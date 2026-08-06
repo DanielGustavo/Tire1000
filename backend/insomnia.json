@@ -1,0 +1,231 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-08-06T15:17:28.000Z",
+  "__export_source": "insomnia.desktop.app:v8.6.0",
+  "resources": [
+    {
+      "_id": "wrk_tire1000",
+      "parentId": null,
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Tire 1000 API",
+      "description": "Coleção gerada a partir de backend/serverless.yml. Atualizar sempre que endpoints forem adicionados/alterados.",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Base Environment",
+      "data": {},
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1786029448482,
+      "_type": "environment"
+    },
+    {
+      "_id": "env_dev",
+      "parentId": "env_base",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Dev (serverless-offline)",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "access_token": "",
+        "id_token": "",
+        "refresh_token": "",
+        "theme_id": ""
+      },
+      "dataPropertyOrder": {
+        "&": ["base_url", "access_token", "id_token", "refresh_token", "theme_id"]
+      },
+      "color": "#7d69cb",
+      "isPrivate": false,
+      "metaSortKey": 1786029448482,
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Auth",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_themes",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Themes",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -900,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_topics",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Topics",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -800,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_auth_signup",
+      "parentId": "fld_auth",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/auth/signup",
+      "name": "Signup",
+      "description": "Cria conta já confirmada no Cognito (AdminCreateUser + AdminSetUserPassword). Sem fluxo de confirmação por e-mail.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Nome do Usuário\",\n  \"email\": \"usuario@example.com\",\n  \"password\": \"Senha123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {},
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_auth_login",
+      "parentId": "fld_auth",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/auth/login",
+      "name": "Login",
+      "description": "Retorna accessToken/idToken/refreshToken/expiresIn. Copie o accessToken para a variável de ambiente `access_token` para usar nas rotas autenticadas.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"Senha123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {},
+      "metaSortKey": -900,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_themes_list",
+      "parentId": "fld_themes",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/themes",
+      "name": "List Themes",
+      "description": "Requer cognitoAuthorizer. Filtros opcionais por topicId e/ou search.",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        { "name": "topicId", "value": "", "disabled": true },
+        { "name": "search", "value": "", "disabled": true }
+      ],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_themes_get",
+      "parentId": "fld_themes",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/themes/{{ _.theme_id }}",
+      "name": "Get Theme",
+      "description": "Requer cognitoAuthorizer. Preencha a variável de ambiente `theme_id`.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -900,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_topics_list",
+      "parentId": "fld_topics",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/topics",
+      "name": "List Topics",
+      "description": "Requer cognitoAuthorizer. Lista todos os eixos (topics), sem paginação/filtros.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    }
+  ]
+}
