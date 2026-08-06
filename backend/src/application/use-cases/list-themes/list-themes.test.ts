@@ -92,7 +92,12 @@ describe("ListThemes", () => {
 
     const result = await listThemes();
 
-    expect(result).toEqual([{ theme, topic }]);
+    expect(result).toEqual([
+      {
+        theme: { id: theme.id, title: theme.title, enemYear: theme.enemYear, topicId: theme.topicId },
+        topic: { id: topic.id, title: topic.title, color: topic.color },
+      },
+    ]);
   });
 
   it("resolves the topic once per distinct topicId, even with repeated themes", async () => {
@@ -111,10 +116,11 @@ describe("ListThemes", () => {
 
     const result = await listThemes();
 
+    const topicDTO = { id: topic.id, title: topic.title, color: topic.color };
     expect(findByIdsCalls).toEqual([["topic-1"]]);
     expect(result).toEqual([
-      { theme: second, topic },
-      { theme: first, topic },
+      { theme: { id: second.id, title: second.title, enemYear: second.enemYear, topicId: second.topicId }, topic: topicDTO },
+      { theme: { id: first.id, title: first.title, enemYear: first.enemYear, topicId: first.topicId }, topic: topicDTO },
     ]);
   });
 
@@ -126,6 +132,8 @@ describe("ListThemes", () => {
 
     const result = await listThemes();
 
-    expect(result).toEqual([{ theme, topic: null }]);
+    expect(result).toEqual([
+      { theme: { id: theme.id, title: theme.title, enemYear: theme.enemYear, topicId: theme.topicId }, topic: null },
+    ]);
   });
 });

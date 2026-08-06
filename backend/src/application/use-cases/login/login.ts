@@ -1,4 +1,5 @@
-import type { AuthGateway, AuthTokens } from "../../../domain/contracts/gateways/auth-gateway.js";
+import type { AuthGateway } from "../../../domain/contracts/gateways/auth-gateway.js";
+import { toAuthTokensDTO, type AuthTokensDTO } from "../../dtos/auth-tokens-dto.js";
 
 export interface LoginDeps {
   authGateway: AuthGateway;
@@ -10,7 +11,8 @@ export interface LoginInput {
 }
 
 export function createLogin({ authGateway }: LoginDeps) {
-  return async function login({ email, password }: LoginInput): Promise<AuthTokens> {
-    return authGateway.login({ email, password });
+  return async function login({ email, password }: LoginInput): Promise<AuthTokensDTO> {
+    const tokens = await authGateway.login({ email, password });
+    return toAuthTokensDTO(tokens);
   };
 }

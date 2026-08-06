@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { InvalidCredentialsError } from "../../../domain/contracts/gateways/auth-gateway.js";
-import type { AuthTokens } from "../../../domain/contracts/gateways/auth-gateway.js";
+import type { AuthTokensDTO } from "../../dtos/auth-tokens-dto.js";
 import { HttpError } from "../http-error.js";
 import { LoginController } from "./login-controller.js";
 
@@ -10,7 +10,7 @@ function buildRequest(body: unknown) {
 
 describe("LoginController", () => {
   it("returns 200 with the tokens on success", async () => {
-    const tokens: AuthTokens = { accessToken: "a", idToken: "i", refreshToken: "r", expiresIn: 3600 };
+    const tokens: AuthTokensDTO = { accessToken: "a", refreshToken: "r", expiresIn: 3600 };
     const controller = new LoginController(async () => tokens);
 
     const response = await controller.execute(buildRequest({ email: "student@example.com", password: "S3curePass!" }));

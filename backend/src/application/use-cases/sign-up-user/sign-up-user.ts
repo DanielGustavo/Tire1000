@@ -1,7 +1,9 @@
 import { User } from "../../../domain/entities/user.js";
-import type { AuthGateway, AuthTokens } from "../../../domain/contracts/gateways/auth-gateway.js";
+import type { AuthGateway } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { IdGenerator } from "../../../domain/contracts/gateways/id-generator.js";
 import type { UserRepository } from "../../../domain/contracts/repositories/user-repository.js";
+import { toAuthTokensDTO, type AuthTokensDTO } from "../../dtos/auth-tokens-dto.js";
+import { toUserDTO, type UserDTO } from "../../dtos/user-dto.js";
 
 export interface SignUpUserDeps {
   authGateway: AuthGateway;
@@ -16,8 +18,8 @@ export interface SignUpUserInput {
 }
 
 export interface SignUpUserOutput {
-  user: User;
-  tokens: AuthTokens;
+  user: UserDTO;
+  tokens: AuthTokensDTO;
 }
 
 export function createSignUpUser({ authGateway, userRepository, idGenerator }: SignUpUserDeps) {
@@ -34,6 +36,6 @@ export function createSignUpUser({ authGateway, userRepository, idGenerator }: S
 
     const tokens = await authGateway.login({ email, password });
 
-    return { user, tokens };
+    return { user: toUserDTO(user), tokens: toAuthTokensDTO(tokens) };
   };
 }

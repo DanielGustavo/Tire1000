@@ -1,6 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { Theme } from "../../../domain/entities/theme.js";
-import { ThemeTopic } from "../../../domain/entities/theme-topic.js";
 import { NotFoundError } from "../../../shared/errors/not-found-error.js";
 import type { GetThemeOutput } from "../../use-cases/get-theme/get-theme.js";
 import { GetThemeController } from "./get-theme-controller.js";
@@ -12,22 +10,9 @@ function buildRequest(pathParameters: Record<string, string | undefined> = {}) {
 describe("GetThemeController", () => {
   it("returns 200 with the use case's result on success", async () => {
     const result: GetThemeOutput = {
-      theme: Theme.reconstitute({
-        id: "theme-1",
-        title: "Educação financeira",
-        enemYear: 2023,
-        topicId: "topic-1",
-        createdAt: new Date("2026-08-01T00:00:00.000Z"),
-        updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-      }),
+      theme: { id: "theme-1", title: "Educação financeira", enemYear: 2023, topicId: "topic-1" },
       referenceTexts: [],
-      topic: ThemeTopic.reconstitute({
-        id: "topic-1",
-        title: "Educação",
-        color: "#2E7D32",
-        createdAt: new Date("2026-08-01T00:00:00.000Z"),
-        updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-      }),
+      topic: { id: "topic-1", title: "Educação", color: "#2E7D32" },
     };
     const controller = new GetThemeController(async () => result);
 

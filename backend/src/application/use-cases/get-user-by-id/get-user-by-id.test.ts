@@ -24,7 +24,7 @@ describe("GetUserById", () => {
 
     const result = await getUserById({ userId: "user-1" });
 
-    expect(result).toEqual(buildUser());
+    expect(result).toEqual({ id: "user-1", email: "student@example.com", name: "Student", credits: 3 });
   });
 
   it("returns null when no user matches the id", async () => {

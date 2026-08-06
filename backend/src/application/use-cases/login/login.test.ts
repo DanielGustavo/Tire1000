@@ -18,7 +18,6 @@ describe("Login", () => {
 
     expect(tokens).toEqual({
       accessToken: "fake-access-token-fake-cognito-sub-1",
-      idToken: "fake-id-token-fake-cognito-sub-1",
       refreshToken: "fake-refresh-token-fake-cognito-sub-1",
       expiresIn: 3600,
     });

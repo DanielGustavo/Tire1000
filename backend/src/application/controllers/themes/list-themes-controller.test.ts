@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Theme } from "../../../domain/entities/theme.js";
-import { ThemeTopic } from "../../../domain/entities/theme-topic.js";
+import type { ThemeDTO } from "../../dtos/theme-dto.js";
+import type { TopicDTO } from "../../dtos/topic-dto.js";
 import type { ThemeWithTopic } from "../../use-cases/list-themes/list-themes.js";
 import { ListThemesController } from "./list-themes-controller.js";
 
@@ -8,25 +8,12 @@ function buildRequest(queryStringParameters: Record<string, string | undefined> 
   return { body: {}, headers: {}, pathParameters: {}, queryStringParameters };
 }
 
-function buildTheme(): Theme {
-  return Theme.reconstitute({
-    id: "theme-1",
-    title: "Educação financeira",
-    enemYear: 2023,
-    topicId: "topic-1",
-    createdAt: new Date("2026-08-01T00:00:00.000Z"),
-    updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-  });
+function buildTheme(): ThemeDTO {
+  return { id: "theme-1", title: "Educação financeira", enemYear: 2023, topicId: "topic-1" };
 }
 
-function buildTopic(): ThemeTopic {
-  return ThemeTopic.reconstitute({
-    id: "topic-1",
-    title: "Educação",
-    color: "#2E7D32",
-    createdAt: new Date("2026-08-01T00:00:00.000Z"),
-    updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-  });
+function buildTopic(): TopicDTO {
+  return { id: "topic-1", title: "Educação", color: "#2E7D32" };
 }
 
 describe("ListThemesController", () => {

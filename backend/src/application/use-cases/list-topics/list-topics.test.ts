@@ -22,7 +22,10 @@ describe("ListTopics", () => {
 
     const result = await listTopics();
 
-    expect(result).toEqual(topics);
+    expect(result).toEqual([
+      { id: "topic-1", title: "Meio ambiente", color: "#2E7D32" },
+      { id: "topic-2", title: "Tecnologia", color: "#2E7D32" },
+    ]);
   });
 
   it("returns an empty list when there are no topics", async () => {

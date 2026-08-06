@@ -1,5 +1,5 @@
-import type { User } from "../../../domain/entities/user.js";
 import type { UserRepository } from "../../../domain/contracts/repositories/user-repository.js";
+import { toUserDTO, type UserDTO } from "../../dtos/user-dto.js";
 
 export interface GetUserByIdDeps {
   userRepository: UserRepository;
@@ -10,7 +10,8 @@ export interface GetUserByIdInput {
 }
 
 export function createGetUserById({ userRepository }: GetUserByIdDeps) {
-  return async function getUserById({ userId }: GetUserByIdInput): Promise<User | null> {
-    return userRepository.findById(userId);
+  return async function getUserById({ userId }: GetUserByIdInput): Promise<UserDTO | null> {
+    const user = await userRepository.findById(userId);
+    return user ? toUserDTO(user) : null;
   };
 }

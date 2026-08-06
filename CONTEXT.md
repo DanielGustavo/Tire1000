@@ -19,3 +19,11 @@ _Avoid_: Correção (esse é o processo completo, não a etapa)
 **Eixo**:
 A categoria temática à qual um Tema pertence (entidade `ThemeTopic`, tipo `TOPIC` no banco).
 _Avoid_: Tópico
+
+**Texto motivador**:
+Material de apoio (texto ou imagem) apresentado junto a um Tema, usado pelo estudante como base pra escrever a redação (entidade `ReferenceText`, tipo `REFERENCE_TEXT` no banco).
+_Avoid_: Texto de referência
+
+**Fonte**:
+De onde a informação de um Texto motivador (ou de uma imagem dentro dele) foi extraída — pode ser uma URL, uma citação, ou outra referência textual. Não é tipografia, apesar do campo no código se chamar `font`. Cada imagem de um Texto motivador pode ter uma fonte própria, independente da fonte do texto geral.
+_Avoid_: Font

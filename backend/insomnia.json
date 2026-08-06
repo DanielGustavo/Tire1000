@@ -119,7 +119,7 @@
       "created": 1786029448482,
       "url": "{{ _.base_url }}/auth/login",
       "name": "Login",
-      "description": "Retorna accessToken/idToken/refreshToken/expiresIn. Copie o accessToken para a variável de ambiente `access_token` para usar nas rotas autenticadas.",
+      "description": "Retorna accessToken/refreshToken/expiresIn. Copie o accessToken para a variável de ambiente `access_token` para usar nas rotas autenticadas.",
       "method": "POST",
       "body": {
         "mimeType": "application/json",

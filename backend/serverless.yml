@@ -24,6 +24,7 @@ provider:
             - dynamodb:PutItem
             - dynamodb:UpdateItem
             - dynamodb:Query
+            - dynamodb:BatchGetItem
           Resource:
             - !GetAtt MainTable.Arn
             - !Sub ${MainTable.Arn}/index/*

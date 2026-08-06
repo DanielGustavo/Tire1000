@@ -54,7 +54,19 @@ describe("GetTheme", () => {
 
     const result = await getTheme({ themeId: "theme-1" });
 
-    expect(result).toEqual({ theme, referenceTexts: [referenceText], topic });
+    expect(result).toEqual({
+      theme: { id: theme.id, title: theme.title, enemYear: theme.enemYear, topicId: theme.topicId },
+      referenceTexts: [
+        {
+          id: referenceText.id,
+          title: referenceText.title,
+          font: referenceText.font,
+          themeId: referenceText.themeId,
+          paragraphs: referenceText.paragraphs,
+        },
+      ],
+      topic: { id: topic.id, title: topic.title, color: topic.color },
+    });
   });
 
   it("returns an empty reference text list when the theme has none", async () => {

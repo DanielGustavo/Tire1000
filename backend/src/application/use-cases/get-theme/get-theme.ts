@@ -1,7 +1,9 @@
-import type { ThemeRepository, ThemeWithReferenceTexts } from "../../../domain/contracts/repositories/theme-repository.js";
-import type { ThemeTopic } from "../../../domain/entities/theme-topic.js";
+import type { ThemeRepository } from "../../../domain/contracts/repositories/theme-repository.js";
 import type { ThemeTopicRepository } from "../../../domain/contracts/repositories/theme-topic-repository.js";
 import { NotFoundError } from "../../../shared/errors/not-found-error.js";
+import { toReferenceTextDTO, type ReferenceTextDTO } from "../../dtos/reference-text-dto.js";
+import { toThemeDTO, type ThemeDTO } from "../../dtos/theme-dto.js";
+import { toTopicDTO, type TopicDTO } from "../../dtos/topic-dto.js";
 
 export interface GetThemeDeps {
   themeRepository: ThemeRepository;
@@ -12,8 +14,10 @@ export interface GetThemeInput {
   themeId: string;
 }
 
-export interface GetThemeOutput extends ThemeWithReferenceTexts {
-  topic: ThemeTopic | null;
+export interface GetThemeOutput {
+  theme: ThemeDTO;
+  referenceTexts: ReferenceTextDTO[];
+  topic: TopicDTO | null;
 }
 
 export function createGetTheme({ themeRepository, themeTopicRepository }: GetThemeDeps) {
@@ -23,6 +27,10 @@ export function createGetTheme({ themeRepository, themeTopicRepository }: GetThe
 
     const topic = await themeTopicRepository.findById(result.theme.topicId);
 
-    return { ...result, topic };
+    return {
+      theme: toThemeDTO(result.theme),
+      referenceTexts: result.referenceTexts.map(toReferenceTextDTO),
+      topic: topic ? toTopicDTO(topic) : null,
+    };
   };
 }

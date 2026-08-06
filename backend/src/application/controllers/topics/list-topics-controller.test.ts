@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ThemeTopic } from "../../../domain/entities/theme-topic.js";
+import type { TopicDTO } from "../../dtos/topic-dto.js";
 import { ListTopicsController } from "./list-topics-controller.js";
 
 function buildRequest() {
@@ -8,15 +8,7 @@ function buildRequest() {
 
 describe("ListTopicsController", () => {
   it("returns 200 with the topics from the use case", async () => {
-    const topics = [
-      ThemeTopic.reconstitute({
-        id: "topic-1",
-        title: "Meio ambiente",
-        color: "#2E7D32",
-        createdAt: new Date("2026-08-01T00:00:00.000Z"),
-        updatedAt: new Date("2026-08-01T00:00:00.000Z"),
-      }),
-    ];
+    const topics: TopicDTO[] = [{ id: "topic-1", title: "Meio ambiente", color: "#2E7D32" }];
     const controller = new ListTopicsController(async () => topics);
 
     const response = await controller.execute(buildRequest());
