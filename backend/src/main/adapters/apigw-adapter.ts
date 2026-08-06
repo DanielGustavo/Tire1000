@@ -1,8 +1,13 @@
-import type { APIGatewayProxyHandlerV2 } from "aws-lambda";
-import type { Controller } from "../../application/controllers/controller.js";
-import { HttpError } from "../../application/controllers/http-error.js";
+import type { APIGatewayProxyHandlerV2WithJWTAuthorizer } from "aws-lambda";
+import type { ControllerAuth, Controller } from "../../application/controllers/controller.js";
+import { mapErrorResponse } from "./map-error-response.js";
 
-export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
+function resolveAuth(claims: Record<string, string | number | boolean | string[]> | undefined): ControllerAuth | null {
+  const sub = claims?.sub;
+  return typeof sub === "string" ? { externalId: sub } : null;
+}
+
+export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2WithJWTAuthorizer {
   return async (event) => {
     let body: unknown = {};
     if (event.body) {
@@ -19,15 +24,12 @@ export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
         headers: event.headers,
         pathParameters: event.pathParameters ?? {},
         queryStringParameters: event.queryStringParameters ?? {},
+        auth: resolveAuth(event.requestContext?.authorizer?.jwt?.claims),
       });
 
       return { statusCode: response.statusCode, body: JSON.stringify(response.body) };
     } catch (error) {
-      if (error instanceof HttpError) {
-        return { statusCode: error.statusCode, body: JSON.stringify(error.body) };
-      }
-      console.error(error);
-      return { statusCode: 500, body: JSON.stringify({ message: "Erro interno do servidor" }) };
+      return mapErrorResponse(error);
     }
   };
 }

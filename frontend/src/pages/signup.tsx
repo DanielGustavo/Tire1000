@@ -13,9 +13,9 @@ export function SignupPage() {
 
   const signUpMutation = useMutation({
     mutationFn: (input: { name: string; email: string; password: string }) => authService.signUp(input),
-    onSuccess: ({ tokens }) => {
+    onSuccess: ({ tokens, checkoutUrl }) => {
       setAccessToken(tokens.accessToken);
-      navigate("/");
+      navigate("/credits", { state: { initialCheckoutUrl: checkoutUrl } });
     },
   });
 

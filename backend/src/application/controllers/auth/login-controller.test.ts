@@ -5,7 +5,7 @@ import { HttpError } from "../http-error.js";
 import { LoginController } from "./login-controller.js";
 
 function buildRequest(body: unknown) {
-  return { body, headers: {}, pathParameters: {}, queryStringParameters: {} };
+  return { body, headers: {}, pathParameters: {}, queryStringParameters: {}, auth: null };
 }
 
 describe("LoginController", () => {

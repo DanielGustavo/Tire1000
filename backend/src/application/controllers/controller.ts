@@ -1,11 +1,17 @@
 import { DomainError } from "../../shared/errors/domain-error.js";
 import { HttpError } from "./http-error.js";
 
+export interface ControllerAuth {
+  /** Cognito sub of the authenticated user — resolve to an internal User via UserRepository#findByExternalId. */
+  externalId: string;
+}
+
 export interface ControllerRequest {
   body: unknown;
   headers: Record<string, string | undefined>;
   pathParameters: Record<string, string | undefined>;
   queryStringParameters: Record<string, string | undefined>;
+  auth: ControllerAuth | null;
 }
 
 export interface ControllerResponse {

@@ -5,7 +5,7 @@ import type { ThemeWithTopic } from "../../use-cases/list-themes/list-themes.js"
 import { ListThemesController } from "./list-themes-controller.js";
 
 function buildRequest(queryStringParameters: Record<string, string | undefined> = {}) {
-  return { body: {}, headers: {}, pathParameters: {}, queryStringParameters };
+  return { body: {}, headers: {}, pathParameters: {}, queryStringParameters, auth: null };
 }
 
 function buildTheme(): ThemeDTO {

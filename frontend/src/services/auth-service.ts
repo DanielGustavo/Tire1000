@@ -23,6 +23,7 @@ export interface SignUpInput {
 export interface SignUpResponse {
   user: AuthUser;
   tokens: AuthTokens;
+  checkoutUrl: string | null;
 }
 
 export interface LoginInput {

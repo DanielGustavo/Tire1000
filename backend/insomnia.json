@@ -85,6 +85,30 @@
       "_type": "request_group"
     },
     {
+      "_id": "fld_credits",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Credits",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -700,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_users",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Users",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -600,
+      "_type": "request_group"
+    },
+    {
       "_id": "req_auth_signup",
       "parentId": "fld_auth",
       "modified": 1786029448482,
@@ -207,6 +231,96 @@
       "url": "{{ _.base_url }}/topics",
       "name": "List Topics",
       "description": "Requer cognitoAuthorizer. Lista todos os eixos (topics), sem paginação/filtros.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_credits_checkout",
+      "parentId": "fld_credits",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/credits/checkout",
+      "name": "Request Credits Checkout",
+      "description": "Requer cognitoAuthorizer. Cria uma Stripe Checkout Session (Price fixo por crédito, quantity = creditsQty) e grava um Checkout PENDING. Retorna checkoutUrl.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"creditsQty\": 10\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_credits_webhook",
+      "parentId": "fld_credits",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/credits/webhook",
+      "name": "Stripe Webhook",
+      "description": "Sem cognitoAuthorizer — o Stripe não se autentica como usuário. Segurança é a validação da assinatura no header stripe-signature. Para testar localmente, use `stripe listen --forward-to <base_url>/credits/webhook` e dispare `stripe trigger checkout.session.completed`.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" },
+        { "name": "stripe-signature", "value": "" }
+      ],
+      "authentication": {},
+      "metaSortKey": -900,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_users_me",
+      "parentId": "fld_users",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/users/me",
+      "name": "Get Current User",
+      "description": "Requer cognitoAuthorizer. Resolve o usuário autenticado pelo sub do JWT (ver ADR-0006). Usado pela tela de saldo de créditos no front.",
       "method": "GET",
       "body": {},
       "parameters": [],

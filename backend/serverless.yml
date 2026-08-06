@@ -15,6 +15,10 @@ provider:
     STAGE: ${self:provider.stage}
     USER_POOL_ID: !Ref CognitoUserPool
     USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
+    STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY, ''}
+    STRIPE_PRICE_ID: ${env:STRIPE_PRICE_ID, ''}
+    STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET, ''}
+    FRONTEND_URL: ${env:FRONTEND_URL, ''}
   iam:
     role:
       statements:
@@ -93,6 +97,28 @@ functions:
           method: get
           authorizer:
             name: cognitoAuthorizer
+  usersMe:
+    handler: src/main/handlers/users/me.handler
+    events:
+      - httpApi:
+          path: /users/me
+          method: get
+          authorizer:
+            name: cognitoAuthorizer
+  creditsCheckout:
+    handler: src/main/handlers/credits/checkout.handler
+    events:
+      - httpApi:
+          path: /credits/checkout
+          method: post
+          authorizer:
+            name: cognitoAuthorizer
+  creditsWebhook:
+    handler: src/main/handlers/credits/webhook.handler
+    events:
+      - httpApi:
+          path: /credits/webhook
+          method: post
   # Further functions are added by feature tickets as they implement
   # endpoints/consumers. Authenticated routes attach the `cognitoAuthorizer`
   # defined above (see above).

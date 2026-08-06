@@ -3,7 +3,7 @@ import type { TopicDTO } from "../../dtos/topic-dto.js";
 import { ListTopicsController } from "./list-topics-controller.js";
 
 function buildRequest() {
-  return { body: {}, headers: {}, pathParameters: {}, queryStringParameters: {} };
+  return { body: {}, headers: {}, pathParameters: {}, queryStringParameters: {}, auth: null };
 }
 
 describe("ListTopicsController", () => {

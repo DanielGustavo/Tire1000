@@ -4,7 +4,7 @@ import type { GetThemeOutput } from "../../use-cases/get-theme/get-theme.js";
 import { GetThemeController } from "./get-theme-controller.js";
 
 function buildRequest(pathParameters: Record<string, string | undefined> = {}) {
-  return { body: {}, headers: {}, pathParameters, queryStringParameters: {} };
+  return { body: {}, headers: {}, pathParameters, queryStringParameters: {}, auth: null };
 }
 
 describe("GetThemeController", () => {

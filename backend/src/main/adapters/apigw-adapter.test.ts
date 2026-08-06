@@ -1,16 +1,19 @@
-import type { APIGatewayProxyEventV2, Context } from "aws-lambda";
+import type { APIGatewayProxyEventV2WithJWTAuthorizer, Context } from "aws-lambda";
 import { describe, expect, it } from "vitest";
 import { Controller, type ControllerRequest, type ControllerResponse } from "../../application/controllers/controller.js";
 import { HttpError } from "../../application/controllers/http-error.js";
 import { apigwAdapter } from "./apigw-adapter.js";
 
-function buildEvent(body?: unknown): APIGatewayProxyEventV2 {
+function buildEvent(body?: unknown, sub?: string): APIGatewayProxyEventV2WithJWTAuthorizer {
   return {
     body: body === undefined ? undefined : JSON.stringify(body),
     headers: {},
     pathParameters: {},
     queryStringParameters: {},
-  } as APIGatewayProxyEventV2;
+    requestContext: sub
+      ? { authorizer: { jwt: { claims: { sub }, scopes: [] } } }
+      : undefined,
+  } as unknown as APIGatewayProxyEventV2WithJWTAuthorizer;
 }
 
 class StubController extends Controller {
@@ -53,5 +56,31 @@ describe("apigwAdapter", () => {
     const result = await handler(buildEvent({}), {} as Context, () => {});
 
     expect(result).toEqual({ statusCode: 500, body: JSON.stringify({ message: "Erro interno do servidor" }) });
+  });
+
+  it("passes the JWT authorizer's sub claim through as auth.externalId", async () => {
+    let receivedRequest: ControllerRequest | undefined;
+    const controller = new StubController(async (request) => {
+      receivedRequest = request;
+      return { statusCode: 200, body: {} };
+    });
+    const handler = apigwAdapter(controller);
+
+    await handler(buildEvent({}, "cognito-sub-1"), {} as Context, () => {});
+
+    expect(receivedRequest?.auth).toEqual({ externalId: "cognito-sub-1" });
+  });
+
+  it("sets auth to null for unauthenticated routes with no JWT authorizer context", async () => {
+    let receivedRequest: ControllerRequest | undefined;
+    const controller = new StubController(async (request) => {
+      receivedRequest = request;
+      return { statusCode: 200, body: {} };
+    });
+    const handler = apigwAdapter(controller);
+
+    await handler(buildEvent({}), {} as Context, () => {});
+
+    expect(receivedRequest?.auth).toBeNull();
   });
 });

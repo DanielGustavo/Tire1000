@@ -1,11 +1,12 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import type { User } from "../../domain/entities/user.js";
 import type { UserRepository } from "../../domain/contracts/repositories/user-repository.js";
 import {
   fromUserItem,
   toUserItem,
   userGSI1PK,
+  userGSI2PK,
   userPK,
   userSK,
   type UserItem,
@@ -60,8 +61,40 @@ export class DynamoUserRepository implements UserRepository {
     return item ? fromUserItem(item as UserItem) : null;
   }
 
+  async findByExternalId(externalId: string): Promise<User | null> {
+    const result = await this.documentClient.send(
+      new QueryCommand({
+        TableName: this.tableName,
+        IndexName: "GSI2",
+        KeyConditionExpression: "GSI2PK = :gsi2pk",
+        ExpressionAttributeValues: { ":gsi2pk": userGSI2PK(externalId) },
+        ProjectionExpression: USER_PROJECTION_EXPRESSION,
+        ExpressionAttributeNames: USER_PROJECTION_NAMES,
+        Limit: 1,
+      }),
+    );
+
+    const item = result.Items?.[0];
+    return item ? fromUserItem(item as UserItem) : null;
+  }
+
   async create(user: User): Promise<User> {
     await this.documentClient.send(new PutCommand({ TableName: this.tableName, Item: toUserItem(user) }));
     return user;
+  }
+
+  async incrementCredits(userId: string, amount: number): Promise<User> {
+    const result = await this.documentClient.send(
+      new UpdateCommand({
+        TableName: this.tableName,
+        Key: { PK: userPK(userId), SK: userSK(userId) },
+        UpdateExpression: "ADD #credits :amount SET #updatedAt = :updatedAt",
+        ExpressionAttributeNames: { "#credits": "credits", "#updatedAt": "updatedAt" },
+        ExpressionAttributeValues: { ":amount": amount, ":updatedAt": new Date().toISOString() },
+        ReturnValues: "ALL_NEW",
+      }),
+    );
+
+    return fromUserItem(result.Attributes as UserItem);
   }
 }

@@ -5,7 +5,7 @@ import { HttpError } from "../http-error.js";
 import { SignupController } from "./signup-controller.js";
 
 function buildRequest(body: unknown) {
-  return { body, headers: {}, pathParameters: {}, queryStringParameters: {} };
+  return { body, headers: {}, pathParameters: {}, queryStringParameters: {}, auth: null };
 }
 
 describe("SignupController", () => {
@@ -13,6 +13,7 @@ describe("SignupController", () => {
     const result: SignUpUserOutput = {
       user: { id: "user-1", email: "student@example.com", name: "Student", credits: 0 },
       tokens: { accessToken: "a", refreshToken: "r", expiresIn: 3600 },
+      checkoutUrl: "https://checkout.stripe.test/fake-checkout-session-1",
     };
     const controller = new SignupController(async () => result);
 

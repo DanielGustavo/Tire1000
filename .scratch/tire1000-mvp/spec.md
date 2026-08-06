@@ -70,7 +70,8 @@ Tire 1000 é uma plataforma web responsiva (mobile-first) onde o estudante fotog
 ### Arquitetura e seam de teste
 
 - Cada operação de negócio é um **caso de uso** (função ou classe) que recebe suas dependências por injeção: repositórios (acesso ao DynamoDB) e gateways (Cognito, Stripe, Gemini, S3, SQS, SNS). Handlers Lambda ficam finos — parseiam o evento, chamam o caso de uso, formatam a resposta — e não carregam lógica de negócio.
-- Casos de uso do MVP: `SignUpUser`, `RequestCreditsCheckout`, `ConfirmCreditsCheckout`, `UploadEssay`, `ResendEssay`, `EnqueueEssayValidation`, `ValidateEssay`, `EvaluateEssay`, `ListThemes`, `GetTheme`, `ListTopics`, `ListUserEssays`, `GetEssayDetail`.
+- Casos de uso do MVP: `SignUpUser`, `RequestCreditsCheckout`, `ConfirmCreditsCheckout`, `GetCurrentUser`, `UploadEssay`, `ResendEssay`, `EnqueueEssayValidation`, `ValidateEssay`, `EvaluateEssay`, `ListThemes`, `GetTheme`, `ListTopics`, `ListUserEssays`, `GetEssayDetail`.
+  - `GetCurrentUser` não estava na lista original — adicionado na ticket 04 pra resolver o usuário autenticado a partir do `sub` do JWT em `GET /users/me` (usado pela tela de saldo de créditos no front) e, internamente, em `RequestCreditsCheckout` (ver ADR-0006).
 - Todo item da tabela DynamoDB carrega um atributo `type` (discriminador: `USER`, `THEME`, `TOPIC`, `REFERENCE_TEXT`, `ESSAY`, `ESSAY_EVALUATION`, `ESSAY_COST`, `CHECKOUT`), e `createdAt`/`updatedAt` em todas as entidades.
 - Identificadores de entidade são KSUID.
 
@@ -81,7 +82,7 @@ Tire 1000 é uma plataforma web responsiva (mobile-first) onde o estudante fotog
 | Theme | `THEMES` | `THEME#<enemYear\|createdAt>#<themeId>` | `TOPIC#<topicId>` | `THEME#<enemYear\|createdAt>#<themeId>` | `THEME#<themeId>` | `THEME#<themeId>` |
 | ThemeTopic (Eixo) | `TOPICS` | `TOPIC#<topicId>` | `TOPIC#<topicId>` (igual ao dos seus Themes) | `#TOPIC#<topicId>` (ordena antes de `THEME#...`) | — | — |
 | ReferenceText | `REFERENCE_TEXT#<themeId>` | `REFERENCE_TEXT#<referenceId>` | — | — | `THEME#<themeId>` | `REFERENCE_TEXT#<referenceId>` |
-| User | `USER#<userId>` | `USER#<userId>` | `USER#<email>` | `USER#<email>` | — | — |
+| User | `USER#<userId>` | `USER#<userId>` | `USER#<email>` | `USER#<email>` | `USER_EXTERNAL_ID#<externalId>` | `USER_EXTERNAL_ID#<externalId>` |
 | Essay | `USER#<userId>` | `ESSAY#<essayId>` | `ESSAY#<essayId>` (compartilhado com sua Evaluation) | `ESSAY#<essayId>` | — | — |
 | EssayEvaluation | `EVALUATION#<essayId>` | `EVALUATION#<essayId>` | `ESSAY#<essayId>` (compartilhado com a Essay) | `EVALUATION#<essayId>` (ordena depois de `ESSAY#...`) | — | — |
 | EssayCost | `ESSAY_COST#<essayId>` | `ESSAY_COST#<id>` | `USER#<userId>` | `ESSAY_COST#<id>` | — | — |
@@ -94,6 +95,7 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 - **Theme/ReferenceText**: compartilham `GSI2PK = THEME#<themeId>` por design — uma única Query em GSI2 retorna o tema e seus textos motivadores juntos. O eixo (`ThemeTopic`) **não** entra nesse GSI2: um `ThemeTopic` é reaproveitado por vários Themes, então não dá pra fixar um `themeId` único no item dele sem duplicá-lo por tema. Em vez disso, o eixo é resolvido com uma query separada — `GetItem` no detalhe, `BatchGetItem` na listagem — sem denormalizar (ver ADR-0004).
 - **EssayEvaluation**: GSI1PK agora é `ESSAY#<essayId>` (igual ao da Essay), não `EVALUATION#<essayId>` — necessário pra "listar redação e sua avaliação pelo id" funcionar numa única query GSI1.
 - **EssayCost**: SK trocada de `ESSAY_COST#<essayId>` (colidia — uma redação gera custo em pelo menos 2 etapas) para `ESSAY_COST#<id>` (KSUID próprio do registro de custo).
+- **User**: também passou a usar GSI2, com um prefixo próprio (`USER_EXTERNAL_ID#<externalId>`) que não colide com o uso de GSI2 por Theme/ReferenceText — resolve o usuário logado a partir do `sub` (claim do JWT do Cognito, igual ao `externalId`), necessário pras rotas autenticadas que precisam saber quem é o usuário, não só que ele está logado (`POST /credits/checkout`, `GET /users/me`; ver ADR-0006).
 
 ### Atributos por entidade
 
@@ -114,8 +116,9 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 
 ### Créditos e checkout
 
-- `POST /credits/checkout { creditsQty }` (autenticado) → cria uma Stripe Checkout Session usando um Price fixo por crédito cadastrado no Stripe, `quantity = creditsQty`; grava `Checkout` com `status: PENDING`; retorna `checkoutUrl`. Essa mesma lógica (`RequestCreditsCheckout`) é reaproveitada por `SignUpUser` pra criar o checkout automático do cadastro (ver ADR-0005).
-- Webhook do Stripe → `ConfirmCreditsCheckout`: valida a assinatura do evento, usa o total retornado pelo Stripe (nunca um valor vindo do cliente) para preencher `amountInCents`, credita o usuário (`credits += creditsQty`) e atualiza `Checkout.status = COMPLETED` (ver ADR-0002).
+- `POST /credits/checkout { creditsQty }` (autenticado) → cria uma Stripe Checkout Session usando um Price fixo por crédito cadastrado no Stripe, `quantity = creditsQty`; grava `Checkout` com `status: PENDING`; retorna `checkoutUrl`. A lógica de criar a sessão + gravar o `Checkout` (`createCheckoutForUser`) é reaproveitada por `SignUpUser` pra criar o checkout automático do cadastro (ver ADR-0005); `RequestCreditsCheckout` só adiciona a resolução do usuário autenticado a partir do `sub` do JWT (ver ADR-0006).
+- `GET /users/me` (autenticado) → retorna dados do usuário logado (incluindo `credits`), resolvido a partir do `sub` do JWT; usado pela tela de saldo de créditos no front.
+- Webhook do Stripe (`POST /credits/webhook`, sem authorizer) → `ConfirmCreditsCheckout`: valida a assinatura do evento, usa o total retornado pelo Stripe (nunca um valor vindo do cliente) para preencher `amountInCents`, credita o usuário (`credits += creditsQty`) e atualiza `Checkout.status = COMPLETED` (ver ADR-0002). Idempotente contra reentrega do mesmo evento via update condicional no `Checkout` (ver ADR-0007).
 
 ### Envio, Revisão e Avaliação de redação
 
@@ -146,7 +149,7 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 ## Testing Decisions
 
 - Um bom teste aqui exerce o **caso de uso** através da sua interface pública (input → output + estado resultante nos fakes + chamadas feitas aos gateways), nunca detalhes internos de implementação. Não testar SDKs da AWS nem o Gemini diretamente — eles são substituídos por fakes/stubs em memória que implementam a mesma interface do gateway/repositório real.
-- Módulos a testar: todos os casos de uso listados na seção de Arquitetura (`SignUpUser`, `RequestCreditsCheckout`, `ConfirmCreditsCheckout`, `UploadEssay`, `ResendEssay`, `EnqueueEssayValidation`, `ValidateEssay`, `EvaluateEssay`, `ListThemes`, `GetTheme`, `ListTopics`, `ListUserEssays`, `GetEssayDetail`), incluindo os ramos de erro (rejeição, falha de sistema, threshold de 10 rejeições, falha de assinatura do webhook).
+- Módulos a testar: todos os casos de uso listados na seção de Arquitetura (`SignUpUser`, `RequestCreditsCheckout`, `ConfirmCreditsCheckout`, `GetCurrentUser`, `UploadEssay`, `ResendEssay`, `EnqueueEssayValidation`, `ValidateEssay`, `EvaluateEssay`, `ListThemes`, `GetTheme`, `ListTopics`, `ListUserEssays`, `GetEssayDetail`), incluindo os ramos de erro (rejeição, falha de sistema, threshold de 10 rejeições, falha de assinatura do webhook, reentrega idempotente do webhook).
 - Não há teste anterior no repo (projeto greenfield) — o padrão caso-de-uso-com-DI estabelecido aqui é a referência pros módulos seguintes.
 - Vitest só roda no backend.
 
@@ -163,6 +166,6 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 ## Further Notes
 
 - Vocabulário do domínio (Correção, Revisão, Avaliação, Eixo) está em `CONTEXT.md` — usar esses termos em tickets, testes e código onde fizer sentido.
-- Decisões arquiteturais registradas: `docs/adr/0001-falha-na-avaliacao-nao-devolve-credito.md`, `docs/adr/0002-preco-do-credito-definido-no-stripe.md`, `docs/adr/0003-theme-sk-enemyear-opcional.md`, `docs/adr/0004-theme-topic-resolvido-em-runtime.md`, `docs/adr/0005-signup-cria-checkout-automatico.md`.
+- Decisões arquiteturais registradas: `docs/adr/0001-falha-na-avaliacao-nao-devolve-credito.md`, `docs/adr/0002-preco-do-credito-definido-no-stripe.md`, `docs/adr/0003-theme-sk-enemyear-opcional.md`, `docs/adr/0004-theme-topic-resolvido-em-runtime.md`, `docs/adr/0005-signup-cria-checkout-automatico.md`, `docs/adr/0006-user-resolvido-via-gsi2-por-externalid.md`, `docs/adr/0007-webhook-idempotente-via-update-condicional.md`.
 - Fontes primárias usadas pra montar este spec: ERD, diagrama de fluxo de cadastro, diagrama de fluxo de envio/reenvio de redação, `Access Patterns.html`, `Decisões.html`, `Table Design.html`, `Levantamento de requisitos.md`, e o design no Figma (mobile-first).
 - Stack: TypeScript, Lambda/SQS/SNS/DynamoDB/S3, Serverless Framework (**nenhum comando do Serverless deve ser executado por um agente — só o dev roda**), React + Tailwind + Axios no front, Vitest no backend.
