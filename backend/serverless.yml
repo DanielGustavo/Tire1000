@@ -1,0 +1,70 @@
+service: tire1000
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    TABLE_NAME: ${self:custom.tableName}
+    STAGE: ${sls:stage}
+
+custom:
+  tableName: ${self:service}-${sls:stage}
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    target: node20
+
+plugins:
+  - serverless-esbuild
+
+# Functions are added by feature tickets as they implement endpoints/consumers.
+functions: {}
+
+resources:
+  Resources:
+    # Single-table design. See spec's "Modelo de dados" section for the full
+    # entity-to-key mapping (PK/SK/GSI1PK/GSI1SK/GSI2PK/GSI2SK per entity).
+    MainTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: GSI1PK
+            AttributeType: S
+          - AttributeName: GSI1SK
+            AttributeType: S
+          - AttributeName: GSI2PK
+            AttributeType: S
+          - AttributeName: GSI2SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: GSI1
+            KeySchema:
+              - AttributeName: GSI1PK
+                KeyType: HASH
+              - AttributeName: GSI1SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: GSI2
+            KeySchema:
+              - AttributeName: GSI2PK
+                KeyType: HASH
+              - AttributeName: GSI2SK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
