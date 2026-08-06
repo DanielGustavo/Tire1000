@@ -1,3 +1,4 @@
+import { DomainError } from "../../shared/errors/domain-error.js";
 import { HttpError } from "./http-error.js";
 
 export interface ControllerRequest {
@@ -12,17 +13,17 @@ export interface ControllerResponse {
   body: unknown;
 }
 
-type ErrorMapping = [errorClass: new (...args: never[]) => Error, statusCode: number];
-
 export abstract class Controller {
-  abstract handle(request: ControllerRequest): Promise<ControllerResponse>;
+  protected abstract handle(request: ControllerRequest): Promise<ControllerResponse>;
 
-  protected mapError(error: unknown, mappings: ErrorMapping[]): never {
-    for (const [ErrorClass, statusCode] of mappings) {
-      if (error instanceof ErrorClass) {
-        throw new HttpError(statusCode, error.message);
+  async execute(request: ControllerRequest): Promise<ControllerResponse> {
+    try {
+      return await this.handle(request);
+    } catch (error) {
+      if (error instanceof DomainError) {
+        throw new HttpError(error.statusCode, error.message);
       }
+      throw error;
     }
-    throw error;
   }
 }

@@ -18,7 +18,7 @@ class StubController extends Controller {
     super();
   }
 
-  handle(request: ControllerRequest): Promise<ControllerResponse> {
+  protected handle(request: ControllerRequest): Promise<ControllerResponse> {
     return this.stubbedHandle(request);
   }
 }

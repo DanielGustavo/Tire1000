@@ -1,4 +1,3 @@
-import { EmailAlreadyExistsError, WeakPasswordError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { createSignUpUser } from "../../use-cases/sign-up-user/sign-up-user.js";
 import { Controller, type ControllerRequest, type ControllerResponse } from "../controller.js";
 import { HttpError } from "../http-error.js";
@@ -16,21 +15,14 @@ export class SignupController extends Controller {
     super();
   }
 
-  async handle({ body }: ControllerRequest): Promise<ControllerResponse> {
+  protected async handle({ body }: ControllerRequest): Promise<ControllerResponse> {
     const { name, email, password } = (body ?? {}) as SignupRequestBody;
 
     if (!name || !email || !password) {
       throw new HttpError(400, "name, email and password are required");
     }
 
-    try {
-      const result = await this.signUpUser({ name, email, password });
-      return { statusCode: 201, body: result };
-    } catch (error) {
-      this.mapError(error, [
-        [EmailAlreadyExistsError, 409],
-        [WeakPasswordError, 400],
-      ]);
-    }
+    const result = await this.signUpUser({ name, email, password });
+    return { statusCode: 201, body: result };
   }
 }

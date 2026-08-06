@@ -14,7 +14,7 @@ export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
     }
 
     try {
-      const response = await controller.handle({
+      const response = await controller.execute({
         body,
         headers: event.headers,
         pathParameters: event.pathParameters ?? {},

@@ -1,3 +1,7 @@
+import { BadRequestError } from "../../../shared/errors/bad-request-error.js";
+import { ConflictError } from "../../../shared/errors/conflict-error.js";
+import { UnauthorizedError } from "../../../shared/errors/unauthorized-error.js";
+
 export interface AuthTokens {
   accessToken: string;
   idToken: string;
@@ -22,23 +26,20 @@ export interface AuthGateway {
   deleteUser(input: { email: string }): Promise<void>;
 }
 
-export class EmailAlreadyExistsError extends Error {
+export class EmailAlreadyExistsError extends ConflictError {
   constructor(email: string) {
     super(`An account with email "${email}" already exists`);
-    this.name = "EmailAlreadyExistsError";
   }
 }
 
-export class InvalidCredentialsError extends Error {
+export class InvalidCredentialsError extends UnauthorizedError {
   constructor() {
     super("Invalid email or password");
-    this.name = "InvalidCredentialsError";
   }
 }
 
-export class WeakPasswordError extends Error {
+export class WeakPasswordError extends BadRequestError {
   constructor(reason?: string) {
     super(reason ?? "Password does not meet the required complexity");
-    this.name = "WeakPasswordError";
   }
 }

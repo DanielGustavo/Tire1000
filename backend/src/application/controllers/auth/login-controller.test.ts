@@ -13,7 +13,7 @@ describe("LoginController", () => {
     const tokens: AuthTokens = { accessToken: "a", idToken: "i", refreshToken: "r", expiresIn: 3600 };
     const controller = new LoginController(async () => tokens);
 
-    const response = await controller.handle(buildRequest({ email: "student@example.com", password: "S3curePass!" }));
+    const response = await controller.execute(buildRequest({ email: "student@example.com", password: "S3curePass!" }));
 
     expect(response).toEqual({ statusCode: 200, body: tokens });
   });
@@ -23,7 +23,7 @@ describe("LoginController", () => {
       throw new Error("should not be called");
     });
 
-    await expect(controller.handle(buildRequest({ email: "student@example.com" }))).rejects.toMatchObject({
+    await expect(controller.execute(buildRequest({ email: "student@example.com" }))).rejects.toMatchObject({
       statusCode: 400,
     });
   });
@@ -34,7 +34,7 @@ describe("LoginController", () => {
     });
 
     await expect(
-      controller.handle(buildRequest({ email: "student@example.com", password: "wrong" })),
+      controller.execute(buildRequest({ email: "student@example.com", password: "wrong" })),
     ).rejects.toMatchObject({ statusCode: 401 });
   });
 
@@ -44,7 +44,7 @@ describe("LoginController", () => {
     });
 
     await expect(
-      controller.handle(buildRequest({ email: "student@example.com", password: "wrong" })),
+      controller.execute(buildRequest({ email: "student@example.com", password: "wrong" })),
     ).rejects.toBeInstanceOf(HttpError);
   });
 });

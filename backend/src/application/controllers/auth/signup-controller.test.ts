@@ -25,7 +25,7 @@ describe("SignupController", () => {
     };
     const controller = new SignupController(async () => result);
 
-    const response = await controller.handle(
+    const response = await controller.execute(
       buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" }),
     );
 
@@ -38,7 +38,7 @@ describe("SignupController", () => {
     });
 
     await expect(
-      controller.handle(buildRequest({ email: "student@example.com", password: "x" })),
+      controller.execute(buildRequest({ email: "student@example.com", password: "x" })),
     ).rejects.toMatchObject({ statusCode: 400 });
   });
 
@@ -48,7 +48,7 @@ describe("SignupController", () => {
     });
 
     await expect(
-      controller.handle(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" })),
+      controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" })),
     ).rejects.toMatchObject({ statusCode: 409 });
   });
 
@@ -58,7 +58,7 @@ describe("SignupController", () => {
     });
 
     await expect(
-      controller.handle(buildRequest({ name: "Student", email: "student@example.com", password: "weak" })),
+      controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "weak" })),
     ).rejects.toMatchObject({ statusCode: 400 });
   });
 
@@ -68,7 +68,7 @@ describe("SignupController", () => {
     });
 
     await expect(
-      controller.handle(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" })),
+      controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" })),
     ).rejects.toBeInstanceOf(HttpError);
   });
 });

@@ -1,4 +1,3 @@
-import { InvalidCredentialsError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { createLogin } from "../../use-cases/login/login.js";
 import { Controller, type ControllerRequest, type ControllerResponse } from "../controller.js";
 import { HttpError } from "../http-error.js";
@@ -15,18 +14,14 @@ export class LoginController extends Controller {
     super();
   }
 
-  async handle({ body }: ControllerRequest): Promise<ControllerResponse> {
+  protected async handle({ body }: ControllerRequest): Promise<ControllerResponse> {
     const { email, password } = (body ?? {}) as LoginRequestBody;
 
     if (!email || !password) {
       throw new HttpError(400, "email and password are required");
     }
 
-    try {
-      const tokens = await this.login({ email, password });
-      return { statusCode: 200, body: tokens };
-    } catch (error) {
-      this.mapError(error, [[InvalidCredentialsError, 401]]);
-    }
+    const tokens = await this.login({ email, password });
+    return { statusCode: 200, body: tokens };
   }
 }
