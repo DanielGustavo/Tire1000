@@ -38,10 +38,11 @@
         "access_token": "",
         "id_token": "",
         "refresh_token": "",
-        "theme_id": ""
+        "theme_id": "",
+        "essay_id": ""
       },
       "dataPropertyOrder": {
-        "&": ["base_url", "access_token", "id_token", "refresh_token", "theme_id"]
+        "&": ["base_url", "access_token", "id_token", "refresh_token", "theme_id", "essay_id"]
       },
       "color": "#7d69cb",
       "isPrivate": false,
@@ -106,6 +107,18 @@
       "environment": {},
       "environmentPropertyOrder": null,
       "metaSortKey": -600,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_essays",
+      "parentId": "wrk_tire1000",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "name": "Essays",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -500,
       "_type": "request_group"
     },
     {
@@ -332,6 +345,67 @@
         "disabled": false
       },
       "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_essays_upload",
+      "parentId": "fld_essays",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/essays",
+      "name": "Upload Essay",
+      "description": "Requer cognitoAuthorizer. Rejeitado se o usuário não tiver ao menos 1 crédito. Cria a Essay com status UPLOADING e retorna uma URL + fields de um presigned POST do S3 (válido por 5 minutos, até 10MB) — faça o upload da foto direto pro bucket usando esses campos, o S3 dispara o EnqueueEssayValidation ao terminar.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"themeId\": \"{{ _.theme_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -1000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_essays_resend",
+      "parentId": "fld_essays",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/essays/{{ _.essay_id }}",
+      "name": "Resend Essay",
+      "description": "Requer cognitoAuthorizer, só o dono da redação. Só permitido quando a Essay está UPLOADING ou REJECTED. Reseta a Essay pro status UPLOADING e retorna uma nova URL + fields de presigned POST (mesma fileKey — o objeto anterior já foi removido do bucket).",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -900,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,

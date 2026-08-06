@@ -19,6 +19,8 @@ provider:
     STRIPE_PRICE_ID: ${env:STRIPE_PRICE_ID, ''}
     STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET, ''}
     FRONTEND_URL: ${env:FRONTEND_URL, ''}
+    ESSAYS_BUCKET_NAME: ${self:custom.essaysBucketName}
+    ESSAY_VALIDATION_QUEUE_URL: !Ref EssayValidationQueue
   iam:
     role:
       statements:
@@ -39,6 +41,16 @@ provider:
             - cognito-idp:AdminInitiateAuth
             - cognito-idp:AdminDeleteUser
           Resource: !GetAtt CognitoUserPool.Arn
+        # Only the presigned POST's prefix — Lambda never uploads the photo itself, it just signs
+        # a policy the browser's direct-to-S3 upload has to satisfy (see essayFileKey).
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource: !Sub ${EssaysBucket.Arn}/essays/*
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource: !GetAtt EssayValidationQueue.Arn
   httpApi:
     cors: true
     authorizers:
@@ -52,6 +64,9 @@ provider:
 custom:
   tableName: ${self:service}-${self:provider.stage}-MainTable
   userPoolName: ${self:service}-${self:provider.stage}-user-pool
+  essaysBucketName: ${self:service}-${self:provider.stage}-essays
+  essayValidationQueueName: ${self:service}-${self:provider.stage}-essay-validation
+  essayValidationDlqName: ${self:service}-${self:provider.stage}-essay-validation-dlq
 
 package:
   individually: true
@@ -119,6 +134,32 @@ functions:
       - httpApi:
           path: /credits/webhook
           method: post
+  essaysUpload:
+    handler: src/main/handlers/essays/upload-essay.handler
+    events:
+      - httpApi:
+          path: /essays
+          method: post
+          authorizer:
+            name: cognitoAuthorizer
+  essaysResend:
+    handler: src/main/handlers/essays/resend-essay.handler
+    events:
+      - httpApi:
+          path: /essays/{essayId}
+          method: post
+          authorizer:
+            name: cognitoAuthorizer
+  # Invoked directly by the EssaysBucket's ObjectCreated notification — the bucket is created by
+  # this same service (see Resources below), so `existing: true` tells Serverless to only attach
+  # the notification, not to also manage the bucket itself.
+  essaysEnqueueValidation:
+    handler: src/main/handlers/essays/enqueue-essay-validation.handler
+    events:
+      - s3:
+          bucket: ${self:custom.essaysBucketName}
+          event: s3:ObjectCreated:*
+          existing: true
   # Invoked directly by Cognito as the PreTokenGeneration trigger (see the
   # CognitoUserPool's LambdaConfig below) — no httpApi event.
   authPreTokenGeneration:
@@ -235,3 +276,44 @@ resources:
         Action: lambda:InvokeFunction
         Principal: cognito-idp.amazonaws.com
         SourceArn: !GetAtt CognitoUserPool.Arn
+
+    # Client uploads the essay photo directly here via presigned POST (UploadEssay/ResendEssay) —
+    # the `essaysEnqueueValidation` function above attaches the ObjectCreated notification.
+    EssaysBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.essaysBucketName}
+        CorsConfiguration:
+          CorsRules:
+            # Presigned POST carries its own single-use, time-boxed policy — an open origin here
+            # doesn't widen what a request can do, so this is fine for MVP.
+            - AllowedOrigins: ["*"]
+              AllowedMethods: [POST]
+              AllowedHeaders: ["*"]
+              MaxAge: 3000
+        LifecycleConfiguration:
+          Rules:
+            # Backstop, not the primary cleanup path: ValidateEssay (ticket 06) deletes the object
+            # itself the moment Revisão finishes (success or rejection). This just guarantees that
+            # anything which slips through — an object whose EnqueueEssayValidation trigger never
+            # fired, for instance — doesn't sit in the bucket forever.
+            - Id: ExpireOrphanedUploads
+              Status: Enabled
+              ExpirationInDays: 7
+
+    # Fila de Revisão (spec's "Envio, Revisão e Avaliação de redação") — EnqueueEssayValidation
+    # produces here; ValidateEssay (ticket 06) is the consumer.
+    EssayValidationDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.essayValidationDlqName}
+        MessageRetentionPeriod: 1209600 # 14 dias
+
+    EssayValidationQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.essayValidationQueueName}
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt EssayValidationDLQ.Arn
+          maxReceiveCount: 3

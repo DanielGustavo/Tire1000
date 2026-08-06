@@ -46,6 +46,13 @@ export function ThemeDetailPage() {
       <h1 className="mt-2 text-2xl font-semibold text-gray-900">{theme.title}</h1>
       {theme.enemYear !== null && <p className="text-sm text-gray-600">ENEM {theme.enemYear}</p>}
 
+      <Link
+        to={`/essays/new?themeId=${theme.id}`}
+        className="mt-4 inline-block rounded-md bg-gray-900 px-4 py-2 text-sm text-white"
+      >
+        Enviar redação sobre este tema
+      </Link>
+
       <div className="mt-6 space-y-6">
         {referenceTexts.map((referenceText) => (
           <section key={referenceText.id}>
