@@ -8,10 +8,6 @@ import { toAuthTokensDTO, type AuthTokensDTO } from "../../dtos/auth-tokens-dto.
 import { toUserDTO, type UserDTO } from "../../dtos/user-dto.js";
 import { createCheckoutForUser } from "../request-credits-checkout/create-checkout-for-user.js";
 
-// Starter pack offered by the automatic signup checkout (ADR-0005) — a placeholder product
-// decision, not derived from any spec constraint, and easy to tune later.
-const DEFAULT_SIGNUP_CREDITS_QTY = 5;
-
 export interface SignUpUserDeps {
   authGateway: AuthGateway;
   userRepository: UserRepository;
@@ -24,6 +20,7 @@ export interface SignUpUserInput {
   name: string;
   email: string;
   password: string;
+  creditsQty?: number;
 }
 
 export interface SignUpUserOutput {
@@ -39,7 +36,7 @@ export function createSignUpUser({
   checkoutRepository,
   paymentGateway,
 }: SignUpUserDeps) {
-  return async function signUpUser({ name, email, password }: SignUpUserInput): Promise<SignUpUserOutput> {
+  return async function signUpUser({ name, email, password, creditsQty }: SignUpUserInput): Promise<SignUpUserOutput> {
     const id = await idGenerator.generate();
     const { externalId } = await authGateway.signUp({ id, name, email, password });
 
@@ -53,16 +50,19 @@ export function createSignUpUser({
 
     const tokens = await authGateway.login({ email, password });
 
-    // The initial credits purchase is optional (ADR-0005): the account already works without
-    // it, so a Stripe failure here must not fail signup — we just skip the checkout link.
+    // The initial credits purchase is opt-in (ADR-0009): callers that don't ask for credits get
+    // no checkout at all. When they do ask, the account already works without the purchase
+    // completing, so a Stripe failure here must not fail signup — we just skip the checkout link.
     let checkoutUrl: string | null = null;
-    try {
-      ({ checkoutUrl } = await createCheckoutForUser(
-        { checkoutRepository, paymentGateway, idGenerator },
-        { userId: user.id, creditsQty: DEFAULT_SIGNUP_CREDITS_QTY },
-      ));
-    } catch (error) {
-      console.error("Failed to create the automatic signup checkout session", error);
+    if (creditsQty) {
+      try {
+        ({ checkoutUrl } = await createCheckoutForUser(
+          { checkoutRepository, paymentGateway, idGenerator },
+          { userId: user.id, creditsQty },
+        ));
+      } catch (error) {
+        console.error("Failed to create the signup checkout session", error);
+      }
     }
 
     return { user: toUserDTO(user), tokens: toAuthTokensDTO(tokens), checkoutUrl };

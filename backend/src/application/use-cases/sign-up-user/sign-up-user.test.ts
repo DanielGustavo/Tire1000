@@ -66,11 +66,16 @@ describe("SignUpUser", () => {
     });
   });
 
-  it("creates an automatic Checkout for the initial credits purchase and returns its URL (ADR-0005)", async () => {
+  it("creates a Checkout for the initial credits purchase and returns its URL when the caller passes creditsQty (ADR-0009)", async () => {
     const deps = buildDeps();
     const signUpUser = createSignUpUser(deps);
 
-    const result = await signUpUser({ name: "Student", email: "student@example.com", password: "S3curePass!" });
+    const result = await signUpUser({
+      name: "Student",
+      email: "student@example.com",
+      password: "S3curePass!",
+      creditsQty: 5,
+    });
 
     expect(result.checkoutUrl).toBe("https://checkout.stripe.test/fake-checkout-session-1");
     expect(deps.paymentGateway.createdSessions).toEqual([{ userId: "fake-id-1", creditsQty: 5 }]);
@@ -81,7 +86,32 @@ describe("SignUpUser", () => {
     });
   });
 
-  it("still returns the account and tokens when creating the automatic checkout fails — the purchase stays optional", async () => {
+  it("does not create a Checkout when the caller omits creditsQty", async () => {
+    const deps = buildDeps();
+    const signUpUser = createSignUpUser(deps);
+
+    const result = await signUpUser({ name: "Student", email: "student@example.com", password: "S3curePass!" });
+
+    expect(result.checkoutUrl).toBeNull();
+    expect(deps.paymentGateway.createdSessions).toEqual([]);
+  });
+
+  it("does not create a Checkout when the caller passes creditsQty: 0", async () => {
+    const deps = buildDeps();
+    const signUpUser = createSignUpUser(deps);
+
+    const result = await signUpUser({
+      name: "Student",
+      email: "student@example.com",
+      password: "S3curePass!",
+      creditsQty: 0,
+    });
+
+    expect(result.checkoutUrl).toBeNull();
+    expect(deps.paymentGateway.createdSessions).toEqual([]);
+  });
+
+  it("still returns the account and tokens when creating the requested checkout fails — the purchase stays optional", async () => {
     const deps = buildDeps();
     const failingPaymentGateway: PaymentGateway = {
       createCheckoutSession: async () => {
@@ -93,7 +123,12 @@ describe("SignUpUser", () => {
     };
     const signUpUser = createSignUpUser({ ...deps, paymentGateway: failingPaymentGateway });
 
-    const result = await signUpUser({ name: "Student", email: "student@example.com", password: "S3curePass!" });
+    const result = await signUpUser({
+      name: "Student",
+      email: "student@example.com",
+      password: "S3curePass!",
+      creditsQty: 5,
+    });
 
     expect(result.checkoutUrl).toBeNull();
     expect(result.user.email).toBe("student@example.com");

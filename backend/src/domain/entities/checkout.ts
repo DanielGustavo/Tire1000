@@ -27,8 +27,8 @@ export class Checkout extends Entity {
 
   readonly externalId: string;
   readonly gateway: CheckoutGateway;
-  readonly status: CheckoutStatus;
-  readonly amountInCents: number | null;
+  status: CheckoutStatus;
+  amountInCents: number | null;
   readonly creditsQty: number;
   readonly userId: string;
 
@@ -61,17 +61,9 @@ export class Checkout extends Entity {
     return new Checkout(props);
   }
 
-  complete({ amountInCents }: { amountInCents: number }): Checkout {
-    return new Checkout({
-      id: this.id,
-      externalId: this.externalId,
-      gateway: this.gateway,
-      status: "COMPLETED",
-      amountInCents,
-      creditsQty: this.creditsQty,
-      userId: this.userId,
-      createdAt: this.createdAt,
-      updatedAt: new Date(),
-    });
+  complete({ amountInCents }: { amountInCents: number }): void {
+    this.status = "COMPLETED";
+    this.amountInCents = amountInCents;
+    this.updatedAt = new Date();
   }
 }

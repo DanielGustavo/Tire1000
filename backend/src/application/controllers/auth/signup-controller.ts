@@ -18,9 +18,9 @@ export class SignupController extends Controller {
   protected async handle({
     body,
   }: ControllerRequest): Promise<ControllerResponse> {
-    const { name, email, password } = this.schema.parse(body);
+    const { name, email, password, creditsQty } = this.schema.parse(body);
 
-    const result = await this.signUpUser({ name, email, password });
+    const result = await this.signUpUser({ name, email, password, creditsQty });
     return { statusCode: 201, body: result };
   }
 }

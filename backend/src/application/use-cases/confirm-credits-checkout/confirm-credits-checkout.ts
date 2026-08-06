@@ -32,8 +32,8 @@ export function createConfirmCreditsCheckout({ paymentGateway, checkoutRepositor
     // Conditioned on the checkout still being PENDING in storage: if another delivery of the
     // same webhook event already completed it, `applied` comes back false and we must not
     // credit the user twice (ADR-0007).
-    const completed = checkout.complete({ amountInCents: event.amountInCents });
-    const { applied } = await checkoutRepository.complete(completed);
+    checkout.complete({ amountInCents: event.amountInCents });
+    const { applied } = await checkoutRepository.updateStatus(checkout, { expectedCurrentStatus: "PENDING" });
     if (!applied) return { confirmed: true };
 
     await userRepository.incrementCredits(checkout.userId, checkout.creditsQty);

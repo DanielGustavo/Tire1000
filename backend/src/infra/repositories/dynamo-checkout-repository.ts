@@ -1,6 +1,6 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import type { Checkout } from "../../domain/entities/checkout.js";
+import type { Checkout, CheckoutStatus } from "../../domain/entities/checkout.js";
 import type { CheckoutRepository } from "../../domain/contracts/repositories/checkout-repository.js";
 import { checkoutPK, checkoutSK, fromCheckoutItem, toCheckoutItem, type CheckoutItem } from "../db/dynamodb/items/checkout-item.js";
 
@@ -26,22 +26,22 @@ export class DynamoCheckoutRepository implements CheckoutRepository {
     return result.Item ? fromCheckoutItem(result.Item as CheckoutItem) : null;
   }
 
-  async complete(checkout: Checkout): Promise<{ applied: boolean }> {
+  async updateStatus(checkout: Checkout, { expectedCurrentStatus }: { expectedCurrentStatus: CheckoutStatus }): Promise<{ applied: boolean }> {
     try {
       await this.documentClient.send(
         new UpdateCommand({
           TableName: this.tableName,
           Key: { PK: checkoutPK(checkout.externalId), SK: checkoutSK(checkout.externalId) },
-          UpdateExpression: "SET #status = :completed, #amountInCents = :amountInCents, #updatedAt = :updatedAt",
-          ConditionExpression: "#status = :pending",
+          UpdateExpression: "SET #status = :status, #amountInCents = :amountInCents, #updatedAt = :updatedAt",
+          ConditionExpression: "#status = :expectedCurrentStatus",
           ExpressionAttributeNames: {
             "#status": "status",
             "#amountInCents": "amountInCents",
             "#updatedAt": "updatedAt",
           },
           ExpressionAttributeValues: {
-            ":completed": "COMPLETED",
-            ":pending": "PENDING",
+            ":status": checkout.status,
+            ":expectedCurrentStatus": expectedCurrentStatus,
             ":amountInCents": checkout.amountInCents,
             ":updatedAt": checkout.updatedAt.toISOString(),
           },

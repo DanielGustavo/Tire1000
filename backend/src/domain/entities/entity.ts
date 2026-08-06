@@ -19,7 +19,7 @@ export abstract class Entity {
   readonly id: string;
   readonly type: EntityType;
   readonly createdAt: Date;
-  readonly updatedAt: Date;
+  updatedAt: Date;
 
   protected constructor({ id, type, createdAt, updatedAt }: EntityProps) {
     this.id = id;

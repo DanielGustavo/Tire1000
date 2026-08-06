@@ -115,11 +115,11 @@
       "created": 1786029448482,
       "url": "{{ _.base_url }}/auth/signup",
       "name": "Signup",
-      "description": "Cria conta já confirmada no Cognito (AdminCreateUser + AdminSetUserPassword). Sem fluxo de confirmação por e-mail.",
+      "description": "Cria conta já confirmada no Cognito (AdminCreateUser + AdminSetUserPassword). Sem fluxo de confirmação por e-mail. `creditsQty` é opcional (ADR-0009): sem ele (ou com 0), nenhum checkout é criado.",
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"name\": \"Nome do Usuário\",\n  \"email\": \"usuario@example.com\",\n  \"password\": \"Senha123\"\n}"
+        "text": "{\n  \"name\": \"Nome do Usuário\",\n  \"email\": \"usuario@example.com\",\n  \"password\": \"Senha123\",\n  \"creditsQty\": 5\n}"
       },
       "parameters": [],
       "headers": [

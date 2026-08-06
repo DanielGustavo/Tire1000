@@ -84,6 +84,58 @@ describe("SignupController", () => {
     ).rejects.toMatchObject({ statusCode: 400 });
   });
 
+  it("passes creditsQty through to the use case when provided", async () => {
+    let receivedInput: unknown;
+    const controller = new SignupController(async (input) => {
+      receivedInput = input;
+      return {
+        user: { id: "user-1", email: "student@example.com", name: "Student", credits: 0 },
+        tokens: { accessToken: "a", refreshToken: "r", expiresIn: 3600 },
+        checkoutUrl: null,
+      };
+    });
+
+    await controller.execute(
+      buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!", creditsQty: 5 }),
+    );
+
+    expect(receivedInput).toEqual({ name: "Student", email: "student@example.com", password: "S3curePass!", creditsQty: 5 });
+  });
+
+  it("does not require creditsQty", async () => {
+    let receivedInput: unknown;
+    const controller = new SignupController(async (input) => {
+      receivedInput = input;
+      return {
+        user: { id: "user-1", email: "student@example.com", name: "Student", credits: 0 },
+        tokens: { accessToken: "a", refreshToken: "r", expiresIn: 3600 },
+        checkoutUrl: null,
+      };
+    });
+
+    await controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" }));
+
+    expect(receivedInput).toEqual({ name: "Student", email: "student@example.com", password: "S3curePass!", creditsQty: undefined });
+  });
+
+  it("throws a 400 HttpError when creditsQty is negative or not an integer", async () => {
+    const controller = new SignupController(async () => {
+      throw new Error("should not be called");
+    });
+
+    await expect(
+      controller.execute(
+        buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!", creditsQty: -1 }),
+      ),
+    ).rejects.toMatchObject({ statusCode: 400 });
+
+    await expect(
+      controller.execute(
+        buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!", creditsQty: 1.5 }),
+      ),
+    ).rejects.toMatchObject({ statusCode: 400 });
+  });
+
   it("rejects with an HttpError instance", async () => {
     const controller = new SignupController(async () => {
       throw new EmailAlreadyExistsError("student@example.com");
