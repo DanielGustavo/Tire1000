@@ -46,12 +46,20 @@ export function ThemesPage() {
       {themesQuery.data?.length === 0 && <p className="mt-4 text-sm text-gray-600">Nenhum tema encontrado.</p>}
 
       <ul className="mt-4 space-y-2">
-        {themesQuery.data?.map((theme) => (
+        {themesQuery.data?.map(({ theme, topic }) => (
           <li key={theme.id}>
             <Link
               to={`/themes/${theme.id}`}
               className="block rounded-md border border-gray-200 p-3 hover:border-gray-400"
             >
+              {topic && (
+                <span
+                  className="mr-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium text-white"
+                  style={{ backgroundColor: topic.color }}
+                >
+                  {topic.title}
+                </span>
+              )}
               {theme.title}
             </Link>
           </li>

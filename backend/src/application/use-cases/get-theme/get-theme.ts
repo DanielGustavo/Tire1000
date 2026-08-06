@@ -1,30 +1,28 @@
-import type { ReferenceText } from "../../../domain/entities/reference-text.js";
-import type { Theme } from "../../../domain/entities/theme.js";
-import type { ReferenceTextRepository } from "../../../domain/contracts/repositories/reference-text-repository.js";
-import type { ThemeRepository } from "../../../domain/contracts/repositories/theme-repository.js";
+import type { ThemeRepository, ThemeWithReferenceTexts } from "../../../domain/contracts/repositories/theme-repository.js";
+import type { ThemeTopic } from "../../../domain/entities/theme-topic.js";
+import type { ThemeTopicRepository } from "../../../domain/contracts/repositories/theme-topic-repository.js";
 import { NotFoundError } from "../../../shared/errors/not-found-error.js";
 
 export interface GetThemeDeps {
   themeRepository: ThemeRepository;
-  referenceTextRepository: ReferenceTextRepository;
+  themeTopicRepository: ThemeTopicRepository;
 }
 
 export interface GetThemeInput {
   themeId: string;
 }
 
-export interface GetThemeOutput {
-  theme: Theme;
-  referenceTexts: ReferenceText[];
+export interface GetThemeOutput extends ThemeWithReferenceTexts {
+  topic: ThemeTopic | null;
 }
 
-export function createGetTheme({ themeRepository, referenceTextRepository }: GetThemeDeps) {
+export function createGetTheme({ themeRepository, themeTopicRepository }: GetThemeDeps) {
   return async function getTheme({ themeId }: GetThemeInput): Promise<GetThemeOutput> {
-    const theme = await themeRepository.findById(themeId);
-    if (!theme) throw new NotFoundError("Tema não encontrado");
+    const result = await themeRepository.findById(themeId);
+    if (!result) throw new NotFoundError("Tema não encontrado");
 
-    const referenceTexts = await referenceTextRepository.listByThemeId(themeId);
+    const topic = await themeTopicRepository.findById(result.theme.topicId);
 
-    return { theme, referenceTexts };
+    return { ...result, topic };
   };
 }

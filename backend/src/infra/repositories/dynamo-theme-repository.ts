@@ -1,7 +1,11 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import type { Theme } from "../../domain/entities/theme.js";
-import type { ListThemesFilter, ThemeRepository } from "../../domain/contracts/repositories/theme-repository.js";
+import type {
+  ListThemesFilter,
+  ThemeRepository,
+  ThemeWithReferenceTexts,
+} from "../../domain/contracts/repositories/theme-repository.js";
 import {
   fromThemeItem,
   themeGSI1PK,
@@ -9,6 +13,31 @@ import {
   themePK,
   type ThemeItem,
 } from "../db/dynamodb/items/theme-item.js";
+import { fromReferenceTextItem, type ReferenceTextItem } from "../db/dynamodb/items/reference-text-item.js";
+
+// Aliased defensively: DynamoDB reserves a large, non-obvious set of words for
+// ProjectionExpression/FilterExpression, so every projected attribute gets a placeholder.
+const THEME_PROJECTION_EXPRESSION = "#id, #title, #enemYear, #topicId, #createdAt, #updatedAt";
+const THEME_PROJECTION_NAMES = {
+  "#id": "id",
+  "#title": "title",
+  "#enemYear": "enemYear",
+  "#topicId": "topicId",
+  "#createdAt": "createdAt",
+  "#updatedAt": "updatedAt",
+};
+
+// GSI2 returns the Theme together with its ReferenceTexts (they share GSI2PK = THEME#<themeId>
+// by design, see ADR-0004) — the projection covers both entities' attributes plus #type to split them.
+const THEME_WITH_REFERENCE_TEXTS_PROJECTION_EXPRESSION =
+  "#type, #id, #title, #enemYear, #topicId, #font, #paragraphs, #themeId, #createdAt, #updatedAt";
+const THEME_WITH_REFERENCE_TEXTS_PROJECTION_NAMES = {
+  ...THEME_PROJECTION_NAMES,
+  "#type": "type",
+  "#font": "font",
+  "#paragraphs": "paragraphs",
+  "#themeId": "themeId",
+};
 
 export class DynamoThemeRepository implements ThemeRepository {
   constructor(
@@ -16,19 +45,27 @@ export class DynamoThemeRepository implements ThemeRepository {
     private readonly documentClient: DynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({})),
   ) {}
 
-  async findById(id: string): Promise<Theme | null> {
+  async findById(id: string): Promise<ThemeWithReferenceTexts | null> {
     const result = await this.documentClient.send(
       new QueryCommand({
         TableName: this.tableName,
         IndexName: "GSI2",
         KeyConditionExpression: "GSI2PK = :gsi2pk",
         ExpressionAttributeValues: { ":gsi2pk": themeGSI2PK(id) },
-        Limit: 1,
+        ProjectionExpression: THEME_WITH_REFERENCE_TEXTS_PROJECTION_EXPRESSION,
+        ExpressionAttributeNames: THEME_WITH_REFERENCE_TEXTS_PROJECTION_NAMES,
       }),
     );
 
-    const item = result.Items?.[0];
-    return item ? fromThemeItem(item as ThemeItem) : null;
+    const items = result.Items ?? [];
+    const themeItem = items.find((item) => item.type === "THEME");
+    if (!themeItem) return null;
+
+    const referenceTexts = items
+      .filter((item) => item.type === "REFERENCE_TEXT")
+      .map((item) => fromReferenceTextItem(item as ReferenceTextItem));
+
+    return { theme: fromThemeItem(themeItem as ThemeItem), referenceTexts };
   }
 
   async list({ topicId, search }: ListThemesFilter = {}): Promise<Theme[]> {
@@ -50,7 +87,9 @@ export class DynamoThemeRepository implements ThemeRepository {
     const result = await this.documentClient.send(
       new QueryCommand({
         TableName: this.tableName,
-        FilterExpression: search ? "contains(title, :search)" : undefined,
+        FilterExpression: search ? "contains(#title, :search)" : undefined,
+        ProjectionExpression: THEME_PROJECTION_EXPRESSION,
+        ExpressionAttributeNames: THEME_PROJECTION_NAMES,
         ScanIndexForward: false,
         ...keyCondition,
       }),

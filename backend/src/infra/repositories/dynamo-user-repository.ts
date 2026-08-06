@@ -11,6 +11,19 @@ import {
   type UserItem,
 } from "../db/dynamodb/items/user-item.js";
 
+// Aliased defensively: DynamoDB reserves a large, non-obvious set of words for
+// ProjectionExpression/FilterExpression, so every projected attribute gets a placeholder.
+const USER_PROJECTION_EXPRESSION = "#id, #externalId, #email, #name, #credits, #createdAt, #updatedAt";
+const USER_PROJECTION_NAMES = {
+  "#id": "id",
+  "#externalId": "externalId",
+  "#email": "email",
+  "#name": "name",
+  "#credits": "credits",
+  "#createdAt": "createdAt",
+  "#updatedAt": "updatedAt",
+};
+
 export class DynamoUserRepository implements UserRepository {
   constructor(
     private readonly tableName: string = process.env.TABLE_NAME ?? "",
@@ -22,6 +35,8 @@ export class DynamoUserRepository implements UserRepository {
       new GetCommand({
         TableName: this.tableName,
         Key: { PK: userPK(id), SK: userSK(id) },
+        ProjectionExpression: USER_PROJECTION_EXPRESSION,
+        ExpressionAttributeNames: USER_PROJECTION_NAMES,
       }),
     );
 
@@ -35,6 +50,8 @@ export class DynamoUserRepository implements UserRepository {
         IndexName: "GSI1",
         KeyConditionExpression: "GSI1PK = :gsi1pk",
         ExpressionAttributeValues: { ":gsi1pk": userGSI1PK(email) },
+        ProjectionExpression: USER_PROJECTION_EXPRESSION,
+        ExpressionAttributeNames: USER_PROJECTION_NAMES,
         Limit: 1,
       }),
     );

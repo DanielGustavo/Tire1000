@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { Theme } from "../../../domain/entities/theme.js";
+import { ThemeTopic } from "../../../domain/entities/theme-topic.js";
+import type { ThemeWithTopic } from "../../use-cases/list-themes/list-themes.js";
 import { ListThemesController } from "./list-themes-controller.js";
 
 function buildRequest(queryStringParameters: Record<string, string | undefined> = {}) {
@@ -17,9 +19,19 @@ function buildTheme(): Theme {
   });
 }
 
+function buildTopic(): ThemeTopic {
+  return ThemeTopic.reconstitute({
+    id: "topic-1",
+    title: "Educação",
+    color: "#2E7D32",
+    createdAt: new Date("2026-08-01T00:00:00.000Z"),
+    updatedAt: new Date("2026-08-01T00:00:00.000Z"),
+  });
+}
+
 describe("ListThemesController", () => {
   it("returns 200 with the themes from the use case", async () => {
-    const themes = [buildTheme()];
+    const themes: ThemeWithTopic[] = [{ theme: buildTheme(), topic: buildTopic() }];
     const controller = new ListThemesController(async () => themes);
 
     const response = await controller.execute(buildRequest());

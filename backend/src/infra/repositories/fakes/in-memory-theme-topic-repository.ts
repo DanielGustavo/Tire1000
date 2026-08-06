@@ -7,4 +7,12 @@ export class InMemoryThemeTopicRepository implements ThemeTopicRepository {
   async list(): Promise<ThemeTopic[]> {
     return [...this.topics];
   }
+
+  async findById(id: string): Promise<ThemeTopic | null> {
+    return this.topics.find((topic) => topic.id === id) ?? null;
+  }
+
+  async findByIds(ids: string[]): Promise<ThemeTopic[]> {
+    return this.topics.filter((topic) => ids.includes(topic.id));
+  }
 }

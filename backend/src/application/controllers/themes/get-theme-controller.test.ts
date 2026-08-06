@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Theme } from "../../../domain/entities/theme.js";
+import { ThemeTopic } from "../../../domain/entities/theme-topic.js";
 import { NotFoundError } from "../../../shared/errors/not-found-error.js";
 import type { GetThemeOutput } from "../../use-cases/get-theme/get-theme.js";
 import { GetThemeController } from "./get-theme-controller.js";
@@ -20,6 +21,13 @@ describe("GetThemeController", () => {
         updatedAt: new Date("2026-08-01T00:00:00.000Z"),
       }),
       referenceTexts: [],
+      topic: ThemeTopic.reconstitute({
+        id: "topic-1",
+        title: "Educação",
+        color: "#2E7D32",
+        createdAt: new Date("2026-08-01T00:00:00.000Z"),
+        updatedAt: new Date("2026-08-01T00:00:00.000Z"),
+      }),
     };
     const controller = new GetThemeController(async () => result);
 

@@ -1,11 +1,22 @@
+import type { ReferenceText } from "../../../domain/entities/reference-text.js";
 import type { Theme } from "../../../domain/entities/theme.js";
-import type { ListThemesFilter, ThemeRepository } from "../../../domain/contracts/repositories/theme-repository.js";
+import type {
+  ListThemesFilter,
+  ThemeRepository,
+  ThemeWithReferenceTexts,
+} from "../../../domain/contracts/repositories/theme-repository.js";
 
 export class InMemoryThemeRepository implements ThemeRepository {
-  constructor(private readonly themes: Theme[] = []) {}
+  constructor(
+    private readonly themes: Theme[] = [],
+    private readonly referenceTexts: ReferenceText[] = [],
+  ) {}
 
-  async findById(id: string): Promise<Theme | null> {
-    return this.themes.find((theme) => theme.id === id) ?? null;
+  async findById(id: string): Promise<ThemeWithReferenceTexts | null> {
+    const theme = this.themes.find((theme) => theme.id === id);
+    if (!theme) return null;
+
+    return { theme, referenceTexts: this.referenceTexts.filter((text) => text.themeId === id) };
   }
 
   async list({ topicId, search }: ListThemesFilter = {}): Promise<Theme[]> {

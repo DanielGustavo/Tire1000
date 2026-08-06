@@ -1,3 +1,4 @@
+import type { ReferenceText } from "../../entities/reference-text.js";
 import type { Theme } from "../../entities/theme.js";
 
 export interface ListThemesFilter {
@@ -5,7 +6,12 @@ export interface ListThemesFilter {
   search?: string;
 }
 
+export interface ThemeWithReferenceTexts {
+  theme: Theme;
+  referenceTexts: ReferenceText[];
+}
+
 export interface ThemeRepository {
-  findById(id: string): Promise<Theme | null>;
+  findById(id: string): Promise<ThemeWithReferenceTexts | null>;
   list(filter?: ListThemesFilter): Promise<Theme[]>;
 }

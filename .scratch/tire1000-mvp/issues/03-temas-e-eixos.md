@@ -13,3 +13,8 @@
 - [x] Fixtures/seed de temas e eixos para desenvolvimento e testes locais
 - [x] Testes Vitest dos casos de uso `ListThemes`/`GetTheme`/`ListTopics` com fake repository
 - [x] Telas de listagem e detalhe de tema no front
+- [x] `GET /themes` e `GET /themes/{themeId}` também devolvem o eixo (`ThemeTopic`: título/cor) — `BatchGetItem` na listagem, `GetItem` no detalhe, sem denormalizar (ver ADR-0004)
+
+## Comments
+
+Incongruência encontrada durante a implementação: o modelo de dados original não previa como buscar o eixo (`ThemeTopic`) de um Theme sem uma terceira leitura. Cogitamos denormalizar `topicTitle`/`topicColor` no item Theme e também colocar `ThemeTopic` no GSI2 compartilhado com Theme/ReferenceText — descartamos as duas (a segunda esbarra em `ThemeTopic` ser reaproveitado por vários Themes, não dá pra fixar `GSI2PK = THEME#<themeId>` num item só sem duplicá-lo). Decisão: resolver o eixo com uma leitura separada em runtime (ver ADR-0004).

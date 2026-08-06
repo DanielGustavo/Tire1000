@@ -1,4 +1,5 @@
 import { Service } from "./service";
+import type { ThemeTopic } from "./topic-service";
 
 export interface Theme {
   id: string;
@@ -23,14 +24,20 @@ export interface ListThemesParams {
   search?: string;
 }
 
+export interface ThemeWithTopic {
+  theme: Theme;
+  topic: ThemeTopic | null;
+}
+
 export interface GetThemeResponse {
   theme: Theme;
   referenceTexts: ReferenceText[];
+  topic: ThemeTopic | null;
 }
 
 class ThemeService extends Service {
-  async list(params: ListThemesParams = {}): Promise<Theme[]> {
-    const { data } = await this.client.get<Theme[]>("/themes", { params });
+  async list(params: ListThemesParams = {}): Promise<ThemeWithTopic[]> {
+    const { data } = await this.client.get<ThemeWithTopic[]>("/themes", { params });
     return data;
   }
 

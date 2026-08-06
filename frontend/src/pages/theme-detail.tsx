@@ -27,7 +27,7 @@ export function ThemeDetailPage() {
     );
   }
 
-  const { theme, referenceTexts } = themeQuery.data;
+  const { theme, referenceTexts, topic } = themeQuery.data;
 
   return (
     <main className="min-h-screen p-4">
@@ -35,6 +35,14 @@ export function ThemeDetailPage() {
         ← Voltar para temas
       </Link>
 
+      {topic && (
+        <span
+          className="mt-2 inline-block rounded-full px-2 py-0.5 text-xs font-medium text-white"
+          style={{ backgroundColor: topic.color }}
+        >
+          {topic.title}
+        </span>
+      )}
       <h1 className="mt-2 text-2xl font-semibold text-gray-900">{theme.title}</h1>
       {theme.enemYear !== null && <p className="text-sm text-gray-600">ENEM {theme.enemYear}</p>}
 

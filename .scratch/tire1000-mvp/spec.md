@@ -91,6 +91,7 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 - **Theme**: SK combina `enemYear` (formato `YYYY-01-01`) quando existir, ou `createdAt` (formato `YYYY-MM-DD`) quando não — `enemYear` é opcional (ADR-0003). Isso resolve a colisão de SK entre temas do mesmo ano.
 - **ThemeTopic**: GSI1PK agora é idêntico ao dos Themes daquele eixo (necessário pra aparecerem na mesma query); o eixo aparece primeiro porque sua GSI1SK (`#TOPIC#<id>`) ordena antes de `THEME#...` em ASCII.
 - **Essay**: denormaliza `themeTitle` e `topicColor` (não `topicId`) pra listagem sem fetch extra (ver Decisões original).
+- **Theme/ReferenceText**: compartilham `GSI2PK = THEME#<themeId>` por design — uma única Query em GSI2 retorna o tema e seus textos motivadores juntos. O eixo (`ThemeTopic`) **não** entra nesse GSI2: um `ThemeTopic` é reaproveitado por vários Themes, então não dá pra fixar um `themeId` único no item dele sem duplicá-lo por tema. Em vez disso, o eixo é resolvido com uma query separada — `GetItem` no detalhe, `BatchGetItem` na listagem — sem denormalizar (ver ADR-0004).
 - **EssayEvaluation**: GSI1PK agora é `ESSAY#<essayId>` (igual ao da Essay), não `EVALUATION#<essayId>` — necessário pra "listar redação e sua avaliação pelo id" funcionar numa única query GSI1.
 - **EssayCost**: SK trocada de `ESSAY_COST#<essayId>` (colidia — uma redação gera custo em pelo menos 2 etapas) para `ESSAY_COST#<id>` (KSUID próprio do registro de custo).
 
@@ -107,13 +108,13 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 
 ### Autenticação e cadastro
 
-- `POST /auth/signup { name, email, password }` → cria conta no Cognito (auto-verificada), retorna tokens. Não cria Checkout — compra de créditos é sempre um passo separado e opcional.
+- `POST /auth/signup { name, email, password }` → cria conta no Cognito (auto-verificada) e o registro de `User` (`credits: 0`), **e também cria uma Stripe Checkout Session** pra compra inicial de créditos (mesma lógica de `RequestCreditsCheckout`, ver ticket 04) — grava `Checkout` com `status: PENDING`; retorna tokens + `checkoutUrl` (ver ADR-0005). A compra continua **opcional**: se o usuário voltar sem pagar (ou nunca abrir o link), a conta funciona normalmente, só sem crédito.
 - `POST /auth/login { email, password }` → autentica via Cognito, retorna tokens.
 - Login social (Google) está fora de escopo do MVP.
 
 ### Créditos e checkout
 
-- `POST /credits/checkout { creditsQty }` (autenticado) → cria uma Stripe Checkout Session usando um Price fixo por crédito cadastrado no Stripe, `quantity = creditsQty`; grava `Checkout` com `status: PENDING`; retorna `checkoutUrl`.
+- `POST /credits/checkout { creditsQty }` (autenticado) → cria uma Stripe Checkout Session usando um Price fixo por crédito cadastrado no Stripe, `quantity = creditsQty`; grava `Checkout` com `status: PENDING`; retorna `checkoutUrl`. Essa mesma lógica (`RequestCreditsCheckout`) é reaproveitada por `SignUpUser` pra criar o checkout automático do cadastro (ver ADR-0005).
 - Webhook do Stripe → `ConfirmCreditsCheckout`: valida a assinatura do evento, usa o total retornado pelo Stripe (nunca um valor vindo do cliente) para preencher `amountInCents`, credita o usuário (`credits += creditsQty`) e atualiza `Checkout.status = COMPLETED` (ver ADR-0002).
 
 ### Envio, Revisão e Avaliação de redação
@@ -132,8 +133,8 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 
 ### Leitura de temas e eixos
 
-- `GET /themes?topicId=&search=` (autenticado) — lista temas, ordenados por data de publicação (ver seção do modelo de dados), filtráveis por eixo ou por busca no título.
-- `GET /themes/{themeId}` (autenticado) — tema + seus textos motivadores.
+- `GET /themes?topicId=&search=` (autenticado) — lista temas, ordenados por data de publicação (ver seção do modelo de dados), filtráveis por eixo ou por busca no título. Depois de listar, um `BatchGetItem` busca os `ThemeTopic`s de todos os `topicId` distintos da página, pra devolver título/cor do eixo de cada tema sem denormalizar (ver ADR-0004).
+- `GET /themes/{themeId}` (autenticado) — uma Query em GSI2 traz o tema + seus textos motivadores (`ReferenceText`) juntos (ver modelo de dados); um `GetItem` separado no `ThemeTopic` pelo `topicId` traz o eixo.
 - `GET /topics` (autenticado) — lista eixos.
 - Cadastro de temas/eixos/textos motivadores é feito diretamente no banco pelo time — não há API de escrita pra essas entidades no MVP.
 
@@ -162,6 +163,6 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 ## Further Notes
 
 - Vocabulário do domínio (Correção, Revisão, Avaliação, Eixo) está em `CONTEXT.md` — usar esses termos em tickets, testes e código onde fizer sentido.
-- Decisões arquiteturais registradas: `docs/adr/0001-falha-na-avaliacao-nao-devolve-credito.md`, `docs/adr/0002-preco-do-credito-definido-no-stripe.md`, `docs/adr/0003-theme-sk-enemyear-opcional.md`.
+- Decisões arquiteturais registradas: `docs/adr/0001-falha-na-avaliacao-nao-devolve-credito.md`, `docs/adr/0002-preco-do-credito-definido-no-stripe.md`, `docs/adr/0003-theme-sk-enemyear-opcional.md`, `docs/adr/0004-theme-topic-resolvido-em-runtime.md`, `docs/adr/0005-signup-cria-checkout-automatico.md`.
 - Fontes primárias usadas pra montar este spec: ERD, diagrama de fluxo de cadastro, diagrama de fluxo de envio/reenvio de redação, `Access Patterns.html`, `Decisões.html`, `Table Design.html`, `Levantamento de requisitos.md`, e o design no Figma (mobile-first).
 - Stack: TypeScript, Lambda/SQS/SNS/DynamoDB/S3, Serverless Framework (**nenhum comando do Serverless deve ser executado por um agente — só o dev roda**), React + Tailwind + Axios no front, Vitest no backend.
