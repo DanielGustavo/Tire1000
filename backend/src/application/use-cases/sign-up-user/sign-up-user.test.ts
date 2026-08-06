@@ -118,7 +118,6 @@ describe("SignUpUser", () => {
     const failingUserRepository: UserRepository = {
       findById: async () => null,
       findByEmail: async () => null,
-      findByExternalId: async () => null,
       create: async () => {
         throw new Error("DynamoDB unavailable");
       },
@@ -133,7 +132,7 @@ describe("SignUpUser", () => {
     ).rejects.toThrow("DynamoDB unavailable");
 
     await expect(
-      deps.authGateway.signUp({ name: "Student", email: "student@example.com", password: "S3curePass!" }),
+      deps.authGateway.signUp({ id: "fake-id-2", name: "Student", email: "student@example.com", password: "S3curePass!" }),
     ).resolves.toEqual({ externalId: "fake-cognito-sub-2" });
   });
 });

@@ -3,8 +3,8 @@ import type { ControllerAuth, Controller } from "../../application/controllers/c
 import { mapErrorResponse } from "./map-error-response.js";
 
 function resolveAuth(claims: Record<string, string | number | boolean | string[]> | undefined): ControllerAuth | null {
-  const sub = claims?.sub;
-  return typeof sub === "string" ? { externalId: sub } : null;
+  const userId = claims?.userId;
+  return typeof userId === "string" ? { id: userId } : null;
 }
 
 export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2WithJWTAuthorizer {

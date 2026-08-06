@@ -13,7 +13,7 @@ export class GetCurrentUserController extends Controller {
   protected async handle({ auth }: ControllerRequest): Promise<ControllerResponse> {
     if (!auth) throw new UnauthorizedError();
 
-    const user = await this.getCurrentUser({ externalId: auth.externalId });
+    const user = await this.getCurrentUser({ id: auth.id });
     if (!user) throw new NotFoundError("Usuário não encontrado");
 
     return { statusCode: 200, body: user };

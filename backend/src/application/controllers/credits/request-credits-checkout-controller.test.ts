@@ -3,7 +3,7 @@ import { NotFoundError } from "../../../shared/errors/not-found-error.js";
 import type { ControllerAuth } from "../controller.js";
 import { RequestCreditsCheckoutController } from "./request-credits-checkout-controller.js";
 
-function buildRequest(body: unknown, auth: ControllerAuth | null = { externalId: "sub-1" }) {
+function buildRequest(body: unknown, auth: ControllerAuth | null = { id: "user-1" }) {
   return { body, headers: {}, pathParameters: {}, queryStringParameters: {}, auth };
 }
 
@@ -16,16 +16,16 @@ describe("RequestCreditsCheckoutController", () => {
     expect(response).toEqual({ statusCode: 201, body: { checkoutUrl: "https://checkout.stripe.test/1" } });
   });
 
-  it("passes the authenticated user's externalId and the requested creditsQty to the use case", async () => {
+  it("passes the authenticated user's id and the requested creditsQty to the use case", async () => {
     let receivedInput: unknown;
     const controller = new RequestCreditsCheckoutController(async (input) => {
       receivedInput = input;
       return { checkoutUrl: "https://checkout.stripe.test/1" };
     });
 
-    await controller.execute(buildRequest({ creditsQty: 10 }, { externalId: "sub-1" }));
+    await controller.execute(buildRequest({ creditsQty: 10 }, { id: "user-1" }));
 
-    expect(receivedInput).toEqual({ externalId: "sub-1", creditsQty: 10 });
+    expect(receivedInput).toEqual({ id: "user-1", creditsQty: 10 });
   });
 
   it("throws a 401 HttpError when there is no authenticated user", async () => {

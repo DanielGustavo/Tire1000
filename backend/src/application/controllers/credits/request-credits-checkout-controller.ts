@@ -16,7 +16,7 @@ export class RequestCreditsCheckoutController extends Controller {
     if (!auth) throw new UnauthorizedError();
 
     const { creditsQty } = this.schema.parse(body);
-    const result = await this.requestCreditsCheckout({ externalId: auth.externalId, creditsQty });
+    const result = await this.requestCreditsCheckout({ id: auth.id, creditsQty });
 
     return { statusCode: 201, body: result };
   }

@@ -6,7 +6,6 @@ import {
   fromUserItem,
   toUserItem,
   userGSI1PK,
-  userGSI2PK,
   userPK,
   userSK,
   type UserItem,
@@ -51,23 +50,6 @@ export class DynamoUserRepository implements UserRepository {
         IndexName: "GSI1",
         KeyConditionExpression: "GSI1PK = :gsi1pk",
         ExpressionAttributeValues: { ":gsi1pk": userGSI1PK(email) },
-        ProjectionExpression: USER_PROJECTION_EXPRESSION,
-        ExpressionAttributeNames: USER_PROJECTION_NAMES,
-        Limit: 1,
-      }),
-    );
-
-    const item = result.Items?.[0];
-    return item ? fromUserItem(item as UserItem) : null;
-  }
-
-  async findByExternalId(externalId: string): Promise<User | null> {
-    const result = await this.documentClient.send(
-      new QueryCommand({
-        TableName: this.tableName,
-        IndexName: "GSI2",
-        KeyConditionExpression: "GSI2PK = :gsi2pk",
-        ExpressionAttributeValues: { ":gsi2pk": userGSI2PK(externalId) },
         ProjectionExpression: USER_PROJECTION_EXPRESSION,
         ExpressionAttributeNames: USER_PROJECTION_NAMES,
         Limit: 1,

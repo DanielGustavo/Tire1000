@@ -26,7 +26,7 @@ describe("RequestCreditsCheckout", () => {
     const deps = await buildDeps();
     const requestCreditsCheckout = createRequestCreditsCheckout(deps);
 
-    const result = await requestCreditsCheckout({ externalId: "sub-1", creditsQty: 10 });
+    const result = await requestCreditsCheckout({ id: "user-1", creditsQty: 10 });
 
     expect(result).toEqual({ checkoutUrl: "https://checkout.stripe.test/fake-checkout-session-1" });
     expect(deps.paymentGateway.createdSessions).toEqual([{ userId: "user-1", creditsQty: 10 }]);
@@ -36,7 +36,7 @@ describe("RequestCreditsCheckout", () => {
     const deps = await buildDeps();
     const requestCreditsCheckout = createRequestCreditsCheckout(deps);
 
-    await requestCreditsCheckout({ externalId: "sub-1", creditsQty: 10 });
+    await requestCreditsCheckout({ id: "user-1", creditsQty: 10 });
 
     await expect(deps.checkoutRepository.findByExternalId("fake-checkout-session-1")).resolves.toMatchObject({
       externalId: "fake-checkout-session-1",
@@ -52,7 +52,7 @@ describe("RequestCreditsCheckout", () => {
     const deps = await buildDeps();
     const requestCreditsCheckout = createRequestCreditsCheckout(deps);
 
-    await expect(requestCreditsCheckout({ externalId: "missing-sub", creditsQty: 10 })).rejects.toThrow(NotFoundError);
+    await expect(requestCreditsCheckout({ id: "missing-id", creditsQty: 10 })).rejects.toThrow(NotFoundError);
     expect(deps.paymentGateway.createdSessions).toEqual([]);
   });
 });

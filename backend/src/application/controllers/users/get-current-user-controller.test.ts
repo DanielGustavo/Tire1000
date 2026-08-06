@@ -3,7 +3,7 @@ import type { UserDTO } from "../../dtos/user-dto.js";
 import type { ControllerAuth } from "../controller.js";
 import { GetCurrentUserController } from "./get-current-user-controller.js";
 
-function buildRequest(auth: ControllerAuth | null = { externalId: "sub-1" }) {
+function buildRequest(auth: ControllerAuth | null = { id: "user-1" }) {
   return { body: {}, headers: {}, pathParameters: {}, queryStringParameters: {}, auth };
 }
 
@@ -25,7 +25,7 @@ describe("GetCurrentUserController", () => {
     await expect(controller.execute(buildRequest(null))).rejects.toMatchObject({ statusCode: 401 });
   });
 
-  it("throws a 404 HttpError when no User record matches the authenticated externalId", async () => {
+  it("throws a 404 HttpError when no User record matches the authenticated id", async () => {
     const controller = new GetCurrentUserController(async () => null);
 
     await expect(controller.execute(buildRequest())).rejects.toMatchObject({ statusCode: 404 });

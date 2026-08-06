@@ -119,6 +119,10 @@ functions:
       - httpApi:
           path: /credits/webhook
           method: post
+  # Invoked directly by Cognito as the PreTokenGeneration trigger (see the
+  # CognitoUserPool's LambdaConfig below) — no httpApi event.
+  authPreTokenGeneration:
+    handler: src/main/handlers/auth/pre-token-generation.handler
   # Further functions are added by feature tickets as they implement
   # endpoints/consumers. Authenticated routes attach the `cognitoAuthorizer`
   # defined above (see above).
@@ -191,6 +195,12 @@ resources:
             RequireNumbers: true
             RequireSymbols: false
             RequireUppercase: true
+        # PreTokenGeneration (V2_0) copies the custom:userId attribute set at signup into the
+        # access token's `userId` claim, with no DynamoDB lookup — see ADR-0008.
+        LambdaConfig:
+          PreTokenGenerationConfig:
+            LambdaArn: !GetAtt AuthPreTokenGenerationLambdaFunction.Arn
+            LambdaVersion: V2_0
         Schema:
           - Name: email
             AttributeDataType: String
@@ -200,6 +210,13 @@ resources:
             AttributeDataType: String
             Required: true
             Mutable: true
+          # Internal User id (KSUID), written once at signup and never changed afterwards.
+          - Name: userId
+            AttributeDataType: String
+            Mutable: false
+            StringAttributeConstraints:
+              MinLength: "1"
+              MaxLength: "64"
 
     CognitoUserPoolClient:
       Type: AWS::Cognito::UserPoolClient
@@ -210,3 +227,11 @@ resources:
         ExplicitAuthFlows:
           - ALLOW_ADMIN_USER_PASSWORD_AUTH
           - ALLOW_REFRESH_TOKEN_AUTH
+
+    CognitoPreTokenGenerationPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref AuthPreTokenGenerationLambdaFunction
+        Action: lambda:InvokeFunction
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: !GetAtt CognitoUserPool.Arn

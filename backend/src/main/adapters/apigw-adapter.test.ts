@@ -4,14 +4,14 @@ import { Controller, type ControllerRequest, type ControllerResponse } from "../
 import { HttpError } from "../../application/controllers/http-error.js";
 import { apigwAdapter } from "./apigw-adapter.js";
 
-function buildEvent(body?: unknown, sub?: string): APIGatewayProxyEventV2WithJWTAuthorizer {
+function buildEvent(body?: unknown, userId?: string): APIGatewayProxyEventV2WithJWTAuthorizer {
   return {
     body: body === undefined ? undefined : JSON.stringify(body),
     headers: {},
     pathParameters: {},
     queryStringParameters: {},
-    requestContext: sub
-      ? { authorizer: { jwt: { claims: { sub }, scopes: [] } } }
+    requestContext: userId
+      ? { authorizer: { jwt: { claims: { sub: "cognito-sub-1", userId }, scopes: [] } } }
       : undefined,
   } as unknown as APIGatewayProxyEventV2WithJWTAuthorizer;
 }
@@ -58,7 +58,7 @@ describe("apigwAdapter", () => {
     expect(result).toEqual({ statusCode: 500, body: JSON.stringify({ message: "Erro interno do servidor" }) });
   });
 
-  it("passes the JWT authorizer's sub claim through as auth.externalId", async () => {
+  it("passes the JWT authorizer's userId claim through as auth.id", async () => {
     let receivedRequest: ControllerRequest | undefined;
     const controller = new StubController(async (request) => {
       receivedRequest = request;
@@ -66,9 +66,9 @@ describe("apigwAdapter", () => {
     });
     const handler = apigwAdapter(controller);
 
-    await handler(buildEvent({}, "cognito-sub-1"), {} as Context, () => {});
+    await handler(buildEvent({}, "user-1"), {} as Context, () => {});
 
-    expect(receivedRequest?.auth).toEqual({ externalId: "cognito-sub-1" });
+    expect(receivedRequest?.auth).toEqual({ id: "user-1" });
   });
 
   it("sets auth to null for unauthenticated routes with no JWT authorizer context", async () => {

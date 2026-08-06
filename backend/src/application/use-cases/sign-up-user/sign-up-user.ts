@@ -40,9 +40,10 @@ export function createSignUpUser({
   paymentGateway,
 }: SignUpUserDeps) {
   return async function signUpUser({ name, email, password }: SignUpUserInput): Promise<SignUpUserOutput> {
-    const { externalId } = await authGateway.signUp({ name, email, password });
+    const id = await idGenerator.generate();
+    const { externalId } = await authGateway.signUp({ id, name, email, password });
 
-    const user = User.create({ id: await idGenerator.generate(), externalId, email, name });
+    const user = User.create({ id, externalId, email, name });
     try {
       await userRepository.create(user);
     } catch (error) {

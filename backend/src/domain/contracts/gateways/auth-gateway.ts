@@ -10,6 +10,7 @@ export interface AuthTokens {
 }
 
 export interface AuthSignUpInput {
+  id: string;
   name: string;
   email: string;
   password: string;

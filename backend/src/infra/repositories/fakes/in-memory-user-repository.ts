@@ -16,13 +16,6 @@ export class InMemoryUserRepository implements UserRepository {
     return null;
   }
 
-  async findByExternalId(externalId: string): Promise<User | null> {
-    for (const user of this.usersById.values()) {
-      if (user.externalId === externalId) return user;
-    }
-    return null;
-  }
-
   async create(user: User): Promise<User> {
     this.usersById.set(user.id, user);
     return user;

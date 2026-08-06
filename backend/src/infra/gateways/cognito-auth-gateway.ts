@@ -26,7 +26,7 @@ export class CognitoAuthGateway implements AuthGateway {
     private readonly client: CognitoIdentityProviderClient = new CognitoIdentityProviderClient({}),
   ) {}
 
-  async signUp({ name, email, password }: AuthSignUpInput): Promise<{ externalId: string }> {
+  async signUp({ id, name, email, password }: AuthSignUpInput): Promise<{ externalId: string }> {
     let created;
     try {
       created = await this.client.send(
@@ -38,6 +38,7 @@ export class CognitoAuthGateway implements AuthGateway {
             { Name: "email", Value: email },
             { Name: "email_verified", Value: "true" },
             { Name: "name", Value: name },
+            { Name: "custom:userId", Value: id },
           ],
         }),
       );

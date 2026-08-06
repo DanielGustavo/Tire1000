@@ -6,12 +6,12 @@ export interface GetCurrentUserDeps {
 }
 
 export interface GetCurrentUserInput {
-  externalId: string;
+  id: string;
 }
 
 export function createGetCurrentUser({ userRepository }: GetCurrentUserDeps) {
-  return async function getCurrentUser({ externalId }: GetCurrentUserInput): Promise<UserDTO | null> {
-    const user = await userRepository.findByExternalId(externalId);
+  return async function getCurrentUser({ id }: GetCurrentUserInput): Promise<UserDTO | null> {
+    const user = await userRepository.findById(id);
     return user ? toUserDTO(user) : null;
   };
 }

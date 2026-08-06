@@ -13,7 +13,7 @@ export interface RequestCreditsCheckoutDeps {
 }
 
 export interface RequestCreditsCheckoutInput {
-  externalId: string;
+  id: string;
   creditsQty: number;
 }
 
@@ -21,10 +21,10 @@ export type RequestCreditsCheckoutOutput = CreateCheckoutForUserOutput;
 
 export function createRequestCreditsCheckout(deps: RequestCreditsCheckoutDeps) {
   return async function requestCreditsCheckout({
-    externalId,
+    id,
     creditsQty,
   }: RequestCreditsCheckoutInput): Promise<RequestCreditsCheckoutOutput> {
-    const user = await deps.userRepository.findByExternalId(externalId);
+    const user = await deps.userRepository.findById(id);
     if (!user) throw new NotFoundError("Usuário não encontrado");
 
     return createCheckoutForUser(deps, { userId: user.id, creditsQty });

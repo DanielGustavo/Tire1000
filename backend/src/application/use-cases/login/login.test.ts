@@ -5,7 +5,7 @@ import { createLogin } from "./login.js";
 
 async function buildAuthGatewayWithUser() {
   const authGateway = new InMemoryAuthGateway();
-  await authGateway.signUp({ name: "Student", email: "student@example.com", password: "S3curePass!" });
+  await authGateway.signUp({ id: "user-1", name: "Student", email: "student@example.com", password: "S3curePass!" });
   return authGateway;
 }
 
