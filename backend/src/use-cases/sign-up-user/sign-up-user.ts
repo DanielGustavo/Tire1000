@@ -1,8 +1,8 @@
 import type { User } from "../../domain/user.js";
-import type { AuthGateway, AuthTokens } from "../../gateways/auth-gateway.js";
-import type { Clock } from "../../gateways/clock.js";
-import type { IdGenerator } from "../../gateways/id-generator.js";
-import type { UserRepository } from "../../repositories/user-repository.js";
+import type { AuthGateway, AuthTokens } from "../../contracts/auth-gateway.js";
+import type { Clock } from "../../contracts/clock.js";
+import type { IdGenerator } from "../../contracts/id-generator.js";
+import type { UserRepository } from "../../contracts/user-repository.js";
 
 export interface SignUpUserDeps {
   authGateway: AuthGateway;

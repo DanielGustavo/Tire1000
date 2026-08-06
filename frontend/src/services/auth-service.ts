@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { Service } from "./service";
 
 export interface AuthTokens {
   accessToken: string;
@@ -25,17 +25,21 @@ export interface SignUpResponse {
   tokens: AuthTokens;
 }
 
-export async function signUp(input: SignUpInput): Promise<SignUpResponse> {
-  const { data } = await apiClient.post<SignUpResponse>("/auth/signup", input);
-  return data;
-}
-
 export interface LoginInput {
   email: string;
   password: string;
 }
 
-export async function login(input: LoginInput): Promise<AuthTokens> {
-  const { data } = await apiClient.post<AuthTokens>("/auth/login", input);
-  return data;
+class AuthService extends Service {
+  async signUp(input: SignUpInput): Promise<SignUpResponse> {
+    const { data } = await this.client.post<SignUpResponse>("/auth/signup", input);
+    return data;
+  }
+
+  async login(input: LoginInput): Promise<AuthTokens> {
+    const { data } = await this.client.post<AuthTokens>("/auth/login", input);
+    return data;
+  }
 }
+
+export const authService = new AuthService();

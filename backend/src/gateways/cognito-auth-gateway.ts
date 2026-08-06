@@ -17,7 +17,7 @@ import {
   type AuthLoginInput,
   type AuthSignUpInput,
   type AuthTokens,
-} from "./auth-gateway.js";
+} from "../contracts/auth-gateway.js";
 
 export class CognitoAuthGateway implements AuthGateway {
   constructor(

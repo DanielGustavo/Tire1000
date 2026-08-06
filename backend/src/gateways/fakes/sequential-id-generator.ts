@@ -1,4 +1,4 @@
-import type { IdGenerator } from "../id-generator.js";
+import type { IdGenerator } from "../../contracts/id-generator.js";
 
 export class SequentialIdGenerator implements IdGenerator {
   private counter = 0;

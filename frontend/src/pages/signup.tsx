@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { signUp } from "../api/auth";
-import { getApiErrorMessage, setAccessToken } from "../api/client";
+import { getApiErrorMessage } from "../libs/axios";
+import { setAccessToken } from "../libs/auth";
+import { authService } from "../services/auth-service";
 
 export function SignupPage() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export function SignupPage() {
   const [password, setPassword] = useState("");
 
   const signUpMutation = useMutation({
-    mutationFn: signUp,
+    mutationFn: (input: { name: string; email: string; password: string }) => authService.signUp(input),
     onSuccess: ({ tokens }) => {
       setAccessToken(tokens.accessToken);
       navigate("/");

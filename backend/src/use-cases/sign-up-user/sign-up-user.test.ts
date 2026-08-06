@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { EmailAlreadyExistsError } from "../../gateways/auth-gateway.js";
+import { EmailAlreadyExistsError } from "../../contracts/auth-gateway.js";
+import type { UserRepository } from "../../contracts/user-repository.js";
 import { InMemoryAuthGateway } from "../../gateways/fakes/in-memory-auth-gateway.js";
 import { FixedClock } from "../../gateways/fakes/fixed-clock.js";
 import { SequentialIdGenerator } from "../../gateways/fakes/sequential-id-generator.js";
 import { InMemoryUserRepository } from "../../repositories/fakes/in-memory-user-repository.js";
-import type { UserRepository } from "../../repositories/user-repository.js";
 import { createSignUpUser } from "./sign-up-user.js";
 
 function buildDeps() {

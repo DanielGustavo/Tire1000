@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { InvalidCredentialsError } from "../../gateways/auth-gateway.js";
+import { InvalidCredentialsError } from "../../contracts/auth-gateway.js";
 import { InMemoryAuthGateway } from "../../gateways/fakes/in-memory-auth-gateway.js";
 import { createLogin } from "./login.js";
 

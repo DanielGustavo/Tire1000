@@ -1,4 +1,4 @@
-import type { AuthGateway, AuthTokens } from "../../gateways/auth-gateway.js";
+import type { AuthGateway, AuthTokens } from "../../contracts/auth-gateway.js";
 
 export interface LoginDeps {
   authGateway: AuthGateway;

@@ -1,5 +1,5 @@
 import type { User } from "../../domain/user.js";
-import type { UserRepository } from "../../repositories/user-repository.js";
+import type { UserRepository } from "../../contracts/user-repository.js";
 
 export interface GetUserByIdDeps {
   userRepository: UserRepository;

@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { login } from "../api/auth";
-import { getApiErrorMessage, setAccessToken } from "../api/client";
+import { getApiErrorMessage } from "../libs/axios";
+import { setAccessToken } from "../libs/auth";
+import { authService } from "../services/auth-service";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
 
   const loginMutation = useMutation({
-    mutationFn: login,
+    mutationFn: (input: { email: string; password: string }) => authService.login(input),
     onSuccess: (tokens) => {
       setAccessToken(tokens.accessToken);
       navigate("/");

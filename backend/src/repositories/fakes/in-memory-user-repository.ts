@@ -1,5 +1,5 @@
 import type { User } from "../../domain/user.js";
-import type { UserRepository } from "../user-repository.js";
+import type { UserRepository } from "../../contracts/user-repository.js";
 
 export class InMemoryUserRepository implements UserRepository {
   private readonly usersById = new Map<string, User>();

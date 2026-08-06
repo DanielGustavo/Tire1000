@@ -1,8 +1,5 @@
 import KSUID from "ksuid";
-
-export interface IdGenerator {
-  generate(): Promise<string>;
-}
+import type { IdGenerator } from "../contracts/id-generator.js";
 
 export class KsuidIdGenerator implements IdGenerator {
   async generate(): Promise<string> {

@@ -5,7 +5,7 @@ import {
   type AuthLoginInput,
   type AuthSignUpInput,
   type AuthTokens,
-} from "../auth-gateway.js";
+} from "../../contracts/auth-gateway.js";
 
 interface FakeCognitoUser {
   externalId: string;

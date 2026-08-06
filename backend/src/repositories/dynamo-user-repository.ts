@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import type { User } from "../domain/user.js";
-import type { UserRepository } from "./user-repository.js";
+import type { UserRepository } from "../contracts/user-repository.js";
 
 interface UserItem extends User {
   PK: string;
