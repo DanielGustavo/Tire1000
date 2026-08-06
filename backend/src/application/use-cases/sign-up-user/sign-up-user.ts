@@ -1,6 +1,5 @@
 import type { User } from "../../../domain/entities/user.js";
 import type { AuthGateway, AuthTokens } from "../../../domain/contracts/gateways/auth-gateway.js";
-import type { Clock } from "../../../domain/contracts/gateways/clock.js";
 import type { IdGenerator } from "../../../domain/contracts/gateways/id-generator.js";
 import type { UserRepository } from "../../../domain/contracts/repositories/user-repository.js";
 
@@ -8,7 +7,6 @@ export interface SignUpUserDeps {
   authGateway: AuthGateway;
   userRepository: UserRepository;
   idGenerator: IdGenerator;
-  clock: Clock;
 }
 
 export interface SignUpUserInput {
@@ -22,11 +20,11 @@ export interface SignUpUserOutput {
   tokens: AuthTokens;
 }
 
-export function createSignUpUser({ authGateway, userRepository, idGenerator, clock }: SignUpUserDeps) {
+export function createSignUpUser({ authGateway, userRepository, idGenerator }: SignUpUserDeps) {
   return async function signUpUser({ name, email, password }: SignUpUserInput): Promise<SignUpUserOutput> {
     const { externalId } = await authGateway.signUp({ name, email, password });
 
-    const now = clock.now().toISOString();
+    const now = new Date().toISOString();
     const user: User = {
       id: await idGenerator.generate(),
       type: "USER",

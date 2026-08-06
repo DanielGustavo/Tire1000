@@ -1,8 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { EmailAlreadyExistsError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { UserRepository } from "../../../domain/contracts/repositories/user-repository.js";
 import { InMemoryAuthGateway } from "../../../infra/gateways/fakes/in-memory-auth-gateway.js";
-import { FixedClock } from "../../../infra/gateways/fakes/fixed-clock.js";
 import { SequentialIdGenerator } from "../../../infra/gateways/fakes/sequential-id-generator.js";
 import { InMemoryUserRepository } from "../../../infra/repositories/fakes/in-memory-user-repository.js";
 import { createSignUpUser } from "./sign-up-user.js";
@@ -12,11 +11,19 @@ function buildDeps() {
     authGateway: new InMemoryAuthGateway(),
     userRepository: new InMemoryUserRepository(),
     idGenerator: new SequentialIdGenerator(),
-    clock: new FixedClock(new Date("2026-08-05T00:00:00.000Z")),
   };
 }
 
 describe("SignUpUser", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-05T00:00:00.000Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("creates the account in Cognito and the User record with 0 credits", async () => {
     const deps = buildDeps();
     const signUpUser = createSignUpUser(deps);
