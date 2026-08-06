@@ -26,6 +26,7 @@ export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
       if (error instanceof HttpError) {
         return { statusCode: error.statusCode, body: JSON.stringify({ message: error.message }) };
       }
+      console.error(error);
       return { statusCode: 500, body: JSON.stringify({ message: "Internal server error" }) };
     }
   };

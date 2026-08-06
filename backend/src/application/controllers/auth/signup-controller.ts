@@ -27,13 +27,10 @@ export class SignupController extends Controller {
       const result = await this.signUpUser({ name, email, password });
       return { statusCode: 201, body: result };
     } catch (error) {
-      if (error instanceof EmailAlreadyExistsError) {
-        throw new HttpError(409, error.message);
-      }
-      if (error instanceof WeakPasswordError) {
-        throw new HttpError(400, error.message);
-      }
-      throw error;
+      this.mapError(error, [
+        [EmailAlreadyExistsError, 409],
+        [WeakPasswordError, 400],
+      ]);
     }
   }
 }

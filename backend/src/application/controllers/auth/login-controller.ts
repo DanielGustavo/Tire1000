@@ -26,10 +26,7 @@ export class LoginController extends Controller {
       const tokens = await this.login({ email, password });
       return { statusCode: 200, body: tokens };
     } catch (error) {
-      if (error instanceof InvalidCredentialsError) {
-        throw new HttpError(401, error.message);
-      }
-      throw error;
+      this.mapError(error, [[InvalidCredentialsError, 401]]);
     }
   }
 }
