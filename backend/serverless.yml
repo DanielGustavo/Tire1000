@@ -66,15 +66,33 @@ functions:
       - httpApi:
           path: /auth/login
           method: post
+  themesList:
+    handler: src/main/handlers/themes/list-themes.handler
+    events:
+      - httpApi:
+          path: /themes
+          method: get
+          authorizer:
+            name: cognitoAuthorizer
+  themesGet:
+    handler: src/main/handlers/themes/get-theme.handler
+    events:
+      - httpApi:
+          path: /themes/{themeId}
+          method: get
+          authorizer:
+            name: cognitoAuthorizer
+  topicsList:
+    handler: src/main/handlers/topics/list-topics.handler
+    events:
+      - httpApi:
+          path: /topics
+          method: get
+          authorizer:
+            name: cognitoAuthorizer
   # Further functions are added by feature tickets as they implement
   # endpoints/consumers. Authenticated routes attach the `cognitoAuthorizer`
-  # defined above, e.g.:
-  #   events:
-  #     - httpApi:
-  #         path: /themes
-  #         method: get
-  #         authorizer:
-  #           name: cognitoAuthorizer
+  # defined above (see above).
 
 resources:
   Resources:

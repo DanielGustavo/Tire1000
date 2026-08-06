@@ -4,12 +4,12 @@
 
 **Blocked by:** 01 — Scaffolding do projeto, 02 — Cadastro e login
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] `GET /themes` lista temas ordenados pela data de publicação (`enemYear` ou `createdAt`, conforme ADR-0003)
-- [ ] `GET /themes` suporta filtro por eixo (`topicId`) e busca por título
-- [ ] `GET /themes/{themeId}` retorna o tema com seus textos motivadores (`ReferenceText`)
-- [ ] `GET /topics` lista os eixos
-- [ ] Fixtures/seed de temas e eixos para desenvolvimento e testes locais
-- [ ] Testes Vitest dos casos de uso `ListThemes`/`GetTheme`/`ListTopics` com fake repository
-- [ ] Telas de listagem e detalhe de tema no front
+- [x] `GET /themes` lista temas ordenados pela data de publicação (`enemYear` ou `createdAt`, conforme ADR-0003)
+- [x] `GET /themes` suporta filtro por eixo (`topicId`) e busca por título
+- [x] `GET /themes/{themeId}` retorna o tema com seus textos motivadores (`ReferenceText`)
+- [x] `GET /topics` lista os eixos
+- [x] Fixtures/seed de temas e eixos para desenvolvimento e testes locais
+- [x] Testes Vitest dos casos de uso `ListThemes`/`GetTheme`/`ListTopics` com fake repository
+- [x] Telas de listagem e detalhe de tema no front

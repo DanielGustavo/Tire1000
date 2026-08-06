@@ -62,3 +62,7 @@ An adapter (`src/main/adapters/apigw-adapter.ts` today) takes a `Controller` and
 A handler (`src/main/handlers/auth/signup.ts`) is the Lambda entry point referenced by `serverless.yml`: it wires real dependencies into a use case, wraps it in a controller, and passes the controller into the adapter. No business logic, no event parsing — both live one layer down.
 
 See `src/main/handlers/auth/`, `src/application/controllers/auth/`, and `src/main/adapters/apigw-adapter.ts` for the reference implementation.
+
+## Seeding themes/topics for local development
+
+Cadastro de temas/eixos/textos motivadores não tem API de escrita neste MVP (é manual, direto no banco). `scripts/seed-themes.ts` popula alguns exemplos direto na tabela via `pnpm seed:themes` (requer `TABLE_NAME`; aponte `AWS_ENDPOINT_URL` para um DynamoDB local, se houver um rodando). Não é um comando `sls`, mas ainda assim escreve numa tabela real — só o dev deve rodar.
