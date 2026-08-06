@@ -1,6 +1,7 @@
 import { InvalidCredentialsError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { createLogin } from "../../use-cases/login/login.js";
 import { Controller, type ControllerRequest, type ControllerResponse } from "../controller.js";
+import { HttpError } from "../http-error.js";
 
 type Login = ReturnType<typeof createLogin>;
 
@@ -18,7 +19,7 @@ export class LoginController extends Controller {
     const { email, password } = (body ?? {}) as LoginRequestBody;
 
     if (!email || !password) {
-      return { statusCode: 400, body: { message: "email and password are required" } };
+      throw new HttpError(400, "email and password are required");
     }
 
     try {
@@ -26,7 +27,7 @@ export class LoginController extends Controller {
       return { statusCode: 200, body: tokens };
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
-        return { statusCode: 401, body: { message: error.message } };
+        throw new HttpError(401, error.message);
       }
       throw error;
     }

@@ -1,5 +1,6 @@
 import type { APIGatewayProxyHandlerV2 } from "aws-lambda";
 import type { Controller } from "../../application/controllers/controller.js";
+import { HttpError } from "../../application/controllers/http-error.js";
 
 export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
   return async (event) => {
@@ -12,13 +13,20 @@ export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
       }
     }
 
-    const response = await controller.handle({
-      body,
-      headers: event.headers,
-      pathParameters: event.pathParameters ?? {},
-      queryStringParameters: event.queryStringParameters ?? {},
-    });
+    try {
+      const response = await controller.handle({
+        body,
+        headers: event.headers,
+        pathParameters: event.pathParameters ?? {},
+        queryStringParameters: event.queryStringParameters ?? {},
+      });
 
-    return { statusCode: response.statusCode, body: JSON.stringify(response.body) };
+      return { statusCode: response.statusCode, body: JSON.stringify(response.body) };
+    } catch (error) {
+      if (error instanceof HttpError) {
+        return { statusCode: error.statusCode, body: JSON.stringify({ message: error.message }) };
+      }
+      return { statusCode: 500, body: JSON.stringify({ message: "Internal server error" }) };
+    }
   };
 }

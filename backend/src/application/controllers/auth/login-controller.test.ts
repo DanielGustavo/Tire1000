@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { InvalidCredentialsError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { AuthTokens } from "../../../domain/contracts/gateways/auth-gateway.js";
+import { HttpError } from "../http-error.js";
 import { LoginController } from "./login-controller.js";
 
 function buildRequest(body: unknown) {
@@ -17,23 +18,33 @@ describe("LoginController", () => {
     expect(response).toEqual({ statusCode: 200, body: tokens });
   });
 
-  it("returns 400 when a required field is missing", async () => {
+  it("throws a 400 HttpError when a required field is missing", async () => {
     const controller = new LoginController(async () => {
       throw new Error("should not be called");
     });
 
-    const response = await controller.handle(buildRequest({ email: "student@example.com" }));
-
-    expect(response.statusCode).toBe(400);
+    await expect(controller.handle(buildRequest({ email: "student@example.com" }))).rejects.toMatchObject({
+      statusCode: 400,
+    });
   });
 
-  it("returns 401 for invalid credentials", async () => {
+  it("throws a 401 HttpError for invalid credentials", async () => {
     const controller = new LoginController(async () => {
       throw new InvalidCredentialsError();
     });
 
-    const response = await controller.handle(buildRequest({ email: "student@example.com", password: "wrong" }));
+    await expect(
+      controller.handle(buildRequest({ email: "student@example.com", password: "wrong" })),
+    ).rejects.toMatchObject({ statusCode: 401 });
+  });
 
-    expect(response.statusCode).toBe(401);
+  it("rejects with an HttpError instance", async () => {
+    const controller = new LoginController(async () => {
+      throw new InvalidCredentialsError();
+    });
+
+    await expect(
+      controller.handle(buildRequest({ email: "student@example.com", password: "wrong" })),
+    ).rejects.toBeInstanceOf(HttpError);
   });
 });

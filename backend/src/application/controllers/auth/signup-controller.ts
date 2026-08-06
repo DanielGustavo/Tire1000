@@ -1,6 +1,7 @@
 import { EmailAlreadyExistsError, WeakPasswordError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { createSignUpUser } from "../../use-cases/sign-up-user/sign-up-user.js";
 import { Controller, type ControllerRequest, type ControllerResponse } from "../controller.js";
+import { HttpError } from "../http-error.js";
 
 type SignUpUser = ReturnType<typeof createSignUpUser>;
 
@@ -19,7 +20,7 @@ export class SignupController extends Controller {
     const { name, email, password } = (body ?? {}) as SignupRequestBody;
 
     if (!name || !email || !password) {
-      return { statusCode: 400, body: { message: "name, email and password are required" } };
+      throw new HttpError(400, "name, email and password are required");
     }
 
     try {
@@ -27,10 +28,10 @@ export class SignupController extends Controller {
       return { statusCode: 201, body: result };
     } catch (error) {
       if (error instanceof EmailAlreadyExistsError) {
-        return { statusCode: 409, body: { message: error.message } };
+        throw new HttpError(409, error.message);
       }
       if (error instanceof WeakPasswordError) {
-        return { statusCode: 400, body: { message: error.message } };
+        throw new HttpError(400, error.message);
       }
       throw error;
     }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EmailAlreadyExistsError, WeakPasswordError } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { SignUpUserOutput } from "../../use-cases/sign-up-user/sign-up-user.js";
+import { HttpError } from "../http-error.js";
 import { SignupController } from "./signup-controller.js";
 
 function buildRequest(body: unknown) {
@@ -31,37 +32,43 @@ describe("SignupController", () => {
     expect(response).toEqual({ statusCode: 201, body: result });
   });
 
-  it("returns 400 when a required field is missing", async () => {
+  it("throws a 400 HttpError when a required field is missing", async () => {
     const controller = new SignupController(async () => {
       throw new Error("should not be called");
     });
 
-    const response = await controller.handle(buildRequest({ email: "student@example.com", password: "x" }));
-
-    expect(response.statusCode).toBe(400);
+    await expect(
+      controller.handle(buildRequest({ email: "student@example.com", password: "x" })),
+    ).rejects.toMatchObject({ statusCode: 400 });
   });
 
-  it("returns 409 when the email is already registered", async () => {
+  it("throws a 409 HttpError when the email is already registered", async () => {
     const controller = new SignupController(async () => {
       throw new EmailAlreadyExistsError("student@example.com");
     });
 
-    const response = await controller.handle(
-      buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" }),
-    );
-
-    expect(response.statusCode).toBe(409);
+    await expect(
+      controller.handle(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" })),
+    ).rejects.toMatchObject({ statusCode: 409 });
   });
 
-  it("returns 400 when the password is rejected as weak", async () => {
+  it("throws a 400 HttpError when the password is rejected as weak", async () => {
     const controller = new SignupController(async () => {
       throw new WeakPasswordError();
     });
 
-    const response = await controller.handle(
-      buildRequest({ name: "Student", email: "student@example.com", password: "weak" }),
-    );
+    await expect(
+      controller.handle(buildRequest({ name: "Student", email: "student@example.com", password: "weak" })),
+    ).rejects.toMatchObject({ statusCode: 400 });
+  });
 
-    expect(response.statusCode).toBe(400);
+  it("rejects with an HttpError instance", async () => {
+    const controller = new SignupController(async () => {
+      throw new EmailAlreadyExistsError("student@example.com");
+    });
+
+    await expect(
+      controller.handle(buildRequest({ name: "Student", email: "student@example.com", password: "S3curePass!" })),
+    ).rejects.toBeInstanceOf(HttpError);
   });
 });
