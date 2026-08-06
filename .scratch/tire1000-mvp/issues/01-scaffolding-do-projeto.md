@@ -6,9 +6,13 @@
 
 **Status:** ready-for-agent
 
-- [ ] Backend em TypeScript com Serverless Framework configurado (nenhum comando do Serverless é executado pelo agente — só escrever o `serverless.yml`)
-- [ ] Recurso da tabela DynamoDB única definido no `serverless.yml`, com GSI1 e GSI2 (ver seção "Modelo de dados" do spec)
-- [ ] Convenção de caso de uso com injeção de dependência estabelecida — pelo menos um caso de uso de exemplo com repositório fake e teste Vitest passando, demonstrando o padrão que os próximos tickets vão seguir
-- [ ] Interfaces base de repositório/gateway definidas
-- [ ] Frontend em React + Tailwind + Axios com roteamento básico e cliente de API configurado
-- [ ] Convenção de pastas documentada (mesmo que brevemente) para os próximos tickets seguirem
+- [x] Backend em TypeScript com Serverless Framework configurado (nenhum comando do Serverless é executado pelo agente — só escrever o `serverless.yml`)
+- [x] Recurso da tabela DynamoDB única definido no `serverless.yml`, com GSI1 e GSI2 (ver seção "Modelo de dados" do spec)
+- [x] Convenção de caso de uso com injeção de dependência estabelecida — pelo menos um caso de uso de exemplo com repositório fake e teste Vitest passando, demonstrando o padrão que os próximos tickets vão seguir
+- [x] Interfaces base de repositório/gateway definidas
+- [x] Frontend em React + Tailwind + Axios com roteamento básico e cliente de API configurado
+- [x] Convenção de pastas documentada (mesmo que brevemente) para os próximos tickets seguirem
+
+## Comments
+
+Implementado em `6c4b183`. Backend: `serverless.yml` com tabela única (GSI1/GSI2), casos de uso via factory `createXxx(deps)`, exemplo `GetUserById` com `InMemoryUserRepository` fake + teste Vitest, gateways base `Clock`/`IdGenerator` (KSUID) com fakes. Frontend: Vite + React + TS, Tailwind v4, React Router, React Query, Axios (`apiClient`). Ambos usando pnpm (`packageManager` fixado em `package.json`). Convenções documentadas em `backend/README.md` e `frontend/README.md`.
