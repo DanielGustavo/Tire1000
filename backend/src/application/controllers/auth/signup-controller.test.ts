@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { EmailAlreadyExistsError, WeakPasswordError } from "../../../domain/contracts/gateways/auth-gateway.js";
+import { User } from "../../../domain/entities/user.js";
 import type { SignUpUserOutput } from "../../use-cases/sign-up-user/sign-up-user.js";
 import { HttpError } from "../http-error.js";
 import { SignupController } from "./signup-controller.js";
@@ -11,16 +12,15 @@ function buildRequest(body: unknown) {
 describe("SignupController", () => {
   it("returns 201 with the use case's result on success", async () => {
     const result: SignUpUserOutput = {
-      user: {
+      user: User.reconstitute({
         id: "user-1",
-        type: "USER",
         externalId: "cognito-sub-1",
         email: "student@example.com",
         name: "Student",
         credits: 0,
-        createdAt: "2026-08-05T00:00:00.000Z",
-        updatedAt: "2026-08-05T00:00:00.000Z",
-      },
+        createdAt: new Date("2026-08-05T00:00:00.000Z"),
+        updatedAt: new Date("2026-08-05T00:00:00.000Z"),
+      }),
       tokens: { accessToken: "a", idToken: "i", refreshToken: "r", expiresIn: 3600 },
     };
     const controller = new SignupController(async () => result);

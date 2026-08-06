@@ -1,4 +1,4 @@
-import type { User } from "../../../domain/entities/user.js";
+import { User } from "../../../domain/entities/user.js";
 import type { AuthGateway, AuthTokens } from "../../../domain/contracts/gateways/auth-gateway.js";
 import type { IdGenerator } from "../../../domain/contracts/gateways/id-generator.js";
 import type { UserRepository } from "../../../domain/contracts/repositories/user-repository.js";
@@ -24,17 +24,7 @@ export function createSignUpUser({ authGateway, userRepository, idGenerator }: S
   return async function signUpUser({ name, email, password }: SignUpUserInput): Promise<SignUpUserOutput> {
     const { externalId } = await authGateway.signUp({ name, email, password });
 
-    const now = new Date().toISOString();
-    const user: User = {
-      id: await idGenerator.generate(),
-      type: "USER",
-      externalId,
-      email,
-      name,
-      credits: 0,
-      createdAt: now,
-      updatedAt: now,
-    };
+    const user = User.create({ id: await idGenerator.generate(), externalId, email, name });
     try {
       await userRepository.create(user);
     } catch (error) {

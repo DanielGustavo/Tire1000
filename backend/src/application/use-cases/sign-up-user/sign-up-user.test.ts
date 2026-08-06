@@ -37,8 +37,8 @@ describe("SignUpUser", () => {
       email: "student@example.com",
       name: "Student",
       credits: 0,
-      createdAt: "2026-08-05T00:00:00.000Z",
-      updatedAt: "2026-08-05T00:00:00.000Z",
+      createdAt: new Date("2026-08-05T00:00:00.000Z"),
+      updatedAt: new Date("2026-08-05T00:00:00.000Z"),
     });
     await expect(deps.userRepository.findByEmail("student@example.com")).resolves.toEqual(result.user);
   });

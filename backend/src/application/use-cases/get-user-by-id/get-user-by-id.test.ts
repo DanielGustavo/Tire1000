@@ -1,20 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { InMemoryUserRepository } from "../../../infra/repositories/fakes/in-memory-user-repository.js";
-import type { User } from "../../../domain/entities/user.js";
+import { User, type UserProps } from "../../../domain/entities/user.js";
 import { createGetUserById } from "./get-user-by-id.js";
 
-function buildUser(overrides: Partial<User> = {}): User {
-  return {
+function buildUser(overrides: Partial<UserProps> = {}): User {
+  return User.reconstitute({
     id: "user-1",
-    type: "USER",
     externalId: "cognito-sub-1",
     email: "student@example.com",
     name: "Student",
     credits: 3,
-    createdAt: "2026-08-05T00:00:00.000Z",
-    updatedAt: "2026-08-05T00:00:00.000Z",
+    createdAt: new Date("2026-08-05T00:00:00.000Z"),
+    updatedAt: new Date("2026-08-05T00:00:00.000Z"),
     ...overrides,
-  };
+  });
 }
 
 describe("GetUserById", () => {
