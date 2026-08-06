@@ -1,7 +1,7 @@
 import { DomainError } from "./domain-error.js";
 
 export class UnauthorizedError extends DomainError {
-  constructor(message = "Unauthorized") {
+  constructor(message = "Não autorizado") {
     super(401, message);
   }
 }

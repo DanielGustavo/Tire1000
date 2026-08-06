@@ -28,18 +28,18 @@ export interface AuthGateway {
 
 export class EmailAlreadyExistsError extends ConflictError {
   constructor(email: string) {
-    super(`An account with email "${email}" already exists`);
+    super(`Já existe uma conta com o e-mail "${email}"`);
   }
 }
 
 export class InvalidCredentialsError extends UnauthorizedError {
   constructor() {
-    super("Invalid email or password");
+    super("E-mail ou senha inválidos");
   }
 }
 
 export class WeakPasswordError extends BadRequestError {
   constructor(reason?: string) {
-    super(reason ?? "Password does not meet the required complexity");
+    super(reason ?? "A senha não atende aos requisitos de complexidade");
   }
 }

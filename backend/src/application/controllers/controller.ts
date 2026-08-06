@@ -21,7 +21,7 @@ export abstract class Controller {
       return await this.handle(request);
     } catch (error) {
       if (error instanceof DomainError) {
-        throw new HttpError(error.statusCode, error.message);
+        throw new HttpError(error.statusCode, error.message, error.body);
       }
       throw error;
     }

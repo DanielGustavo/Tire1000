@@ -9,7 +9,7 @@ export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
       try {
         body = JSON.parse(event.body);
       } catch {
-        return { statusCode: 400, body: JSON.stringify({ message: "Invalid JSON body" }) };
+        return { statusCode: 400, body: JSON.stringify({ message: "Corpo da requisição inválido" }) };
       }
     }
 
@@ -24,10 +24,10 @@ export function apigwAdapter(controller: Controller): APIGatewayProxyHandlerV2 {
       return { statusCode: response.statusCode, body: JSON.stringify(response.body) };
     } catch (error) {
       if (error instanceof HttpError) {
-        return { statusCode: error.statusCode, body: JSON.stringify({ message: error.message }) };
+        return { statusCode: error.statusCode, body: JSON.stringify(error.body) };
       }
       console.error(error);
-      return { statusCode: 500, body: JSON.stringify({ message: "Internal server error" }) };
+      return { statusCode: 500, body: JSON.stringify({ message: "Erro interno do servidor" }) };
     }
   };
 }

@@ -42,6 +42,36 @@ describe("SignupController", () => {
     ).rejects.toMatchObject({ statusCode: 400 });
   });
 
+  it("includes per-field errors in the HttpError body when validation fails", async () => {
+    const controller = new SignupController(async () => {
+      throw new Error("should not be called");
+    });
+
+    await expect(
+      controller.execute(buildRequest({ email: "not-an-email", password: "x" })),
+    ).rejects.toMatchObject({
+      body: {
+        fields: {
+          name: expect.any(Array),
+          email: expect.any(Array),
+        },
+      },
+    });
+  });
+
+  it("rejects a password that does not meet Cognito's complexity policy before calling the use case", async () => {
+    const controller = new SignupController(async () => {
+      throw new Error("should not be called");
+    });
+
+    await expect(
+      controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "weak" })),
+    ).rejects.toMatchObject({
+      statusCode: 400,
+      body: { fields: { password: expect.any(Array) } },
+    });
+  });
+
   it("throws a 409 HttpError when the email is already registered", async () => {
     const controller = new SignupController(async () => {
       throw new EmailAlreadyExistsError("student@example.com");
@@ -58,7 +88,7 @@ describe("SignupController", () => {
     });
 
     await expect(
-      controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "weak" })),
+      controller.execute(buildRequest({ name: "Student", email: "student@example.com", password: "Weak1234" })),
     ).rejects.toMatchObject({ statusCode: 400 });
   });
 

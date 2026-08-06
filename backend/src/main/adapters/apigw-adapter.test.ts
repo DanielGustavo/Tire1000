@@ -52,6 +52,6 @@ describe("apigwAdapter", () => {
 
     const result = await handler(buildEvent({}), {} as Context, () => {});
 
-    expect(result).toEqual({ statusCode: 500, body: JSON.stringify({ message: "Internal server error" }) });
+    expect(result).toEqual({ statusCode: 500, body: JSON.stringify({ message: "Erro interno do servidor" }) });
   });
 });

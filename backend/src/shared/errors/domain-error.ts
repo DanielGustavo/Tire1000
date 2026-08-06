@@ -6,4 +6,8 @@ export abstract class DomainError extends Error {
     super(message);
     this.name = new.target.name;
   }
+
+  get body(): unknown {
+    return { message: this.message };
+  }
 }
