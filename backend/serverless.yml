@@ -55,13 +55,13 @@ plugins:
 
 functions:
   authSignup:
-    handler: src/handlers/auth/signup.handler
+    handler: src/main/handlers/auth/signup.handler
     events:
       - httpApi:
           path: /auth/signup
           method: post
   authLogin:
-    handler: src/handlers/auth/login.handler
+    handler: src/main/handlers/auth/login.handler
     events:
       - httpApi:
           path: /auth/login
