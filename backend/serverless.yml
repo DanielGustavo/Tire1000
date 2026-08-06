@@ -10,9 +10,40 @@ provider:
   environment:
     TABLE_NAME: ${self:custom.tableName}
     STAGE: ${self:provider.stage}
+    USER_POOL_ID: !Ref CognitoUserPool
+    USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+          Resource:
+            - !GetAtt MainTable.Arn
+            - !Sub ${MainTable.Arn}/index/*
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminCreateUser
+            - cognito-idp:AdminSetUserPassword
+            - cognito-idp:AdminInitiateAuth
+            - cognito-idp:AdminDeleteUser
+          Resource: !GetAtt CognitoUserPool.Arn
+  httpApi:
+    cors: true
+    authorizers:
+      cognitoAuthorizer:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}
+        audience:
+          - !Ref CognitoUserPoolClient
 
 custom:
   tableName: ${self:service}-${self:provider.stage}-MainTable
+  userPoolName: ${self:service}-${self:provider.stage}-user-pool
   esbuild:
     bundle: true
     minify: false
@@ -22,8 +53,28 @@ custom:
 plugins:
   - serverless-esbuild
 
-# Functions are added by feature tickets as they implement endpoints/consumers.
-functions: {}
+functions:
+  authSignup:
+    handler: src/handlers/auth/signup.handler
+    events:
+      - httpApi:
+          path: /auth/signup
+          method: post
+  authLogin:
+    handler: src/handlers/auth/login.handler
+    events:
+      - httpApi:
+          path: /auth/login
+          method: post
+  # Further functions are added by feature tickets as they implement
+  # endpoints/consumers. Authenticated routes attach the `cognitoAuthorizer`
+  # defined above, e.g.:
+  #   events:
+  #     - httpApi:
+  #         path: /themes
+  #         method: get
+  #         authorizer:
+  #           name: cognitoAuthorizer
 
 resources:
   Resources:
@@ -69,3 +120,41 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+
+    # Backend controls signup directly (AdminCreateUser + AdminSetUserPassword)
+    # so accounts are created already confirmed and verified — no self-service
+    # email confirmation flow, no login social (see ticket 02 / spec.md).
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:custom.userPoolName}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: true
+        Schema:
+          - Name: email
+            AttributeDataType: String
+            Required: true
+            Mutable: true
+          - Name: name
+            AttributeDataType: String
+            Required: true
+            Mutable: true
+
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:custom.userPoolName}-client
+        UserPoolId: !Ref CognitoUserPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - ALLOW_ADMIN_USER_PASSWORD_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
