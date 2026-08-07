@@ -7,8 +7,11 @@ import { essayService, type EssayStatus } from "../services/essay-service";
 const MAX_PHOTO_SIZE_IN_BYTES = 10 * 1024 * 1024;
 
 const REJECTION_REASON_LABELS: Record<string, string> = {
+  NOT_AN_ESSAY: "A foto não é de uma redação",
   ILLEGIBLE_HANDWRITING: "Letra ilegível",
   LOW_LIGHTING: "Iluminação baixa",
+  BLURRY_PHOTO: "Foto desfocada",
+  INCOMPLETE_PHOTO: "Foto corta parte do texto",
   TOO_FEW_LINES: "Menos de 7 linhas",
   TOO_MANY_LINES: "Mais de 30 linhas",
 };

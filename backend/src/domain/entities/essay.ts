@@ -34,7 +34,15 @@ export const MAX_ESSAY_VALIDATION_ATTEMPTS = 3;
 /** Threshold from the spec: past this many lifetime rejections, the dev is alerted (no automatic action). */
 export const ESSAY_REJECTED_ATTEMPTS_ALERT_THRESHOLD = 10;
 
-export const ESSAY_REJECTION_REASONS = ["ILLEGIBLE_HANDWRITING", "LOW_LIGHTING", "TOO_FEW_LINES", "TOO_MANY_LINES"] as const;
+export const ESSAY_REJECTION_REASONS = [
+  "ILLEGIBLE_HANDWRITING",
+  "LOW_LIGHTING",
+  "TOO_FEW_LINES",
+  "TOO_MANY_LINES",
+  "NOT_AN_ESSAY",
+  "BLURRY_PHOTO",
+  "INCOMPLETE_PHOTO",
+] as const;
 
 export type EssayRejectionReason = (typeof ESSAY_REJECTION_REASONS)[number];
 
