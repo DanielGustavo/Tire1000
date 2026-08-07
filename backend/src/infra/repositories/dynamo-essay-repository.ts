@@ -1,8 +1,9 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import type { Essay, EssayStatus } from "../../domain/entities/essay.js";
-import type { EssayRepository } from "../../domain/contracts/repositories/essay-repository.js";
+import type { EssayRepository, EssayWithEvaluation } from "../../domain/contracts/repositories/essay-repository.js";
 import { essayGSI1PK, essayPK, essaySK, fromEssayItem, toEssayItem, type EssayItem } from "../db/dynamodb/items/essay-item.js";
+import { fromEssayEvaluationItem, type EssayEvaluationItem } from "../db/dynamodb/items/essay-evaluation-item.js";
 
 export class DynamoEssayRepository implements EssayRepository {
   constructor(
@@ -28,6 +29,28 @@ export class DynamoEssayRepository implements EssayRepository {
 
     const item = result.Items?.[0];
     return item ? fromEssayItem(item as EssayItem) : null;
+  }
+
+  async findByIdWithEvaluation(essayId: string): Promise<EssayWithEvaluation | null> {
+    const result = await this.documentClient.send(
+      new QueryCommand({
+        TableName: this.tableName,
+        IndexName: "GSI1",
+        KeyConditionExpression: "GSI1PK = :gsi1pk",
+        ExpressionAttributeValues: { ":gsi1pk": essayGSI1PK(essayId) },
+      }),
+    );
+
+    const items = result.Items ?? [];
+    const essayItem = items.find((item) => item.type === "ESSAY");
+    if (!essayItem) return null;
+
+    const evaluationItem = items.find((item) => item.type === "ESSAY_EVALUATION");
+
+    return {
+      essay: fromEssayItem(essayItem as EssayItem),
+      evaluation: evaluationItem ? fromEssayEvaluationItem(evaluationItem as EssayEvaluationItem) : null,
+    };
   }
 
   async listByUserId(userId: string): Promise<Essay[]> {

@@ -36,7 +36,7 @@ describe("GetEssayDetail", () => {
   it("returns the essay's DTO for its owner, with textContent and no evaluation before Avaliação finishes", async () => {
     const essayRepository = new InMemoryEssayRepository();
     await essayRepository.create(buildEssay());
-    const getEssayDetail = createGetEssayDetail({ essayRepository, essayEvaluationRepository: new InMemoryEssayEvaluationRepository() });
+    const getEssayDetail = createGetEssayDetail({ essayRepository });
 
     const result = await getEssayDetail({ userId: "user-1", essayId: "essay-1" });
 
@@ -56,11 +56,13 @@ describe("GetEssayDetail", () => {
   });
 
   it("includes the evaluation's scores and highlights once Avaliação finished (SUCCESS)", async () => {
-    const essayRepository = new InMemoryEssayRepository();
+    // Same InMemoryEssayEvaluationRepository instance passed into InMemoryEssayRepository — mirrors
+    // the real single-table backing that makes findByIdWithEvaluation's joint GSI1 query possible.
+    const essayEvaluationRepository = new InMemoryEssayEvaluationRepository();
+    const essayRepository = new InMemoryEssayRepository(essayEvaluationRepository);
     await essayRepository.create(
       buildEssay({ status: "SUCCESS", finalScore: 800, textContent: "Era uma vez uma redação." }),
     );
-    const essayEvaluationRepository = new InMemoryEssayEvaluationRepository();
     const scores = buildScores();
     await essayEvaluationRepository.create(
       EssayEvaluation.create({
@@ -69,7 +71,7 @@ describe("GetEssayDetail", () => {
         highlights: [{ type: "C2", anchorIndex: 0, endIndex: 7, textContent: "Era uma" }],
       }),
     );
-    const getEssayDetail = createGetEssayDetail({ essayRepository, essayEvaluationRepository });
+    const getEssayDetail = createGetEssayDetail({ essayRepository });
 
     const result = await getEssayDetail({ userId: "user-1", essayId: "essay-1" });
 
@@ -82,7 +84,7 @@ describe("GetEssayDetail", () => {
 
   it("throws NotFoundError when the essay does not exist", async () => {
     const essayRepository = new InMemoryEssayRepository();
-    const getEssayDetail = createGetEssayDetail({ essayRepository, essayEvaluationRepository: new InMemoryEssayEvaluationRepository() });
+    const getEssayDetail = createGetEssayDetail({ essayRepository });
 
     await expect(getEssayDetail({ userId: "user-1", essayId: "missing-essay" })).rejects.toThrow(NotFoundError);
   });
@@ -90,7 +92,7 @@ describe("GetEssayDetail", () => {
   it("throws NotFoundError when the essay belongs to a different user", async () => {
     const essayRepository = new InMemoryEssayRepository();
     await essayRepository.create(buildEssay());
-    const getEssayDetail = createGetEssayDetail({ essayRepository, essayEvaluationRepository: new InMemoryEssayEvaluationRepository() });
+    const getEssayDetail = createGetEssayDetail({ essayRepository });
 
     await expect(getEssayDetail({ userId: "another-user", essayId: "essay-1" })).rejects.toThrow(NotFoundError);
   });
