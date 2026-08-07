@@ -5,7 +5,7 @@ export interface EssayValidationApproved {
   /** OCR'd text of the essay, as read from the photo. */
   textContent: string;
   tokens: number;
-  /** Estimated cost of this call, in cents — the gateway owns pricing knowledge for its model. */
+  /** Estimated cost of this call, in cents. */
   amountInCents: number;
 }
 
