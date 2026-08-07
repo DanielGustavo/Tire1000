@@ -1,3 +1,7 @@
+## Testing
+
+Tests live at the `application/` layer (controllers, use-cases) by default. Skip a dedicated `domain/`/`infra/` unit test unless the logic there is genuinely non-trivial (not a passthrough to a library call, not simple arithmetic verifiable by reading).
+
 ## Agent skills
 
 ### Issue tracker
