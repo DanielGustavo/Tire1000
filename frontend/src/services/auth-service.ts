@@ -18,6 +18,7 @@ export interface SignUpInput {
   name: string;
   email: string;
   password: string;
+  creditsQty?: number;
 }
 
 export interface SignUpResponse {

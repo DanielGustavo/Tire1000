@@ -3,6 +3,10 @@ import type { ReactNode } from "react";
 const VARIANT_CLASSES = {
   default: "bg-primary-100 border-neutral-900 text-neutral-900 shadow-hard",
   dark: "bg-neutral-900 border-neutral-0 text-neutral-0 shadow-hard-pink",
+  alert: "bg-alert-100 border-neutral-900 text-neutral-900 shadow-hard",
+  error: "bg-error-100 border-neutral-900 text-neutral-900 shadow-hard",
+  info: "bg-info-300 border-neutral-900 text-neutral-900 shadow-hard",
+  pink: "bg-pink-300 border-neutral-900 text-neutral-900 shadow-hard",
   slot: "bg-primary-100 border-neutral-900 shadow-hard",
   "dark-slot": "bg-neutral-900 border-neutral-0 shadow-hard-pink",
 } as const;

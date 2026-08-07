@@ -6,18 +6,30 @@
   --color-neutral-0: #ffffff;
   --color-neutral-30: #ededed;
   --color-neutral-300: #696c6b;
+  --color-neutral-600: #454947;
   --color-neutral-700: #353938;
   --color-neutral-900: #1c211f;
 
   --color-primary-100: #81eeb7;
   --color-primary-300: #25e283;
 
+  --color-alert-100: #ffed7a;
   --color-alert-300: #ffe01a;
 
+  --color-error-100: #ef8d80;
   --color-error-300: #e33a24;
+
+  --color-pink-300: #ef80bd;
+  --color-info-300: #7ad3ff;
+
+  --text-hero: 39px;
+  --text-hero--line-height: 1;
 
   --text-title: 31px;
   --text-title--line-height: 1;
+
+  --text-subtitle: 24px;
+  --text-subtitle--line-height: 1.2;
 
   --text-default: 16px;
   --text-default--line-height: 1.2;
@@ -26,5 +38,5 @@
   --text-small--line-height: 1.2;
 
   --shadow-hard: 2px 2px 0px 0px #1e1e1e;
-  --shadow-hard-pink: 2px 2px 0px 0px #ef80bd;
+  --shadow-hard-pink: 2px 2px 0px 0px var(--color-pink-300);
 }
