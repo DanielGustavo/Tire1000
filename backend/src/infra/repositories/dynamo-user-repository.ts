@@ -1,4 +1,4 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { ConditionalCheckFailedException, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import type { User } from "../../domain/entities/user.js";
 import type { UserRepository } from "../../domain/contracts/repositories/user-repository.js";
@@ -78,5 +78,28 @@ export class DynamoUserRepository implements UserRepository {
     );
 
     return fromUserItem(result.Attributes as UserItem);
+  }
+
+  async decrementCredits(userId: string, amount: number): Promise<{ applied: boolean }> {
+    try {
+      await this.documentClient.send(
+        new UpdateCommand({
+          TableName: this.tableName,
+          Key: { PK: userPK(userId), SK: userSK(userId) },
+          UpdateExpression: "ADD #credits :negativeAmount SET #updatedAt = :updatedAt",
+          ConditionExpression: "#credits >= :amount",
+          ExpressionAttributeNames: { "#credits": "credits", "#updatedAt": "updatedAt" },
+          ExpressionAttributeValues: {
+            ":negativeAmount": -amount,
+            ":amount": amount,
+            ":updatedAt": new Date().toISOString(),
+          },
+        }),
+      );
+      return { applied: true };
+    } catch (error) {
+      if (error instanceof ConditionalCheckFailedException) return { applied: false };
+      throw error;
+    }
   }
 }

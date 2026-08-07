@@ -37,4 +37,22 @@ export class InMemoryUserRepository implements UserRepository {
     this.usersById.set(userId, updated);
     return updated;
   }
+
+  async decrementCredits(userId: string, amount: number): Promise<{ applied: boolean }> {
+    const user = this.usersById.get(userId);
+    if (!user) throw new NotFoundError("Usuário não encontrado");
+    if (user.credits < amount) return { applied: false };
+
+    const updated = User.reconstitute({
+      id: user.id,
+      externalId: user.externalId,
+      email: user.email,
+      name: user.name,
+      credits: user.credits - amount,
+      createdAt: user.createdAt,
+      updatedAt: new Date(),
+    });
+    this.usersById.set(userId, updated);
+    return { applied: true };
+  }
 }

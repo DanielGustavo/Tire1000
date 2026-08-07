@@ -85,7 +85,21 @@ describe("ResendEssay", () => {
     await expect(resendEssay({ userId: "user-1", essayId: "essay-1" })).resolves.toMatchObject({ essayId: "essay-1" });
   });
 
-  it.each<EssayStatus>(["QUEUED", "VALIDATING", "VALIDATED", "EVALUATING", "EVALUATION_FAILED", "SUCCESS", "VALIDATION_FAILED"])(
+  it("allows resend from UPLOAD_FAILED (the credit debit lost the race at confirmation time)", async () => {
+    const deps = await buildDeps({ essay: buildEssay({ status: "UPLOAD_FAILED", rejectionReasons: [] }) });
+    const resendEssay = createResendEssay(deps);
+
+    await expect(resendEssay({ userId: "user-1", essayId: "essay-1" })).resolves.toMatchObject({ essayId: "essay-1" });
+  });
+
+  it("allows resend from VALIDATION_FAILED (system error during Revisão, credit already refunded)", async () => {
+    const deps = await buildDeps({ essay: buildEssay({ status: "VALIDATION_FAILED", rejectionReasons: [] }) });
+    const resendEssay = createResendEssay(deps);
+
+    await expect(resendEssay({ userId: "user-1", essayId: "essay-1" })).resolves.toMatchObject({ essayId: "essay-1" });
+  });
+
+  it.each<EssayStatus>(["QUEUED", "VALIDATING", "VALIDATED", "EVALUATING", "EVALUATION_FAILED", "SUCCESS"])(
     "throws ConflictError when the essay is %s",
     async (status) => {
       const deps = await buildDeps({ essay: buildEssay({ status }) });

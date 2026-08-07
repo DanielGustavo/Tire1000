@@ -1,12 +1,12 @@
 # 06 — Pipeline de Revisão
 
-**What to build:** A foto enviada é processada pela etapa de Revisão: o Gemini faz OCR do texto ou retorna motivos de rejeição, o crédito é debitado (e devolvido em caso de rejeição ou falha de sistema), e o custo estimado é registrado. Usuário vê o resultado — aprovado ou motivo da rejeição com opção de reenvio.
+**What to build:** A foto enviada é processada pela etapa de Revisão: o Gemini faz OCR do texto ou retorna motivos de rejeição, o custo estimado é registrado, e o crédito é devolvido em caso de rejeição ou falha de sistema. Usuário vê o resultado — aprovado ou motivo da rejeição com opção de reenvio.
 
 **Blocked by:** 05 — Envio e reenvio de redação
 
 **Status:** ready-for-agent
 
-- [ ] `ValidateEssay` debita 1 crédito do usuário ao iniciar o processamento
+- [ ] O crédito **não** é debitado aqui — isso já aconteceu em `EnqueueEssayValidation` (ticket 05), na confirmação do upload (ver ADR-0011). `ValidateEssay` só devolve, nunca debita.
 - [ ] Chamada ao Gemini (fake nos testes) retorna o texto OCR'd da redação (sucesso) ou motivos de rejeição — letra ilegível, iluminação baixa, menos de 7 linhas, mais de 30 linhas
 - [ ] Em sucesso: `Essay.textContent` preenchido, `status: VALIDATED`, `fileKey: null` e a foto é removida do bucket
 - [ ] Em rejeição: `status: REJECTED`, `rejectedAttempts` incrementado, `validationAttempts` resetado, `rejectionReasons` preenchido, `fileKey: null`, crédito devolvido

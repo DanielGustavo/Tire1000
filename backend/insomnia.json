@@ -361,7 +361,7 @@
       "created": 1786029448482,
       "url": "{{ _.base_url }}/essays",
       "name": "Upload Essay",
-      "description": "Requer cognitoAuthorizer. Rejeitado se o usuário não tiver ao menos 1 crédito. Cria a Essay com status UPLOADING e retorna uma URL + fields de um presigned POST do S3 (válido por 5 minutos, até 10MB) — faça o upload da foto direto pro bucket usando esses campos, o S3 dispara o EnqueueEssayValidation ao terminar.",
+      "description": "Requer cognitoAuthorizer. Rejeitado se o usuário não tiver ao menos 1 crédito (checagem informativa — o crédito só é debitado de fato quando o upload é confirmado, ver EnqueueEssayValidation). Cria a Essay com status UPLOADING e retorna uma URL + fields de um presigned POST do S3 (válido por 5 minutos, até 10MB) — faça o upload da foto direto pro bucket usando esses campos, o S3 dispara o EnqueueEssayValidation ao terminar, que debita o crédito e move a Essay pra QUEUED (ou UPLOAD_FAILED se o saldo não bastar mais nesse momento).",
       "method": "POST",
       "body": {
         "mimeType": "application/json",
@@ -394,7 +394,7 @@
       "created": 1786029448482,
       "url": "{{ _.base_url }}/essays/{{ _.essay_id }}",
       "name": "Resend Essay",
-      "description": "Requer cognitoAuthorizer, só o dono da redação. Só permitido quando a Essay está UPLOADING ou REJECTED. Reseta a Essay pro status UPLOADING e retorna uma nova URL + fields de presigned POST (mesma fileKey — o objeto anterior já foi removido do bucket).",
+      "description": "Requer cognitoAuthorizer, só o dono da redação. Só permitido quando a Essay está UPLOADING, REJECTED, VALIDATION_FAILED (esses dois já tiveram o crédito devolvido) ou UPLOAD_FAILED (saldo insuficiente na confirmação do upload anterior — nunca chegou a ser debitado). Reseta a Essay pro status UPLOADING e retorna uma nova URL + fields de presigned POST (mesma fileKey — o objeto anterior já foi removido do bucket).",
       "method": "POST",
       "body": {},
       "parameters": [],

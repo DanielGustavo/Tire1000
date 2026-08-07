@@ -101,7 +101,7 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 
 - **User**: `id`, `externalId` (sub do Cognito), `email`, `name`, `credits` (number)
 - **Checkout**: `id`, `externalId` (id da Checkout Session do Stripe), `gateway` (`STRIPE`), `status` (`PENDING`\|`COMPLETED`\|`FAILED`), `amountInCents`, `creditsQty`, `userId`
-- **Essay**: `id`, `status` (`UPLOADING`\|`QUEUED`\|`VALIDATING`\|`VALIDATION_FAILED`\|`REJECTED`\|`VALIDATED`\|`EVALUATING`\|`EVALUATION_FAILED`\|`SUCCESS`), `validationAttempts`, `rejectedAttempts`, `rejectionReasons` (string[]), `fileKey`, `textContent`, `evaluationAttempts`, `finalScore`, `userId`, `themeId`, `themeTitle`, `topicColor`
+- **Essay**: `id`, `status` (`UPLOADING`\|`QUEUED`\|`UPLOAD_FAILED`\|`VALIDATING`\|`VALIDATION_FAILED`\|`REJECTED`\|`VALIDATED`\|`EVALUATING`\|`EVALUATION_FAILED`\|`SUCCESS`), `validationAttempts`, `rejectedAttempts`, `rejectionReasons` (string[]), `fileKey`, `textContent`, `evaluationAttempts`, `finalScore`, `userId`, `themeId`, `themeTitle`, `topicColor`
 - **EssayEvaluation**: `essayId`, `scores` (`{C1..C5, final}: {score, evaluationText}`), `highlights` (`[{type, anchorIndex, endIndex, textContent}]`)
 - **EssayCost**: `id`, `essayId`, `amountInCents`, `tokens`, `step` (`VALIDATION`\|`EVALUATION`)
 - **Theme**: `id`, `title`, `enemYear` (opcional), `topicId`
@@ -122,9 +122,9 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 
 ### Envio, Revisão e Avaliação de redação
 
-- `POST /essays { themeId }` ou `POST /essays/{essayId}` (reenvio) → gera uma presigned POST URL pro bucket de redações, cria/atualiza a `Essay` com `status: UPLOADING`.
-- Upload direto do cliente pro bucket (S3). Trigger de S3 → `EnqueueEssayValidation`: pega os metadados, atualiza `Essay.status = QUEUED`, envia pra fila de Revisão (SQS).
-- `ValidateEssay` (consumidor da fila de Revisão): debita 1 crédito do usuário, atualiza `status: VALIDATING`, registra o custo estimado (`EssayCost`, `step: VALIDATION`), chama o Gemini com um único prompt que retorna **ou** o texto OCR'd da redação **ou** um array de motivos de rejeição (letra ilegível, iluminação baixa, <7 linhas, >30 linhas — a contagem de linhas também é lida da imagem pelo mesmo prompt).
+- `POST /essays { themeId }` ou `POST /essays/{essayId}` (reenvio) → gera uma presigned POST URL pro bucket de redações, cria/atualiza a `Essay` com `status: UPLOADING`. Rejeitado com erro claro se o usuário não tiver ao menos 1 crédito — checagem informativa nesse ponto; o débito de fato só acontece na confirmação do upload (ver abaixo, ADR-0011).
+- Upload direto do cliente pro bucket (S3). Trigger de S3 → `EnqueueEssayValidation`: pega os metadados, atualiza `Essay.status = QUEUED` e **debita 1 crédito do usuário** (não espera a Revisão começar — a fila pode demorar a esvaziar, ver ADR-0011), envia pra fila de Revisão (SQS). Se o saldo não for suficiente nesse momento (corrida entre duas redações do mesmo usuário confirmando quase ao mesmo tempo — raro), a `Essay` vai para `status: UPLOAD_FAILED` em vez de entrar na fila; o usuário reenvia depois de repor o saldo (mesmo fluxo de reenvio de uma rejeição).
+- `ValidateEssay` (consumidor da fila de Revisão): atualiza `status: VALIDATING`, registra o custo estimado (`EssayCost`, `step: VALIDATION`), chama o Gemini com um único prompt que retorna **ou** o texto OCR'd da redação **ou** um array de motivos de rejeição (letra ilegível, iluminação baixa, <7 linhas, >30 linhas — a contagem de linhas também é lida da imagem pelo mesmo prompt).
   - Sucesso: `Essay.textContent` = texto retornado, `status: VALIDATED`, `fileKey: null` (foto removida do bucket).
   - Rejeição: `status: REJECTED`, `rejectedAttempts += 1`, `validationAttempts` reseta, `rejectionReasons` preenchido, `fileKey: null`, crédito devolvido.
   - Falha de sistema (após 3 tentativas): `status: VALIDATION_FAILED`, `fileKey: null`, crédito devolvido, mensagem vai pra DLQ de Revisão, alerta por email ao dev (CloudWatch + SNS).

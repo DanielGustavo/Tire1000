@@ -2,9 +2,11 @@ import type { S3Handler } from "aws-lambda";
 import { createEnqueueEssayValidation } from "../../../application/use-cases/enqueue-essay-validation/enqueue-essay-validation.js";
 import { SqsEssayValidationQueueGateway } from "../../../infra/gateways/sqs-essay-validation-queue-gateway.js";
 import { DynamoEssayRepository } from "../../../infra/repositories/dynamo-essay-repository.js";
+import { DynamoUserRepository } from "../../../infra/repositories/dynamo-user-repository.js";
 
 const enqueueEssayValidation = createEnqueueEssayValidation({
   essayRepository: new DynamoEssayRepository(),
+  userRepository: new DynamoUserRepository(),
   essayValidationQueueGateway: new SqsEssayValidationQueueGateway(),
 });
 

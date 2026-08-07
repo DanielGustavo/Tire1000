@@ -159,6 +159,9 @@ describe("SignUpUser", () => {
       incrementCredits: async () => {
         throw new Error("should not be called");
       },
+      decrementCredits: async () => {
+        throw new Error("should not be called");
+      },
     };
     const signUpUser = createSignUpUser({ ...deps, userRepository: failingUserRepository });
 

@@ -3,6 +3,7 @@ import { Entity } from "./entity.js";
 export type EssayStatus =
   | "UPLOADING"
   | "QUEUED"
+  | "UPLOAD_FAILED"
   | "VALIDATING"
   | "VALIDATION_FAILED"
   | "REJECTED"
@@ -11,10 +12,17 @@ export type EssayStatus =
   | "EVALUATION_FAILED"
   | "SUCCESS";
 
-/** Statuses a resend is allowed from: a fresh upload that never finished, or one Revisão rejected. */
-export const RESENDABLE_ESSAY_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED"];
+/**
+ * Statuses a resend is allowed from: a fresh upload that never finished, one Revisão rejected or
+ * failed by system error (both refund the credit), or one that reached QUEUED but couldn't be
+ * debited (insufficient credits at confirmation time — never charged in the first place).
+ */
+export const RESENDABLE_ESSAY_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
 
 export const ESSAY_PHOTO_MAX_SIZE_IN_BYTES = 10 * 1024 * 1024;
+
+/** Credits debited from the owning user when an essay's upload is confirmed (see EnqueueEssayValidation). */
+export const ESSAY_CREDIT_COST = 1;
 
 const ESSAY_FILE_KEY_PREFIX = "essays/";
 
@@ -125,6 +133,12 @@ export class Essay extends Entity {
   /** S3 confirmed the photo landed in the bucket — ready for the fila de Revisão. */
   markQueued(): void {
     this.status = "QUEUED";
+    this.updatedAt = new Date();
+  }
+
+  /** Reached QUEUED but the credit debit lost the race against the user's balance — needs a reenvio. */
+  markUploadFailed(): void {
+    this.status = "UPLOAD_FAILED";
     this.updatedAt = new Date();
   }
 }
