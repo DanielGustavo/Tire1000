@@ -2,11 +2,11 @@ import { GoogleGenAI, Type } from "@google/genai";
 import type { EssayRejectionReason } from "../../domain/entities/essay.js";
 import type { EssayValidationGateway, EssayValidationResult } from "../../domain/contracts/gateways/essay-validation-gateway.js";
 
-const GEMINI_VALIDATION_MODEL = "gemini-2.5-flash";
+const GEMINI_VALIDATION_MODEL = "gemini-3.6-flash";
 
-// Rough estimate for gemini-2.5-flash's blended per-token price — good enough for the operator-facing
+// Rough estimate for gemini-3.6-flash's blended per-token price — good enough for the operator-facing
 // cost tracking the spec asks for (story 30), not a billing-accurate figure. Tune as pricing changes.
-const ESTIMATED_CENTS_PER_1000_TOKENS = 0.03;
+const ESTIMATED_CENTS_PER_1000_TOKENS = 0.15;
 
 const REJECTION_REASONS: EssayRejectionReason[] = ["ILLEGIBLE_HANDWRITING", "LOW_LIGHTING", "TOO_FEW_LINES", "TOO_MANY_LINES"];
 
