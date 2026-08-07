@@ -1,0 +1,17 @@
+themesList:
+  handler: src/main/handlers/themes/list-themes.handler
+  events:
+    - httpApi:
+        path: /themes
+        method: get
+        authorizer:
+          name: cognitoAuthorizer
+
+themesGet:
+  handler: src/main/handlers/themes/get-theme.handler
+  events:
+    - httpApi:
+        path: /themes/{themeId}
+        method: get
+        authorizer:
+          name: cognitoAuthorizer

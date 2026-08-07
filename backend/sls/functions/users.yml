@@ -1,0 +1,8 @@
+usersMe:
+  handler: src/main/handlers/users/me.handler
+  events:
+    - httpApi:
+        path: /users/me
+        method: get
+        authorizer:
+          name: cognitoAuthorizer

@@ -1,0 +1,8 @@
+topicsList:
+  handler: src/main/handlers/topics/list-topics.handler
+  events:
+    - httpApi:
+        path: /topics
+        method: get
+        authorizer:
+          name: cognitoAuthorizer

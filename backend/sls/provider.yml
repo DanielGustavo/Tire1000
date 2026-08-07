@@ -1,0 +1,55 @@
+name: aws
+runtime: nodejs20.x
+architecture: arm64
+region: us-east-1
+stage: ${opt:stage, 'dev'}
+memorySize: 256
+logRetentionInDays: 14
+environment:
+  TABLE_NAME: ${self:custom.tableName}
+  STAGE: ${self:provider.stage}
+  STRIPE_SECRET_KEY: ${env:STRIPE_SECRET_KEY, ''}
+  STRIPE_PRICE_ID: ${env:STRIPE_PRICE_ID, ''}
+  STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET, ''}
+  FRONTEND_URL: ${env:FRONTEND_URL, ''}
+  ESSAYS_BUCKET_NAME: ${self:custom.essaysBucketName}
+  ESSAY_VALIDATION_QUEUE_URL: !Ref EssayValidationQueue
+iam:
+  role:
+    statements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:Query
+          - dynamodb:BatchGetItem
+        Resource:
+          - !GetAtt MainTable.Arn
+          - !Sub ${MainTable.Arn}/index/*
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminCreateUser
+          - cognito-idp:AdminSetUserPassword
+          - cognito-idp:AdminInitiateAuth
+          - cognito-idp:AdminDeleteUser
+        Resource: !GetAtt CognitoUserPool.Arn
+      # Only the presigned POST's prefix — Lambda never uploads the photo itself, it just signs
+      # a policy the browser's direct-to-S3 upload has to satisfy (see essayFileKey).
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+        Resource: !Sub ${EssaysBucket.Arn}/essays/*
+      - Effect: Allow
+        Action:
+          - sqs:SendMessage
+        Resource: !GetAtt EssayValidationQueue.Arn
+httpApi:
+  cors: true
+  authorizers:
+    cognitoAuthorizer:
+      type: jwt
+      identitySource: $request.header.Authorization
+      issuerUrl: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPool}
+      audience:
+        - !Ref CognitoUserPoolClient

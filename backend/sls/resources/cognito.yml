@@ -1,0 +1,78 @@
+# Backend controls signup directly (AdminCreateUser + AdminSetUserPassword)
+# so accounts are created already confirmed and verified — no self-service
+# email confirmation flow, no login social (see ticket 02 / spec.md).
+CognitoUserPool:
+  Type: AWS::Cognito::UserPool
+  Properties:
+    UserPoolName: ${self:custom.userPoolName}
+    UserPoolTier: ESSENTIALS
+    DeletionProtection: ACTIVE
+    UsernameAttributes:
+      - email
+    AutoVerifiedAttributes:
+      - email
+    Policies:
+      PasswordPolicy:
+        MinimumLength: 8
+        RequireLowercase: true
+        RequireNumbers: true
+        RequireSymbols: false
+        RequireUppercase: true
+    # PreTokenGeneration (V2_0) copies the custom:userId attribute set at signup into the
+    # access token's `userId` claim, with no DynamoDB lookup — see ADR-0008.
+    LambdaConfig:
+      PreTokenGenerationConfig:
+        LambdaArn: !GetAtt AuthPreTokenGenerationLambdaFunction.Arn
+        LambdaVersion: V2_0
+    Schema:
+      - Name: email
+        AttributeDataType: String
+        Required: true
+        Mutable: true
+      - Name: name
+        AttributeDataType: String
+        Required: true
+        Mutable: true
+      # Internal User id (KSUID), written once at signup and never changed afterwards.
+      - Name: userId
+        AttributeDataType: String
+        Mutable: false
+        StringAttributeConstraints:
+          MinLength: "1"
+          MaxLength: "64"
+
+CognitoUserPoolClient:
+  Type: AWS::Cognito::UserPoolClient
+  Properties:
+    ClientName: ${self:custom.userPoolName}-client
+    UserPoolId: !Ref CognitoUserPool
+    GenerateSecret: false
+    ExplicitAuthFlows:
+      - ALLOW_ADMIN_USER_PASSWORD_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+
+CognitoPreTokenGenerationPermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    FunctionName: !Ref AuthPreTokenGenerationLambdaFunction
+    Action: lambda:InvokeFunction
+    Principal: cognito-idp.amazonaws.com
+    SourceArn: !GetAtt CognitoUserPool.Arn
+
+# Dedicated role for authPreTokenGeneration — see ADR-0010. Must stay isolated from the shared
+# execution role (IamRoleLambdaExecution, see provider.yml) because CognitoUserPool above
+# references this function in LambdaConfig: if the function depended back on CognitoUserPool
+# (through a shared role's policy or an env var), it would close a cycle that CloudFormation
+# rejects as "Circular dependency between resources".
+AuthPreTokenGenerationRole:
+  Type: AWS::IAM::Role
+  Properties:
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+    ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole

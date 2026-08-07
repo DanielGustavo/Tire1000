@@ -1,0 +1,15 @@
+creditsCheckout:
+  handler: src/main/handlers/credits/checkout.handler
+  events:
+    - httpApi:
+        path: /credits/checkout
+        method: post
+        authorizer:
+          name: cognitoAuthorizer
+
+creditsWebhook:
+  handler: src/main/handlers/credits/webhook.handler
+  events:
+    - httpApi:
+        path: /credits/webhook
+        method: post

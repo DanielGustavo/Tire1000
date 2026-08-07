@@ -1,0 +1,41 @@
+# Client uploads the essay photo directly here via presigned POST (UploadEssay/ResendEssay) —
+# the `essaysEnqueueValidation` function (see functions/essays.yml) attaches the ObjectCreated
+# notification.
+EssaysBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:custom.essaysBucketName}
+    CorsConfiguration:
+      CorsRules:
+        # Presigned POST carries its own single-use, time-boxed policy — an open origin here
+        # doesn't widen what a request can do, so this is fine for MVP.
+        - AllowedOrigins: ["*"]
+          AllowedMethods: [POST]
+          AllowedHeaders: ["*"]
+          MaxAge: 3000
+    LifecycleConfiguration:
+      Rules:
+        # Backstop, not the primary cleanup path: ValidateEssay (ticket 06) deletes the object
+        # itself the moment Revisão finishes (success or rejection). This just guarantees that
+        # anything which slips through — an object whose EnqueueEssayValidation trigger never
+        # fired, for instance — doesn't sit in the bucket forever.
+        - Id: ExpireOrphanedUploads
+          Status: Enabled
+          ExpirationInDays: 7
+
+# Fila de Revisão (spec's "Envio, Revisão e Avaliação de redação") — EnqueueEssayValidation
+# produces here; ValidateEssay (ticket 06) is the consumer.
+EssayValidationDLQ:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:custom.essayValidationDlqName}
+    MessageRetentionPeriod: 1209600 # 14 dias
+
+EssayValidationQueue:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:custom.essayValidationQueueName}
+    VisibilityTimeout: 60
+    RedrivePolicy:
+      deadLetterTargetArn: !GetAtt EssayValidationDLQ.Arn
+      maxReceiveCount: 3

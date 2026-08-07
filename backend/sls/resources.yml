@@ -1,0 +1,11 @@
+Resources:
+  MainTable: ${file(sls/resources/dynamodb.yml):MainTable}
+
+  CognitoUserPool: ${file(sls/resources/cognito.yml):CognitoUserPool}
+  CognitoUserPoolClient: ${file(sls/resources/cognito.yml):CognitoUserPoolClient}
+  CognitoPreTokenGenerationPermission: ${file(sls/resources/cognito.yml):CognitoPreTokenGenerationPermission}
+  AuthPreTokenGenerationRole: ${file(sls/resources/cognito.yml):AuthPreTokenGenerationRole}
+
+  EssaysBucket: ${file(sls/resources/essays.yml):EssaysBucket}
+  EssayValidationDLQ: ${file(sls/resources/essays.yml):EssayValidationDLQ}
+  EssayValidationQueue: ${file(sls/resources/essays.yml):EssayValidationQueue}

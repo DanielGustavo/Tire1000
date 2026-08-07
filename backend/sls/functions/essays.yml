@@ -1,0 +1,28 @@
+essaysUpload:
+  handler: src/main/handlers/essays/upload-essay.handler
+  events:
+    - httpApi:
+        path: /essays
+        method: post
+        authorizer:
+          name: cognitoAuthorizer
+
+essaysResend:
+  handler: src/main/handlers/essays/resend-essay.handler
+  events:
+    - httpApi:
+        path: /essays/{essayId}
+        method: post
+        authorizer:
+          name: cognitoAuthorizer
+
+# Invoked directly by the EssaysBucket's ObjectCreated notification — the bucket is created by
+# this same service (see resources/essays.yml), so `existing: true` tells Serverless to only
+# attach the notification, not to also manage the bucket itself.
+essaysEnqueueValidation:
+  handler: src/main/handlers/essays/enqueue-essay-validation.handler
+  events:
+    - s3:
+        bucket: ${self:custom.essaysBucketName}
+        event: s3:ObjectCreated:*
+        existing: true

@@ -1,0 +1,19 @@
+authSignup: ${file(sls/functions/auth.yml):authSignup}
+authLogin: ${file(sls/functions/auth.yml):authLogin}
+authPreTokenGeneration: ${file(sls/functions/auth.yml):authPreTokenGeneration}
+
+themesList: ${file(sls/functions/themes.yml):themesList}
+themesGet: ${file(sls/functions/themes.yml):themesGet}
+
+topicsList: ${file(sls/functions/topics.yml):topicsList}
+
+usersMe: ${file(sls/functions/users.yml):usersMe}
+
+creditsCheckout: ${file(sls/functions/credits.yml):creditsCheckout}
+creditsWebhook: ${file(sls/functions/credits.yml):creditsWebhook}
+
+essaysUpload: ${file(sls/functions/essays.yml):essaysUpload}
+essaysResend: ${file(sls/functions/essays.yml):essaysResend}
+essaysEnqueueValidation: ${file(sls/functions/essays.yml):essaysEnqueueValidation}
+# Further functions are added by feature tickets as they implement endpoints/consumers.
+# Authenticated routes attach the `cognitoAuthorizer` defined in provider.yml.
