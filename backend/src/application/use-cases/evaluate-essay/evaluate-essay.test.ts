@@ -141,7 +141,7 @@ describe("EvaluateEssay", () => {
       await expect(evaluateEssay({ essayId: "missing-essay" })).resolves.toEqual({ outcome: "SKIPPED" });
     });
 
-    it.each(["REJECTED", "VALIDATION_FAILED", "SUCCESS", "EVALUATION_FAILED", "UPLOADING"] as const)(
+    it.each(["REJECTED", "VALIDATION_FAILED", "SUCCESS", "UPLOADING"] as const)(
       "is a no-op when the essay is already %s (duplicate SQS delivery after this essay's Avaliação finished, or not ready yet)",
       async (status) => {
         const deps = await buildDeps({ essay: buildEssay({ status }) });
@@ -153,6 +153,20 @@ describe("EvaluateEssay", () => {
         expect(deps.essayEvaluationGateway.calls).toEqual([]);
       },
     );
+
+    it("reprocesses an EVALUATION_FAILED essay from its preserved textContent instead of skipping it (redrive, see REEVALUATABLE_ESSAY_STATUSES)", async () => {
+      const deps = await buildDeps({ essay: buildEssay({ status: "EVALUATION_FAILED", evaluationAttempts: 0 }) });
+      deps.essayEvaluationGateway.queueResult();
+      const evaluateEssay = createEvaluateEssay(deps);
+
+      const result = await evaluateEssay({ essayId: "essay-1" });
+
+      expect(result).toEqual({ outcome: "EVALUATED" });
+      await expect(deps.essayRepository.findById("essay-1")).resolves.toMatchObject({
+        status: "SUCCESS",
+        evaluationAttempts: 1,
+      });
+    });
 
     it("is a no-op when the essay has no textContent (shouldn't happen once VALIDATED, but defends against a corrupt state)", async () => {
       const deps = await buildDeps({ essay: buildEssay({ textContent: null }) });

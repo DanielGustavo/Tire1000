@@ -30,6 +30,21 @@ export const REEVALUATABLE_ESSAY_STATUSES: EssayStatus[] = [
   "EVALUATION_FAILED",
 ];
 
+/**
+ * Statuses ValidateEssay will (re)process. Mirrors REEVALUATABLE_ESSAY_STATUSES's pattern by including
+ * VALIDATION_FAILED, but this is a status-gate-only fix, not a functional redrive: unlike Avaliação,
+ * where a terminal failure preserves `textContent` for reprocessing, `markValidationFailed` nulls
+ * `fileKey` and ValidateEssay has already deleted the source photo from S3 and refunded the credit
+ * (ADR-0001 — Revisão's recovery path is resend, not reprocess). So a VALIDATION_FAILED essay still hits
+ * ValidateEssay's `fileKey` guard right after this check and gets skipped anyway. Making redrive actually
+ * work would mean revisiting that fileKey/credit behavior, which is a separate decision from this fix.
+ */
+export const REVALIDATABLE_ESSAY_STATUSES: EssayStatus[] = [
+  "QUEUED",
+  "VALIDATING",
+  "VALIDATION_FAILED",
+];
+
 export const ESSAY_PHOTO_MAX_SIZE_IN_BYTES = 10 * 1024 * 1024;
 
 /** Credits debited from the owning user when an essay's upload is confirmed (see EnqueueEssayValidation). */
@@ -198,11 +213,15 @@ export class Essay extends Entity {
   /**
    * Start (or retry) a Revisão attempt. Called once per SQS delivery of the fila de Revisão message —
    * `validationAttempts` mirrors the delivery count so ValidateEssay can recognize its own last attempt
-   * (see MAX_ESSAY_VALIDATION_ATTEMPTS) without depending on SQS's own opaque receive count.
+   * (see MAX_ESSAY_VALIDATION_ATTEMPTS) without depending on SQS's own opaque receive count. Also clears
+   * `rejectionReasons` from any earlier REJECTED cycle — a fresh attempt supersedes them, and leaving
+   * them in place would leak stale reasons through VALIDATING/VALIDATED/VALIDATION_FAILED until the next
+   * rejection overwrites them.
    */
   markValidating(): void {
     this.status = "VALIDATING";
     this.validationAttempts += 1;
+    this.rejectionReasons = [];
     this.updatedAt = new Date();
   }
 

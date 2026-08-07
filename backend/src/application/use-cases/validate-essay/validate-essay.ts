@@ -2,6 +2,7 @@ import {
   ESSAY_CREDIT_COST,
   ESSAY_REJECTED_ATTEMPTS_ALERT_THRESHOLD,
   MAX_ESSAY_VALIDATION_ATTEMPTS,
+  REVALIDATABLE_ESSAY_STATUSES,
 } from "../../../domain/entities/essay.js";
 import { EssayCost } from "../../../domain/entities/essay-cost.js";
 import type { DevAlertGateway } from "../../../domain/contracts/gateways/dev-alert-gateway.js";
@@ -47,8 +48,10 @@ export interface ValidateEssayOutput {
  * own redrive also moves the message to the DLQ — bookkeeping and DLQ placement happen on the same attempt,
  * not one instead of the other.
  *
- * Every branch that skips processing (essay missing, already past QUEUED/VALIDATING, lost the conditional
- * transition to a concurrent delivery) is a deliberate no-op, same reasoning as EnqueueEssayValidation.
+ * Every branch that skips processing (essay missing, status outside REVALIDATABLE_ESSAY_STATUSES, missing
+ * `fileKey` — which is how a VALIDATION_FAILED essay still ends up skipped despite being in that set, see
+ * its doc comment — or lost the conditional transition to a concurrent delivery) is a deliberate no-op,
+ * same reasoning as EnqueueEssayValidation.
  */
 export function createValidateEssay({
   essayRepository,
@@ -62,7 +65,7 @@ export function createValidateEssay({
 }: ValidateEssayDeps) {
   return async function validateEssay({ essayId }: ValidateEssayInput): Promise<ValidateEssayOutput> {
     const essay = await essayRepository.findById(essayId);
-    if (!essay || (essay.status !== "QUEUED" && essay.status !== "VALIDATING")) return { outcome: "SKIPPED" };
+    if (!essay || !REVALIDATABLE_ESSAY_STATUSES.includes(essay.status)) return { outcome: "SKIPPED" };
 
     const fileKey = essay.fileKey;
     if (!fileKey) return { outcome: "SKIPPED" };

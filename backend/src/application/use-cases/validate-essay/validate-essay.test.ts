@@ -104,6 +104,16 @@ describe("ValidateEssay", () => {
 
       expect(deps.essayValidationGateway.calls).toEqual([Buffer.from("fake-jpeg-bytes")]);
     });
+
+    it("clears rejectionReasons left over from a previous REJECTED cycle once a resend is approved", async () => {
+      const deps = await buildDeps({ essay: buildEssay({ rejectionReasons: ["LOW_LIGHTING"] }) });
+      deps.essayValidationGateway.queueApproved();
+      const validateEssay = createValidateEssay(deps);
+
+      await validateEssay({ essayId: "essay-1" });
+
+      await expect(deps.essayRepository.findById("essay-1")).resolves.toMatchObject({ rejectionReasons: [] });
+    });
   });
 
   describe("rejection", () => {
@@ -189,6 +199,18 @@ describe("ValidateEssay", () => {
       await expect(deps.userRepository.findById("user-1")).resolves.toMatchObject({ credits: 1 });
       expect(deps.devAlertGateway.alerts).toMatchObject([{ subject: "Falha de sistema na Revisão" }]);
     });
+
+    it("clears rejectionReasons left over from a previous REJECTED cycle once a resend terminally fails", async () => {
+      const deps = await buildDeps({
+        essay: buildEssay({ status: "VALIDATING", validationAttempts: 2, rejectionReasons: ["TOO_FEW_LINES"] }),
+      });
+      deps.essayValidationGateway.queueFailure(new Error("timeout"));
+      const validateEssay = createValidateEssay(deps);
+
+      await expect(validateEssay({ essayId: "essay-1" })).rejects.toThrow("timeout");
+
+      await expect(deps.essayRepository.findById("essay-1")).resolves.toMatchObject({ rejectionReasons: [] });
+    });
   });
 
   describe("no-op guards", () => {
@@ -199,7 +221,7 @@ describe("ValidateEssay", () => {
       await expect(validateEssay({ essayId: "missing-essay" })).resolves.toEqual({ outcome: "SKIPPED" });
     });
 
-    it.each(["VALIDATED", "REJECTED", "VALIDATION_FAILED", "UPLOADING"] as const)(
+    it.each(["VALIDATED", "REJECTED", "UPLOADING"] as const)(
       "is a no-op when the essay is already %s (duplicate SQS delivery after this essay's Revisão finished)",
       async (status) => {
         const deps = await buildDeps({ essay: buildEssay({ status, fileKey: status === "UPLOADING" ? "essays/essay-1" : null }) });
@@ -211,5 +233,15 @@ describe("ValidateEssay", () => {
         expect(deps.essayValidationGateway.calls).toEqual([]);
       },
     );
+
+    it("is a no-op for a VALIDATION_FAILED essay — passes the REVALIDATABLE_ESSAY_STATUSES gate but has no fileKey left to reprocess (see its doc comment)", async () => {
+      const deps = await buildDeps({ essay: buildEssay({ status: "VALIDATION_FAILED", fileKey: null }) });
+      const validateEssay = createValidateEssay(deps);
+
+      const result = await validateEssay({ essayId: "essay-1" });
+
+      expect(result).toEqual({ outcome: "SKIPPED" });
+      expect(deps.essayValidationGateway.calls).toEqual([]);
+    });
   });
 });
