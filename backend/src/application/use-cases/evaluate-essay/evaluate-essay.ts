@@ -1,4 +1,7 @@
-import { MAX_ESSAY_EVALUATION_ATTEMPTS } from "../../../domain/entities/essay.js";
+import {
+  MAX_ESSAY_EVALUATION_ATTEMPTS,
+  REEVALUATABLE_ESSAY_STATUSES,
+} from "../../../domain/entities/essay.js";
 import { EssayCost } from "../../../domain/entities/essay-cost.js";
 import { EssayEvaluation } from "../../../domain/entities/essay-evaluation.js";
 import type { DevAlertGateway } from "../../../domain/contracts/gateways/dev-alert-gateway.js";
@@ -46,20 +49,28 @@ export function createEvaluateEssay({
   devAlertGateway,
   idGenerator,
 }: EvaluateEssayDeps) {
-  return async function evaluateEssay({ essayId }: EvaluateEssayInput): Promise<EvaluateEssayOutput> {
+  return async function evaluateEssay({
+    essayId,
+  }: EvaluateEssayInput): Promise<EvaluateEssayOutput> {
     const essay = await essayRepository.findById(essayId);
-    if (!essay || (essay.status !== "VALIDATED" && essay.status !== "EVALUATING")) return { outcome: "SKIPPED" };
+    if (!essay || !REEVALUATABLE_ESSAY_STATUSES.includes(essay.status))
+      return { outcome: "SKIPPED" };
 
     const textContent = essay.textContent;
     if (!textContent) return { outcome: "SKIPPED" };
 
     const expectedCurrentStatus = essay.status;
     essay.markEvaluating();
-    const { applied } = await essayRepository.updateStatus(essay, { expectedCurrentStatus });
+    const { applied } = await essayRepository.updateStatus(essay, {
+      expectedCurrentStatus,
+    });
     if (!applied) return { outcome: "SKIPPED" };
 
     try {
-      const result = await essayEvaluationGateway.evaluate(textContent, essay.themeTitle);
+      const result = await essayEvaluationGateway.evaluate(
+        textContent,
+        essay.themeTitle,
+      );
 
       const costId = await idGenerator.generate();
       await essayCostRepository.create(
@@ -74,18 +85,26 @@ export function createEvaluateEssay({
       );
 
       await essayEvaluationRepository.create(
-        EssayEvaluation.create({ essayId: essay.id, scores: result.scores, highlights: result.highlights }),
+        EssayEvaluation.create({
+          essayId: essay.id,
+          scores: result.scores,
+          highlights: result.highlights,
+        }),
       );
 
       essay.markEvaluated(result.scores.final.score);
-      await essayRepository.updateStatus(essay, { expectedCurrentStatus: "EVALUATING" });
+      await essayRepository.updateStatus(essay, {
+        expectedCurrentStatus: "EVALUATING",
+      });
 
       return { outcome: "EVALUATED" };
     } catch (error) {
       if (essay.evaluationAttempts < MAX_ESSAY_EVALUATION_ATTEMPTS) throw error;
 
       essay.markEvaluationFailed();
-      await essayRepository.updateStatus(essay, { expectedCurrentStatus: "EVALUATING" });
+      await essayRepository.updateStatus(essay, {
+        expectedCurrentStatus: "EVALUATING",
+      });
       await devAlertGateway.alert({
         subject: "Falha de sistema na Avaliação",
         message: `Redação ${essay.id} falhou na Avaliação após ${MAX_ESSAY_EVALUATION_ATTEMPTS} tentativas: ${(error as Error).message}`,

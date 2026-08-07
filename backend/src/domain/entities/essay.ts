@@ -17,7 +17,18 @@ export type EssayStatus =
  * failed by system error (both refund the credit), or one that reached QUEUED but couldn't be
  * debited (insufficient credits at confirmation time — never charged in the first place).
  */
-export const RESENDABLE_ESSAY_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
+export const RESENDABLE_ESSAY_STATUSES: EssayStatus[] = [
+  "UPLOADING",
+  "REJECTED",
+  "UPLOAD_FAILED",
+  "VALIDATION_FAILED",
+];
+
+export const REEVALUATABLE_ESSAY_STATUSES: EssayStatus[] = [
+  "VALIDATED",
+  "EVALUATING",
+  "EVALUATION_FAILED",
+];
 
 export const ESSAY_PHOTO_MAX_SIZE_IN_BYTES = 10 * 1024 * 1024;
 
@@ -112,7 +123,12 @@ export class Essay extends Entity {
   readonly topicColor: string;
 
   private constructor(props: EssayProps) {
-    super({ id: props.id, type: "ESSAY", createdAt: props.createdAt, updatedAt: props.updatedAt });
+    super({
+      id: props.id,
+      type: "ESSAY",
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
+    });
     this.status = props.status;
     this.validationAttempts = props.validationAttempts;
     this.rejectedAttempts = props.rejectedAttempts;
@@ -127,7 +143,14 @@ export class Essay extends Entity {
     this.topicColor = props.topicColor;
   }
 
-  static create({ id, fileKey, userId, themeId, themeTitle, topicColor }: NewEssayProps): Essay {
+  static create({
+    id,
+    fileKey,
+    userId,
+    themeId,
+    themeTitle,
+    topicColor,
+  }: NewEssayProps): Essay {
     const now = new Date();
     return new Essay({
       id,
