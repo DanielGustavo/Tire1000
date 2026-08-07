@@ -1,3 +1,3 @@
 import type { GeminiModelId } from "./models.js";
 
-export const EVALUATION_MODEL: GeminiModelId = "gemini-3.1-pro-preview";
+export const EVALUATION_MODEL: GeminiModelId = "gemini-2.5-pro";
