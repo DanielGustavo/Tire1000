@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../libs/axios";
 import { essayService } from "../services/essay-service";
@@ -9,6 +9,7 @@ const MAX_PHOTO_SIZE_IN_BYTES = 10 * 1024 * 1024;
 
 export function EssayUploadPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [themeId, setThemeId] = useState(searchParams.get("themeId") ?? "");
   const [photo, setPhoto] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
@@ -20,6 +21,9 @@ export function EssayUploadPage() {
       const { essayId, upload } = await essayService.upload(themeId);
       await essayService.uploadPhoto(upload, photo);
       return essayId;
+    },
+    onSuccess: (essayId) => {
+      navigate(`/essays/${essayId}`);
     },
   });
 
@@ -38,23 +42,6 @@ export function EssayUploadPage() {
     event.preventDefault();
     if (!themeId || !photo) return;
     uploadMutation.mutate({ themeId, photo });
-  }
-
-  if (uploadMutation.isSuccess) {
-    return (
-      <main className="min-h-screen p-4">
-        <h1 className="text-2xl font-semibold text-gray-900">Redação enviada!</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Sua foto foi enviada e entrou na fila de Revisão. Assim que a Correção terminar, o resultado aparece no seu
-          histórico.
-        </p>
-        <p className="mt-6 text-sm">
-          <Link to="/themes" className="font-medium text-gray-900 underline">
-            Voltar para temas
-          </Link>
-        </p>
-      </main>
-    );
   }
 
   return (

@@ -72,6 +72,7 @@ Tire 1000 é uma plataforma web responsiva (mobile-first) onde o estudante fotog
 - Cada operação de negócio é um **caso de uso** (função ou classe) que recebe suas dependências por injeção: repositórios (acesso ao DynamoDB) e gateways (Cognito, Stripe, Gemini, S3, SQS, SNS). Handlers Lambda ficam finos — parseiam o evento, chamam o caso de uso, formatam a resposta — e não carregam lógica de negócio.
 - Casos de uso do MVP: `SignUpUser`, `RequestCreditsCheckout`, `ConfirmCreditsCheckout`, `GetCurrentUser`, `UploadEssay`, `ResendEssay`, `EnqueueEssayValidation`, `ValidateEssay`, `EvaluateEssay`, `ListThemes`, `GetTheme`, `ListTopics`, `ListUserEssays`, `GetEssayDetail`.
   - `GetCurrentUser` não estava na lista original — adicionado na ticket 04 pra resolver o usuário autenticado a partir do `sub` do JWT em `GET /users/me` (usado pela tela de saldo de créditos no front) e, internamente, em `RequestCreditsCheckout` (ver ADR-0006).
+  - `GetEssayDetail` foi implementado em duas partes: escopo mínimo (resultado da Revisão) na ticket 06, estendido na ticket 07 com texto/highlights/notas (ver ADR-0012).
 - Todo item da tabela DynamoDB carrega um atributo `type` (discriminador: `USER`, `THEME`, `TOPIC`, `REFERENCE_TEXT`, `ESSAY`, `ESSAY_EVALUATION`, `ESSAY_COST`, `CHECKOUT`), e `createdAt`/`updatedAt` em todas as entidades.
 - Identificadores de entidade são KSUID.
 
@@ -130,6 +131,7 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
   - Falha de sistema (após 3 tentativas): `status: VALIDATION_FAILED`, `fileKey: null`, crédito devolvido, mensagem vai pra DLQ de Revisão, alerta por email ao dev (CloudWatch + SNS).
   - Se `rejectedAttempts > 10`: alerta por email ao dev — sem outra ação automática.
 - Ao validar com sucesso, a redação segue pra fila de Avaliação.
+- `GET /essays/{essayId}` foi implementado já na ticket 06, com saída mínima (`id`, `status`, `rejectionReasons`, campos denormalizados do tema) só pra alimentar a tela de resultado da Revisão — o front não tem outro jeito de saber o desfecho de um `ValidateEssay` assíncrono. Ver "Leitura de redações" abaixo e ADR-0012.
 - `EvaluateEssay` (consumidor da fila de Avaliação): chama o Gemini com o texto + 5 prompts, um por competência (avaliadas independentemente), registra o custo estimado (`EssayCost`, `step: EVALUATION`).
   - Sucesso: grava `EssayEvaluation` (scores C1-C5 + final, highlights), `Essay.finalScore`, `status: SUCCESS`.
   - Falha de sistema (após 3 tentativas): `status: EVALUATION_FAILED`, **crédito não é devolvido** (ADR-0001), mensagem vai pra DLQ de Avaliação, alerta por email ao dev; a correção é reprocessar a mesma redação depois do reparo do erro (redrive da DLQ), não reembolsar.
@@ -143,8 +145,8 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 
 ### Leitura de redações
 
-- `GET /essays` (autenticado) — lista as redações do usuário logado, ordenadas pela ordem de envio.
-- `GET /essays/{essayId}` (autenticado, só o dono) — tema, data de envio, texto, highlights, avaliações das 5 competências e avaliação geral.
+- `GET /essays` (autenticado) — lista as redações do usuário logado, ordenadas pela ordem de envio. (ticket 07)
+- `GET /essays/{essayId}` (autenticado, só o dono) — implementado em duas partes: a ticket 06 entrega `id`, `status`, `rejectionReasons` e os campos denormalizados do tema (resultado da Revisão); a ticket 07 estende o mesmo endpoint com texto, highlights e avaliações das 5 competências + avaliação geral (ver ADR-0012).
 
 ## Testing Decisions
 
@@ -166,6 +168,6 @@ Notas sobre correções feitas em cima do modelo original (ver ADRs em `docs/adr
 ## Further Notes
 
 - Vocabulário do domínio (Correção, Revisão, Avaliação, Eixo) está em `CONTEXT.md` — usar esses termos em tickets, testes e código onde fizer sentido.
-- Decisões arquiteturais registradas: `docs/adr/0001-falha-na-avaliacao-nao-devolve-credito.md`, `docs/adr/0002-preco-do-credito-definido-no-stripe.md`, `docs/adr/0003-theme-sk-enemyear-opcional.md`, `docs/adr/0004-theme-topic-resolvido-em-runtime.md`, `docs/adr/0005-signup-cria-checkout-automatico.md`, `docs/adr/0006-user-resolvido-via-gsi2-por-externalid.md`, `docs/adr/0007-webhook-idempotente-via-update-condicional.md`.
+- Decisões arquiteturais registradas: `docs/adr/0001-falha-na-avaliacao-nao-devolve-credito.md`, `docs/adr/0002-preco-do-credito-definido-no-stripe.md`, `docs/adr/0003-theme-sk-enemyear-opcional.md`, `docs/adr/0004-theme-topic-resolvido-em-runtime.md`, `docs/adr/0005-signup-cria-checkout-automatico.md`, `docs/adr/0006-user-resolvido-via-gsi2-por-externalid.md`, `docs/adr/0007-webhook-idempotente-via-update-condicional.md`, `docs/adr/0008-user-resolvido-via-claim-de-access-token.md`, `docs/adr/0009-signup-checkout-e-opt-in-via-creditsqty.md`, `docs/adr/0010-role-dedicado-para-quebrar-ciclo-cognito-pretoken.md`, `docs/adr/0011-debito-de-credito-na-confirmacao-do-upload.md`, `docs/adr/0012-get-essay-detail-antecipado-para-a-ticket-06.md`.
 - Fontes primárias usadas pra montar este spec: ERD, diagrama de fluxo de cadastro, diagrama de fluxo de envio/reenvio de redação, `Access Patterns.html`, `Decisões.html`, `Table Design.html`, `Levantamento de requisitos.md`, e o design no Figma (mobile-first).
 - Stack: TypeScript, Lambda/SQS/SNS/DynamoDB/S3, Serverless Framework (**nenhum comando do Serverless deve ser executado por um agente — só o dev roda**), React + Tailwind + Axios no front, Vitest no backend.

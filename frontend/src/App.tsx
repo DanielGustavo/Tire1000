@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { CreditsPage } from "./pages/credits";
+import { EssayResultPage } from "./pages/essay-result";
 import { EssayUploadPage } from "./pages/essay-upload";
 import { HomePage } from "./pages/home";
 import { LoginPage } from "./pages/login";
@@ -16,6 +17,7 @@ function App() {
       <Route path="/themes" element={<ThemesPage />} />
       <Route path="/themes/:themeId" element={<ThemeDetailPage />} />
       <Route path="/essays/new" element={<EssayUploadPage />} />
+      <Route path="/essays/:essayId" element={<EssayResultPage />} />
       <Route path="/credits" element={<CreditsPage />} />
     </Routes>
   );

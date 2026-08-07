@@ -36,12 +36,21 @@ export class DynamoEssayRepository implements EssayRepository {
         new UpdateCommand({
           TableName: this.tableName,
           Key: { PK: essayPK(essay.userId), SK: essaySK(essay.id) },
-          UpdateExpression: "SET #status = :status, #fileKey = :fileKey, #textContent = :textContent, #updatedAt = :updatedAt",
+          UpdateExpression:
+            "SET #status = :status, #fileKey = :fileKey, #textContent = :textContent, " +
+            "#validationAttempts = :validationAttempts, #rejectedAttempts = :rejectedAttempts, " +
+            "#rejectionReasons = :rejectionReasons, #evaluationAttempts = :evaluationAttempts, " +
+            "#finalScore = :finalScore, #updatedAt = :updatedAt",
           ConditionExpression: "#status = :expectedCurrentStatus",
           ExpressionAttributeNames: {
             "#status": "status",
             "#fileKey": "fileKey",
             "#textContent": "textContent",
+            "#validationAttempts": "validationAttempts",
+            "#rejectedAttempts": "rejectedAttempts",
+            "#rejectionReasons": "rejectionReasons",
+            "#evaluationAttempts": "evaluationAttempts",
+            "#finalScore": "finalScore",
             "#updatedAt": "updatedAt",
           },
           ExpressionAttributeValues: {
@@ -49,6 +58,11 @@ export class DynamoEssayRepository implements EssayRepository {
             ":expectedCurrentStatus": expectedCurrentStatus,
             ":fileKey": essay.fileKey,
             ":textContent": essay.textContent,
+            ":validationAttempts": essay.validationAttempts,
+            ":rejectedAttempts": essay.rejectedAttempts,
+            ":rejectionReasons": essay.rejectionReasons,
+            ":evaluationAttempts": essay.evaluationAttempts,
+            ":finalScore": essay.finalScore,
             ":updatedAt": essay.updatedAt.toISOString(),
           },
         }),

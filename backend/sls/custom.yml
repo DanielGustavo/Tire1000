@@ -3,3 +3,6 @@ userPoolName: ${self:service}-${self:provider.stage}-user-pool
 essaysBucketName: ${self:service}-${self:provider.stage}-essays
 essayValidationQueueName: ${self:service}-${self:provider.stage}-essay-validation
 essayValidationDlqName: ${self:service}-${self:provider.stage}-essay-validation-dlq
+essayEvaluationQueueName: ${self:service}-${self:provider.stage}-essay-evaluation
+devAlertsTopicName: ${self:service}-${self:provider.stage}-dev-alerts
+devAlertEmail: ${env:DEV_ALERT_EMAIL, ''}

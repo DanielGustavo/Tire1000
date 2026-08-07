@@ -16,6 +16,15 @@ essaysResend:
         authorizer:
           name: cognitoAuthorizer
 
+essaysGet:
+  handler: src/main/handlers/essays/get-essay-detail.handler
+  events:
+    - httpApi:
+        path: /essays/{essayId}
+        method: get
+        authorizer:
+          name: cognitoAuthorizer
+
 # Invoked directly by the EssaysBucket's ObjectCreated notification — the bucket is created by
 # this same service (see resources/essays.yml), so `existing: true` tells Serverless to only
 # attach the notification, not to also manage the bucket itself.
@@ -26,3 +35,14 @@ essaysEnqueueValidation:
         bucket: ${self:custom.essaysBucketName}
         event: s3:ObjectCreated:*
         existing: true
+
+# Consumer of the fila de Revisão. batchSize: 1 so one essay's failure doesn't hold up another's.
+# Function timeout stays under the queue's VisibilityTimeout (60s, see resources/essays.yml) so a
+# message doesn't become visible to another poller while this invocation is still running.
+essaysValidate:
+  handler: src/main/handlers/essays/validate-essay.handler
+  timeout: 30
+  events:
+    - sqs:
+        arn: !GetAtt EssayValidationQueue.Arn
+        batchSize: 1

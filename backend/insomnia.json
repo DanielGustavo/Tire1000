@@ -414,6 +414,34 @@
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
       "_type": "request"
+    },
+    {
+      "_id": "req_essays_get",
+      "parentId": "fld_essays",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/essays/{{ _.essay_id }}",
+      "name": "Get Essay Detail",
+      "description": "Requer cognitoAuthorizer, só o dono da redação. Escopo da ticket 06: id, status, rejectionReasons e os campos denormalizados do tema — usado pela tela de resultado da Revisão pra saber se foi aprovada ou o motivo da rejeição. Ticket 07 estende esse mesmo endpoint com textContent, highlights e notas quando EvaluateEssay existir.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.access_token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -800,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
     }
   ]
 }

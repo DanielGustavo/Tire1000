@@ -24,6 +24,18 @@ export const ESSAY_PHOTO_MAX_SIZE_IN_BYTES = 10 * 1024 * 1024;
 /** Credits debited from the owning user when an essay's upload is confirmed (see EnqueueEssayValidation). */
 export const ESSAY_CREDIT_COST = 1;
 
+/**
+ * Mirrors the fila de Revisão's SQS RedrivePolicy (`maxReceiveCount: 3`, see sls/resources/essays.yml)
+ * so ValidateEssay can recognize its own final attempt and do terminal bookkeeping (VALIDATION_FAILED,
+ * refund, dev alert) on the same delivery SQS will use to move the message to the DLQ.
+ */
+export const MAX_ESSAY_VALIDATION_ATTEMPTS = 3;
+
+/** Threshold from the spec: past this many lifetime rejections, the dev is alerted (no automatic action). */
+export const ESSAY_REJECTED_ATTEMPTS_ALERT_THRESHOLD = 10;
+
+export type EssayRejectionReason = "ILLEGIBLE_HANDWRITING" | "LOW_LIGHTING" | "TOO_FEW_LINES" | "TOO_MANY_LINES";
+
 const ESSAY_FILE_KEY_PREFIX = "essays/";
 
 /** Deterministic per-essay S3 key, reused across resends (the previous object is gone by then — see spec). */
@@ -139,6 +151,47 @@ export class Essay extends Entity {
   /** Reached QUEUED but the credit debit lost the race against the user's balance — needs a reenvio. */
   markUploadFailed(): void {
     this.status = "UPLOAD_FAILED";
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Start (or retry) a Revisão attempt. Called once per SQS delivery of the fila de Revisão message —
+   * `validationAttempts` mirrors the delivery count so ValidateEssay can recognize its own last attempt
+   * (see MAX_ESSAY_VALIDATION_ATTEMPTS) without depending on SQS's own opaque receive count.
+   */
+  markValidating(): void {
+    this.status = "VALIDATING";
+    this.validationAttempts += 1;
+    this.updatedAt = new Date();
+  }
+
+  /** Gemini returned OCR'd text — Revisão passed, photo no longer needed. */
+  markValidated(textContent: string): void {
+    this.status = "VALIDATED";
+    this.textContent = textContent;
+    this.fileKey = null;
+    this.updatedAt = new Date();
+  }
+
+  /** Gemini rejected the photo (legibility/lighting/line count) — refundable, resendable. */
+  markRejected(reasons: EssayRejectionReason[]): void {
+    this.status = "REJECTED";
+    this.rejectedAttempts += 1;
+    this.validationAttempts = 0;
+    this.rejectionReasons = reasons;
+    this.fileKey = null;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Terminal system failure — the MAX_ESSAY_VALIDATION_ATTEMPTS-th attempt also failed. `validationAttempts`
+   * resets same as a rejection: a resend starts a fresh Revisão cycle and must not immediately look
+   * like it's already exhausted its attempts.
+   */
+  markValidationFailed(): void {
+    this.status = "VALIDATION_FAILED";
+    this.validationAttempts = 0;
+    this.fileKey = null;
     this.updatedAt = new Date();
   }
 }

@@ -11,9 +11,45 @@ export interface UploadEssayResponse {
   upload: PresignedUpload;
 }
 
+export type EssayStatus =
+  | "UPLOADING"
+  | "QUEUED"
+  | "UPLOAD_FAILED"
+  | "VALIDATING"
+  | "VALIDATION_FAILED"
+  | "REJECTED"
+  | "VALIDATED"
+  | "EVALUATING"
+  | "EVALUATION_FAILED"
+  | "SUCCESS";
+
+export interface Essay {
+  id: string;
+  status: EssayStatus;
+  rejectionReasons: string[];
+  themeId: string;
+  themeTitle: string;
+  topicColor: string;
+  createdAt: string;
+}
+
+export interface GetEssayDetailResponse {
+  essay: Essay;
+}
+
 class EssayService extends Service {
   async upload(themeId: string): Promise<UploadEssayResponse> {
     const { data } = await this.client.post<UploadEssayResponse>("/essays", { themeId });
+    return data;
+  }
+
+  async resend(essayId: string): Promise<UploadEssayResponse> {
+    const { data } = await this.client.post<UploadEssayResponse>(`/essays/${essayId}`);
+    return data;
+  }
+
+  async getById(essayId: string): Promise<GetEssayDetailResponse> {
+    const { data } = await this.client.get<GetEssayDetailResponse>(`/essays/${essayId}`);
     return data;
   }
 

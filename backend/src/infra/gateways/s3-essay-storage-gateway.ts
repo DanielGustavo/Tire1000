@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import type {
   CreatePresignedUploadInput,
@@ -23,5 +23,15 @@ export class S3EssayStorageGateway implements EssayStorageGateway {
     });
 
     return { url, fields };
+  }
+
+  async getObject(key: string): Promise<Buffer> {
+    const result = await this.client.send(new GetObjectCommand({ Bucket: this.bucketName, Key: key }));
+    const bytes = await result.Body?.transformToByteArray();
+    return Buffer.from(bytes ?? []);
+  }
+
+  async deleteObject(key: string): Promise<void> {
+    await this.client.send(new DeleteObjectCommand({ Bucket: this.bucketName, Key: key }));
   }
 }

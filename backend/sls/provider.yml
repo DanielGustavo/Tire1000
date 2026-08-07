@@ -14,6 +14,9 @@ environment:
   FRONTEND_URL: ${env:FRONTEND_URL, ''}
   ESSAYS_BUCKET_NAME: ${self:custom.essaysBucketName}
   ESSAY_VALIDATION_QUEUE_URL: !Ref EssayValidationQueue
+  ESSAY_EVALUATION_QUEUE_URL: !Ref EssayEvaluationQueue
+  DEV_ALERTS_TOPIC_ARN: !Ref DevAlertsTopic
+  GEMINI_API_KEY: ${env:GEMINI_API_KEY, ''}
 iam:
   role:
     statements:
@@ -40,10 +43,28 @@ iam:
         Action:
           - s3:PutObject
         Resource: !Sub ${EssaysBucket.Arn}/essays/*
+      # ValidateEssay fetches the photo for Gemini and deletes it once Revisão finishes.
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+          - s3:DeleteObject
+        Resource: !Sub ${EssaysBucket.Arn}/essays/*
       - Effect: Allow
         Action:
           - sqs:SendMessage
+        Resource:
+          - !GetAtt EssayValidationQueue.Arn
+          - !GetAtt EssayEvaluationQueue.Arn
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
         Resource: !GetAtt EssayValidationQueue.Arn
+      - Effect: Allow
+        Action:
+          - sns:Publish
+        Resource: !Ref DevAlertsTopic
 httpApi:
   cors: true
   authorizers:
