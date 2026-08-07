@@ -44,7 +44,7 @@ export class GeminiEssayEvaluationGateway implements EssayEvaluationGateway {
       scores[call.competency.id] = { score: call.data.score, evaluationText: call.data.evaluationText };
 
       for (const highlight of call.data.highlights) {
-        const located = locateHighlight(textContent, highlight.textContent);
+        const located = locateHighlight(textContent, highlight.quote);
         if (!located) continue;
         highlights.push({ type: call.competency.id, textContent: highlight.textContent, ...located });
       }

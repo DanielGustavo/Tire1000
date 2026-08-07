@@ -24,6 +24,10 @@ _Avoid_: Tópico
 Material de apoio (texto ou imagem) apresentado junto a um Tema, usado pelo estudante como base pra escrever a redação (entidade `ReferenceText`, tipo `REFERENCE_TEXT` no banco).
 _Avoid_: Texto de referência
 
+**Destaque**:
+Marca um trecho da redação que tirou nota ou merece atenção numa competência da Avaliação (entidade `EssayHighlight`). `anchorIndex`/`endIndex` localizam o trecho no texto original; `textContent` é o comentário do avaliador explicando o motivo, exibido só ao passar o mouse sobre o trecho.
+_Avoid_: tratar `textContent` como a citação/trecho em si — ele é o comentário sobre o trecho, não o trecho.
+
 **Fonte**:
 De onde a informação de um Texto motivador (ou de uma imagem dentro dele) foi extraída — pode ser uma URL, uma citação, ou outra referência textual. Não é tipografia, apesar do campo no código se chamar `font`. Cada imagem de um Texto motivador pode ter uma fonte própria, independente da fonte do texto geral.
 _Avoid_: Font

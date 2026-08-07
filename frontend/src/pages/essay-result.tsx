@@ -66,9 +66,12 @@ function buildHighlightedTextSegments(text: string, highlights: EssayHighlight[]
 function HighlightedText({ text, highlights }: { text: string; highlights: EssayHighlight[] }): ReactNode {
   return buildHighlightedTextSegments(text, highlights).map((segment, index) =>
     segment.highlight ? (
-      <mark key={index} style={{ backgroundColor: COMPETENCY_COLORS[segment.highlight.type] }} title={COMPETENCY_LABELS[segment.highlight.type]}>
-        {segment.text}
-      </mark>
+      <span key={index} className="group relative inline">
+        <mark style={{ backgroundColor: COMPETENCY_COLORS[segment.highlight.type] }}>{segment.text}</mark>
+        <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 w-max max-w-xs -translate-x-1/2 rounded-md bg-gray-900 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+          {segment.highlight.textContent}
+        </span>
+      </span>
     ) : (
       <span key={index}>{segment.text}</span>
     ),

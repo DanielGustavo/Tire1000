@@ -11,11 +11,14 @@ export const competencyScoreSchema = z.union([
 ]);
 
 /**
- * `textContent` deve ser uma citação literal (substring exata) do texto avaliado — o gateway calcula
+ * `quote` deve ser uma citação literal (substring exata) do texto avaliado — o gateway calcula
  * `anchorIndex`/`endIndex` localizando essa citação no texto original, em vez de pedir pro modelo contar
- * caracteres (pouco confiável). Ver GeminiEssayEvaluationGateway/locateHighlight.
+ * caracteres (pouco confiável), e depois descarta `quote` (o texto original já cobre isso). Ver
+ * GeminiEssayEvaluationGateway/locateHighlight. `textContent` é o comentário do avaliador explicando por
+ * que aquele trecho tirou nota ou merece atenção — é o que o usuário vê ao passar o mouse sobre o destaque.
  */
 export const evaluationHighlightResponseSchema = z.object({
+  quote: z.string().min(1),
   textContent: z.string().min(1),
 });
 

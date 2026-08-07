@@ -15,10 +15,11 @@ export type EssayEvaluationScores = Record<CompetencyId, CompetencyScore> & {
 };
 
 export interface EssayHighlight {
-  /** Competência a que o trecho se refere — embasa a nota/parecer daquela competência. */
+  /** Competência a que o trecho se refere — a competência que perdeu nota ou tem o ponto de atenção. */
   type: CompetencyId;
   anchorIndex: number;
   endIndex: number;
+  /** Comentário do avaliador explicando por que esse trecho tirou nota ou merece atenção — exibido ao usuário só ao passar o mouse sobre o destaque. */
   textContent: string;
 }
 

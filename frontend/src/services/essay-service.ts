@@ -46,6 +46,7 @@ export interface EssayHighlight {
   type: CompetencyId;
   anchorIndex: number;
   endIndex: number;
+  /** Comentário do avaliador explicando por que esse trecho tirou nota ou merece atenção — mostrado ao passar o mouse sobre o destaque. */
   textContent: string;
 }
 
