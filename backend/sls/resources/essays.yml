@@ -36,6 +36,7 @@ EssayValidationQueue:
   Properties:
     QueueName: ${self:custom.essayValidationQueueName}
     VisibilityTimeout: 60
+    ReceiveMessageWaitTimeSeconds: 20
     RedrivePolicy:
       deadLetterTargetArn: !GetAtt EssayValidationDLQ.Arn
       maxReceiveCount: 3
@@ -55,6 +56,7 @@ EssayEvaluationQueue:
   Properties:
     QueueName: ${self:custom.essayEvaluationQueueName}
     VisibilityTimeout: 60
+    ReceiveMessageWaitTimeSeconds: 20
     RedrivePolicy:
       deadLetterTargetArn: !GetAtt EssayEvaluationDLQ.Arn
       maxReceiveCount: 3
