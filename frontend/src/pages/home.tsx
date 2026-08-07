@@ -10,6 +10,9 @@ export function HomePage() {
       <Link to="/essays/new" className="text-sm font-medium text-gray-900 underline">
         Enviar redação
       </Link>
+      <Link to="/essays" className="text-sm font-medium text-gray-900 underline">
+        Minhas redações
+      </Link>
       <Link to="/credits" className="text-sm font-medium text-gray-900 underline">
         Meus créditos
       </Link>

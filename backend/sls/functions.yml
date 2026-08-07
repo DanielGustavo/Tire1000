@@ -15,7 +15,9 @@ creditsWebhook: ${file(sls/functions/credits.yml):creditsWebhook}
 essaysUpload: ${file(sls/functions/essays.yml):essaysUpload}
 essaysResend: ${file(sls/functions/essays.yml):essaysResend}
 essaysGet: ${file(sls/functions/essays.yml):essaysGet}
+essaysList: ${file(sls/functions/essays.yml):essaysList}
 essaysEnqueueValidation: ${file(sls/functions/essays.yml):essaysEnqueueValidation}
 essaysValidate: ${file(sls/functions/essays.yml):essaysValidate}
+essaysEvaluate: ${file(sls/functions/essays.yml):essaysEvaluate}
 # Further functions are added by feature tickets as they implement endpoints/consumers.
 # Authenticated routes attach the `cognitoAuthorizer` defined in provider.yml.

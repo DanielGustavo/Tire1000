@@ -17,6 +17,8 @@ const FAKE_OUTPUT: GetEssayDetailOutput = {
     themeTitle: "Educação financeira",
     topicColor: "#2E7D32",
     createdAt: "2026-08-01T00:00:00.000Z",
+    textContent: null,
+    evaluation: null,
   },
 };
 

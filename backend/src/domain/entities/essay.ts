@@ -31,6 +31,14 @@ export const ESSAY_CREDIT_COST = 1;
  */
 export const MAX_ESSAY_VALIDATION_ATTEMPTS = 3;
 
+/**
+ * Mirrors the fila de Avaliação's SQS RedrivePolicy (`maxReceiveCount: 3`, see sls/resources/essays.yml)
+ * — same reasoning as MAX_ESSAY_VALIDATION_ATTEMPTS, but for EvaluateEssay. Unlike Revisão, a terminal
+ * failure here does **not** refund the credit (ADR-0001) — the essay is reprocessed via DLQ redrive
+ * once the error is fixed, not resent by the user.
+ */
+export const MAX_ESSAY_EVALUATION_ATTEMPTS = 3;
+
 /** Threshold from the spec: past this many lifetime rejections, the dev is alerted (no automatic action). */
 export const ESSAY_REJECTED_ATTEMPTS_ALERT_THRESHOLD = 10;
 
@@ -202,6 +210,35 @@ export class Essay extends Entity {
     this.status = "VALIDATION_FAILED";
     this.validationAttempts = 0;
     this.fileKey = null;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Start (or retry) an Avaliação attempt. Called once per SQS delivery of the fila de Avaliação
+   * message — same reasoning as `markValidating`, `evaluationAttempts` mirrors delivery count.
+   */
+  markEvaluating(): void {
+    this.status = "EVALUATING";
+    this.evaluationAttempts += 1;
+    this.updatedAt = new Date();
+  }
+
+  /** Gemini scored all 5 competências — Avaliação (and the whole Correção) is done. */
+  markEvaluated(finalScore: number): void {
+    this.status = "SUCCESS";
+    this.finalScore = finalScore;
+    this.updatedAt = new Date();
+  }
+
+  /**
+   * Terminal system failure — the MAX_ESSAY_EVALUATION_ATTEMPTS-th attempt also failed. No credit
+   * refund (ADR-0001): the fix is reprocessing this same essay from its already-extracted textContent
+   * after the team repairs the error, not a resend. `evaluationAttempts` resets so that reprocessing
+   * (status flipped back to VALIDATED as part of the manual fix) starts a fresh attempt count.
+   */
+  markEvaluationFailed(): void {
+    this.status = "EVALUATION_FAILED";
+    this.evaluationAttempts = 0;
     this.updatedAt = new Date();
   }
 }

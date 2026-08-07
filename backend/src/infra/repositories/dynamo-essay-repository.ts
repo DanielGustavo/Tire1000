@@ -30,6 +30,20 @@ export class DynamoEssayRepository implements EssayRepository {
     return item ? fromEssayItem(item as EssayItem) : null;
   }
 
+  async listByUserId(userId: string): Promise<Essay[]> {
+    const result = await this.documentClient.send(
+      new QueryCommand({
+        TableName: this.tableName,
+        KeyConditionExpression: "PK = :pk AND begins_with(SK, :essayPrefix)",
+        ExpressionAttributeValues: { ":pk": essayPK(userId), ":essayPrefix": "ESSAY#" },
+        // Essay ids are KSUIDs, so SK order mirrors submission order — newest first.
+        ScanIndexForward: false,
+      }),
+    );
+
+    return (result.Items ?? []).map((item) => fromEssayItem(item as EssayItem));
+  }
+
   async updateStatus(essay: Essay, { expectedCurrentStatus }: { expectedCurrentStatus: EssayStatus }): Promise<{ applied: boolean }> {
     try {
       await this.documentClient.send(

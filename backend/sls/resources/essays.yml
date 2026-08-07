@@ -40,14 +40,24 @@ EssayValidationQueue:
       deadLetterTargetArn: !GetAtt EssayValidationDLQ.Arn
       maxReceiveCount: 3
 
-# Fila de Avaliação — ValidateEssay (ticket 06) produces here on a VALIDATED essay; EvaluateEssay
-# (ticket 07) is the consumer. No dedicated DLQ yet: EvaluateEssay's own failure handling (ADR-0001,
-# no refund) lands in ticket 07 alongside the queue's consumer.
+# Fila de Avaliação — ValidateEssay produces here on a VALIDATED essay; EvaluateEssay (ticket 07) is
+# the consumer. Same RedrivePolicy shape as EssayValidationQueue (maxReceiveCount: 3, matching
+# MAX_ESSAY_EVALUATION_ATTEMPTS) — a message that fails 3 deliveries lands in EssayEvaluationDLQ for
+# the team to fix and redrive (ADR-0001: no credit refund, reprocess the same essay instead).
+EssayEvaluationDLQ:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:custom.essayEvaluationDlqName}
+    MessageRetentionPeriod: 1209600 # 14 dias
+
 EssayEvaluationQueue:
   Type: AWS::SQS::Queue
   Properties:
     QueueName: ${self:custom.essayEvaluationQueueName}
     VisibilityTimeout: 60
+    RedrivePolicy:
+      deadLetterTargetArn: !GetAtt EssayEvaluationDLQ.Arn
+      maxReceiveCount: 3
 
 # Dev-facing alerts (ValidateEssay's system-failure/rejection-threshold branches, spec's stories 31-32).
 # Reused as-is by EvaluateEssay in ticket 07 for the same kind of alert on the fila de Avaliação.

@@ -4,5 +4,6 @@ essaysBucketName: ${self:service}-${self:provider.stage}-essays
 essayValidationQueueName: ${self:service}-${self:provider.stage}-essay-validation
 essayValidationDlqName: ${self:service}-${self:provider.stage}-essay-validation-dlq
 essayEvaluationQueueName: ${self:service}-${self:provider.stage}-essay-evaluation
+essayEvaluationDlqName: ${self:service}-${self:provider.stage}-essay-evaluation-dlq
 devAlertsTopicName: ${self:service}-${self:provider.stage}-dev-alerts
 devAlertEmail: ${env:DEV_ALERT_EMAIL, ''}

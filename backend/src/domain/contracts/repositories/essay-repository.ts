@@ -4,6 +4,8 @@ export interface EssayRepository {
   create(essay: Essay): Promise<Essay>;
   /** Resolved by essayId alone (GSI1), independent of the owning userId — see spec's model. */
   findById(essayId: string): Promise<Essay | null>;
+  /** Every essay the user has sent, most recent submission first (KSUID ids sort chronologically). */
+  listByUserId(userId: string): Promise<Essay[]>;
   /**
    * Persists essay's current status/fileKey/textContent/updatedAt, conditioned on the stored
    * status still being `expectedCurrentStatus`. `applied: false` means the stored status had

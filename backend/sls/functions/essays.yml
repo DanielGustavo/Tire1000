@@ -25,6 +25,15 @@ essaysGet:
         authorizer:
           name: cognitoAuthorizer
 
+essaysList:
+  handler: src/main/handlers/essays/list-user-essays.handler
+  events:
+    - httpApi:
+        path: /essays
+        method: get
+        authorizer:
+          name: cognitoAuthorizer
+
 # Invoked directly by the EssaysBucket's ObjectCreated notification — the bucket is created by
 # this same service (see resources/essays.yml), so `existing: true` tells Serverless to only
 # attach the notification, not to also manage the bucket itself.
@@ -45,4 +54,15 @@ essaysValidate:
   events:
     - sqs:
         arn: !GetAtt EssayValidationQueue.Arn
+        batchSize: 1
+
+# Consumer of the fila de Avaliação. batchSize: 1, same reasoning as essaysValidate. Timeout stays
+# under the queue's VisibilityTimeout (60s, see resources/essays.yml) — 5 concurrent Gemini calls
+# (one per competência) fit comfortably inside it.
+essaysEvaluate:
+  handler: src/main/handlers/essays/evaluate-essay.handler
+  timeout: 30
+  events:
+    - sqs:
+        arn: !GetAtt EssayEvaluationQueue.Arn
         batchSize: 1

@@ -33,8 +33,38 @@ export interface Essay {
   createdAt: string;
 }
 
+export type CompetencyId = "C1" | "C2" | "C3" | "C4" | "C5";
+
+export interface CompetencyScore {
+  score: number;
+  evaluationText: string;
+}
+
+export type EssayEvaluationScores = Record<CompetencyId, CompetencyScore> & { final: CompetencyScore };
+
+export interface EssayHighlight {
+  type: CompetencyId;
+  anchorIndex: number;
+  endIndex: number;
+  textContent: string;
+}
+
+export interface EssayEvaluation {
+  scores: EssayEvaluationScores;
+  highlights: EssayHighlight[];
+}
+
+export interface EssayDetail extends Essay {
+  textContent: string | null;
+  evaluation: EssayEvaluation | null;
+}
+
 export interface GetEssayDetailResponse {
-  essay: Essay;
+  essay: EssayDetail;
+}
+
+export interface ListUserEssaysResponse {
+  essays: Essay[];
 }
 
 class EssayService extends Service {
@@ -50,6 +80,11 @@ class EssayService extends Service {
 
   async getById(essayId: string): Promise<GetEssayDetailResponse> {
     const { data } = await this.client.get<GetEssayDetailResponse>(`/essays/${essayId}`);
+    return data;
+  }
+
+  async list(): Promise<ListUserEssaysResponse> {
+    const { data } = await this.client.get<ListUserEssaysResponse>("/essays");
     return data;
   }
 

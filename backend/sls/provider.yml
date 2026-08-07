@@ -60,7 +60,9 @@ iam:
           - sqs:ReceiveMessage
           - sqs:DeleteMessage
           - sqs:GetQueueAttributes
-        Resource: !GetAtt EssayValidationQueue.Arn
+        Resource:
+          - !GetAtt EssayValidationQueue.Arn
+          - !GetAtt EssayEvaluationQueue.Arn
       - Effect: Allow
         Action:
           - sns:Publish

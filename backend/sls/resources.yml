@@ -9,6 +9,7 @@ Resources:
   EssaysBucket: ${file(sls/resources/essays.yml):EssaysBucket}
   EssayValidationDLQ: ${file(sls/resources/essays.yml):EssayValidationDLQ}
   EssayValidationQueue: ${file(sls/resources/essays.yml):EssayValidationQueue}
+  EssayEvaluationDLQ: ${file(sls/resources/essays.yml):EssayEvaluationDLQ}
   EssayEvaluationQueue: ${file(sls/resources/essays.yml):EssayEvaluationQueue}
   DevAlertsTopic: ${file(sls/resources/essays.yml):DevAlertsTopic}
   DevAlertsSubscription: ${file(sls/resources/essays.yml):DevAlertsSubscription}

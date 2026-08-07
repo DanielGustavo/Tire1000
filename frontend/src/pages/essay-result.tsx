@@ -1,8 +1,8 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../libs/axios";
-import { essayService, type EssayStatus } from "../services/essay-service";
+import { essayService, type CompetencyId, type EssayEvaluation, type EssayHighlight, type EssayStatus } from "../services/essay-service";
 
 const MAX_PHOTO_SIZE_IN_BYTES = 10 * 1024 * 1024;
 
@@ -16,9 +16,108 @@ const REJECTION_REASON_LABELS: Record<string, string> = {
   TOO_MANY_LINES: "Mais de 30 linhas",
 };
 
+const COMPETENCY_IDS: CompetencyId[] = ["C1", "C2", "C3", "C4", "C5"];
+
+const COMPETENCY_LABELS: Record<CompetencyId, string> = {
+  C1: "Competência I — Domínio da norma culta",
+  C2: "Competência II — Compreensão do tema",
+  C3: "Competência III — Argumentação",
+  C4: "Competência IV — Coesão textual",
+  C5: "Competência V — Proposta de intervenção",
+};
+
+const COMPETENCY_COLORS: Record<CompetencyId, string> = {
+  C1: "#FDE68A",
+  C2: "#BFDBFE",
+  C3: "#BBF7D0",
+  C4: "#FBCFE8",
+  C5: "#DDD6FE",
+};
+
 // Still going through the fila de Revisão — keep polling.
-const PENDING_STATUSES: EssayStatus[] = ["UPLOADING", "QUEUED", "VALIDATING"];
+const VALIDATING_STATUSES: EssayStatus[] = ["UPLOADING", "QUEUED", "VALIDATING"];
+// Revisão passed, still going through the fila de Avaliação — keep polling.
+const EVALUATING_STATUSES: EssayStatus[] = ["VALIDATED", "EVALUATING"];
+const PENDING_STATUSES: EssayStatus[] = [...VALIDATING_STATUSES, ...EVALUATING_STATUSES];
 const RESENDABLE_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
+
+interface HighlightedTextSegment {
+  text: string;
+  highlight: EssayHighlight | null;
+}
+
+/** Splits `text` around non-overlapping highlight ranges, sorted by position — later overlapping ranges are dropped. */
+function buildHighlightedTextSegments(text: string, highlights: EssayHighlight[]): HighlightedTextSegment[] {
+  const sorted = [...highlights].sort((a, b) => a.anchorIndex - b.anchorIndex);
+  const segments: HighlightedTextSegment[] = [];
+  let cursor = 0;
+
+  for (const highlight of sorted) {
+    if (highlight.anchorIndex < cursor) continue;
+    if (highlight.anchorIndex > cursor) segments.push({ text: text.slice(cursor, highlight.anchorIndex), highlight: null });
+    segments.push({ text: text.slice(highlight.anchorIndex, highlight.endIndex), highlight });
+    cursor = highlight.endIndex;
+  }
+
+  if (cursor < text.length) segments.push({ text: text.slice(cursor), highlight: null });
+  return segments;
+}
+
+function HighlightedText({ text, highlights }: { text: string; highlights: EssayHighlight[] }): ReactNode {
+  return buildHighlightedTextSegments(text, highlights).map((segment, index) =>
+    segment.highlight ? (
+      <mark key={index} style={{ backgroundColor: COMPETENCY_COLORS[segment.highlight.type] }} title={COMPETENCY_LABELS[segment.highlight.type]}>
+        {segment.text}
+      </mark>
+    ) : (
+      <span key={index}>{segment.text}</span>
+    ),
+  );
+}
+
+function EssayEvaluationSummary({ evaluation, textContent }: { evaluation: EssayEvaluation; textContent: string | null }) {
+  return (
+    <div className="mt-4 space-y-6">
+      <div className="rounded-md border border-gray-200 p-4">
+        <p className="text-3xl font-semibold text-gray-900">
+          {evaluation.scores.final.score}
+          <span className="text-base font-normal text-gray-500"> / 1000</span>
+        </p>
+        <p className="mt-2 whitespace-pre-line text-sm text-gray-700">{evaluation.scores.final.evaluationText}</p>
+      </div>
+
+      {textContent && (
+        <div className="rounded-md border border-gray-200 p-4">
+          <h2 className="text-sm font-medium text-gray-900">Sua redação</h2>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-gray-800">
+            <HighlightedText text={textContent} highlights={evaluation.highlights} />
+          </p>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {COMPETENCY_IDS.map((competencyId) => {
+          const competency = evaluation.scores[competencyId];
+          return (
+            <div key={competencyId} className="rounded-md border border-gray-200 p-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-gray-900">
+                  <span
+                    className="mr-2 inline-block h-2.5 w-2.5 rounded-full align-middle"
+                    style={{ backgroundColor: COMPETENCY_COLORS[competencyId] }}
+                  />
+                  {COMPETENCY_LABELS[competencyId]}
+                </h3>
+                <span className="text-sm font-semibold text-gray-900">{competency.score} / 200</span>
+              </div>
+              <p className="mt-2 text-sm text-gray-700">{competency.evaluationText}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export function EssayResultPage() {
   const { essayId } = useParams<{ essayId: string }>();
@@ -84,16 +183,15 @@ export function EssayResultPage() {
     <main className="min-h-screen p-4">
       <h1 className="text-2xl font-semibold text-gray-900">{essay.themeTitle}</h1>
 
-      {PENDING_STATUSES.includes(essay.status) && (
+      {VALIDATING_STATUSES.includes(essay.status) && (
         <p className="mt-2 text-sm text-gray-600">
           Sua redação está sendo revisada — checando letra, iluminação e contagem de linhas. Essa página atualiza sozinha.
         </p>
       )}
 
-      {essay.status === "VALIDATED" && (
-        <p className="mt-2 text-sm text-green-700">
-          Aprovada na Revisão! Sua redação entrou na fila de Avaliação — o resultado completo aparece no seu histórico assim que
-          terminar.
+      {EVALUATING_STATUSES.includes(essay.status) && (
+        <p className="mt-2 text-sm text-gray-600">
+          Aprovada na Revisão! Sua redação está sendo avaliada nas 5 competências do Enem. Essa página atualiza sozinha.
         </p>
       )}
 
@@ -106,6 +204,17 @@ export function EssayResultPage() {
             ))}
           </ul>
         </div>
+      )}
+
+      {essay.status === "EVALUATION_FAILED" && (
+        <p className="mt-2 text-sm text-red-600">
+          Tivemos uma falha técnica ao avaliar sua redação. Seu crédito não é devolvido nesse caso — nosso time vai reprocessar a
+          mesma redação assim que o problema for corrigido.
+        </p>
+      )}
+
+      {essay.status === "SUCCESS" && essay.evaluation && (
+        <EssayEvaluationSummary evaluation={essay.evaluation} textContent={essay.textContent} />
       )}
 
       {essay.status === "VALIDATION_FAILED" && (
@@ -153,7 +262,10 @@ export function EssayResultPage() {
         </form>
       )}
 
-      <p className="mt-6 text-sm">
+      <p className="mt-6 space-x-4 text-sm">
+        <Link to="/essays" className="font-medium text-gray-900 underline">
+          Minhas redações
+        </Link>
         <Link to="/themes" className="font-medium text-gray-900 underline">
           Voltar para temas
         </Link>
