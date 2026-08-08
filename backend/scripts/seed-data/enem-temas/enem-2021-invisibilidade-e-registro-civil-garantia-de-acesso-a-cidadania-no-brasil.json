@@ -1,0 +1,41 @@
+{
+  "title": "Invisibilidade e registro civil: garantia de acesso à cidadania no Brasil",
+  "enemYear": 2021,
+  "topic": "Direitos Humanos e Minorias",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "Disponível em: ESCÓSSIA, F. M. Invisíveis: uma etnografia sobre identidade, direitos e cidadania nas trajetórias de brasileiros sem documento. Tese (Doutorado em História, Política e Bens Culturais). Fundação Getúlio Vargas. Rio de Janeiro. 2019.",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Toda sexta-feira, o ônibus azul e branco estacionado no pátio da Vara da Infância e da Juventude, na Praça Onze, Centro do Rio, sacoleja com o entra e sai de gente a partir das 9h. Do lado de fora, nunca menos de 50 pessoas, todas pobres ou muito pobres, quase todas negras, cercam o veículo, perguntam, sentam e levantam, perguntam de novo e esperam sem reclamar o tempo que for preciso. Adultos, velhos e crianças estão ali para conseguir o que, no Brasil, é oficialmente reconhecido como o primeiro documento da vida - a certidão de nascimento. (...)"
+        },
+        {
+          "type": "TEXT",
+          "content": "Ao longo do discurso desses entrevistados, fica clara a forma como os usuários se definem: \"zero à esquerda\", \"cachorro\", \"um nada\", \"pessoa que não existe\", entre outras, todas são expressões que conformam claramente a ideia da pessoa sem registro de nascimento sobre si mesma como uma pessoa sem valor, cuja existência nunca foi oficialmente reconhecida pelo Estado."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 2",
+      "font": "Disponível em: https://estudio.r7.com/os-invisiveis-10082020 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "A Lei de número 9534 de 1997 tornou o registro de nascimento gratuito no Brasil. Só que o problema persiste, mostrando que essa exclusão é complexa e não se explica apenas pela dificuldade financeira em pagar pelo registro, por exemplo."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 3",
+      "font": "Disponível em: https://www2.senado.leg.br/bdsf/handle/id/70224 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "A certidão de nascimento é o primeiro e o mais importante documento do cidadão. Com ele, a pessoa existe oficialmente para o Estado e a sociedade. Só de posse da certidão é possível retirar outros documentos civis, como a carteira de trabalho, a carteira de identidade, o título de eleitor e o Cadastro de Pessoa Física (CPF). Além disso, para matricular uma criança na escola e ter acesso a benefícios sociais, a apresentação do documento é obrigatória."
+        }
+      ]
+    }
+  ]
+}

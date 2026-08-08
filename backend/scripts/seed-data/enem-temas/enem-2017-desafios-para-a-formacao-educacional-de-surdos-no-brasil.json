@@ -1,0 +1,65 @@
+{
+  "title": "Desafios para a formação educacional de surdos no Brasil",
+  "enemYear": 2017,
+  "topic": "Educação",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "BRASIL. Lei nº 13.146, de 6 de julho de 2015. Disponível em: www.planalto.gov.br. Acesso em: 9 jun. 2017 (fragmento).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "CAPÍTULO IV"
+        },
+        {
+          "type": "TEXT",
+          "content": "DO DIREITO À EDUCAÇÃO"
+        },
+        {
+          "type": "TEXT",
+          "content": "Art. 27. A educação constitui direito da pessoa com deficiência, assegurados sistema de educação inclusivo em todos os níveis e aprendizado ao longo de toda a vida, de forma a alcançar o máximo desenvolvimento possível de seus talentos e habilidades físicas, sensoriais, intelectuais e sociais, segundo suas características, interesses e necessidades de aprendizagem."
+        },
+        {
+          "type": "TEXT",
+          "content": "Parágrafo único. É dever do Estado, da família, da comunidade escolar e da sociedade assegurar educação de qualidade à pessoa com deficiência, colocando-a a salvo de toda forma de violência, negligência e discriminação."
+        },
+        {
+          "type": "TEXT",
+          "content": "Art. 28. Incumbe ao poder público assegurar, criar, desenvolver, implementar, incentivar, acompanhar e avaliar: […]"
+        },
+        {
+          "type": "TEXT",
+          "content": "IV – oferta de educação bilíngue, em Libras como primeira língua e na modalidade escrita da língua portuguesa como segunda língua, em escolas e classes bilíngues e em escolas inclusivas; […]"
+        },
+        {
+          "type": "TEXT",
+          "content": "XII – oferta de ensino da Libras, do Sistema Braille e de uso de recursos de tecnologia assistiva, de forma a ampliar habilidades funcionais dos estudantes, promovendo sua autonomia e participação."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 2",
+      "font": "Fonte: Inep.",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Matrículas de Surdos na Educação Básica – Educação Especial"
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 3",
+      "font": "Disponível em: www.brasil.gov.br. Acesso em: 9 jun. 2017 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "No Brasil, os surdos só começaram a ter acesso à educação durante o Império, no governo de Dom Pedro II, que criou a primeira escola de educação de meninos surdos, em 26 de setembro de 1857, na antiga capital do País, o Rio de Janeiro. Hoje, no lugar da escola funciona o Instituto Nacional de Educação de Surdos (Ines). Por isso, a data foi escolhida como Dia do Surdo."
+        },
+        {
+          "type": "TEXT",
+          "content": "Contudo, foi somente em 2002, por meio da sanção da Lei nº 10.436, que a Língua Brasileira de Sinais (Libras) foi reconhecida como segunda língua oficial no País. A legislação determinou também que devem ser garantidas, por parte do poder público em geral e empresas concessionárias de serviços públicos, formas institucionalizadas de apoiar o uso e difusão da Libras como meio de comunicação objetiva."
+        }
+      ]
+    }
+  ]
+}

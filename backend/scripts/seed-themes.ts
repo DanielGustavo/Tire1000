@@ -1,7 +1,12 @@
 /**
- * Seeds sample ThemeTopics (Eixos), Themes, and ReferenceTexts directly into the
- * DynamoDB table, bypassing the (deliberately read-only) application layer — cadastro
- * de temas/eixos é manual, direto no banco (see .scratch/tire1000-mvp/spec.md).
+ * Seeds ThemeTopics (Eixos), Themes, and ReferenceTexts directly into the DynamoDB table,
+ * bypassing the (deliberately read-only) application layer — cadastro de temas/eixos é
+ * manual, direto no banco (see .scratch/tire1000-mvp/spec.md).
+ *
+ * Theme/reference-text content comes from `scripts/seed-data/enem-temas/*.json`, scraped
+ * from provas reais do ENEM (see backend/scripts/seed-data/enem-temas). Eixos are the 8
+ * canonical ones defined for the product; colors reuse the DS palette (frontend/src/index.css)
+ * since there's no eixo-specific color in Figma.
  *
  * Usage (run by a developer, never by an agent — this writes to the real table):
  *   TABLE_NAME=tire1000-dev-MainTable pnpm seed:themes
@@ -9,12 +14,15 @@
  * For a local DynamoDB, also set AWS_ENDPOINT_URL (read natively by the AWS SDK), e.g.:
  *   TABLE_NAME=tire1000-local-MainTable AWS_ENDPOINT_URL=http://localhost:8000 pnpm seed:themes
  */
+import { readFileSync, readdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import KSUID from "ksuid";
 import { Theme } from "../src/domain/entities/theme.js";
 import { ThemeTopic } from "../src/domain/entities/theme-topic.js";
-import { ReferenceText } from "../src/domain/entities/reference-text.js";
+import { ReferenceText, ReferenceTextParagraph } from "../src/domain/entities/reference-text.js";
 import { toThemeItem } from "../src/infra/db/dynamodb/items/theme-item.js";
 import { toThemeTopicItem } from "../src/infra/db/dynamodb/items/theme-topic-item.js";
 import { toReferenceTextItem } from "../src/infra/db/dynamodb/items/reference-text-item.js";
@@ -30,67 +38,85 @@ async function id(): Promise<string> {
   return (await KSUID.random()).string;
 }
 
+// Os 8 eixos canônicos do produto. Cores reaproveitadas da paleta do DS (frontend/src/index.css)
+// já que não existe uma cor de eixo definida no Figma.
+const TOPIC_COLORS: Record<string, string> = {
+  "Sociedade, Cultura e Comportamento": "#EF80BD", // pink-300
+  "Ciência e Tecnologia": "#7AD3FF", // info-300
+  "Educação": "#25E283", // primary-300
+  "Meio Ambiente e Sustentabilidade": "#81EEB7", // primary-100
+  "Saúde e Bem-Estar": "#FFED7A", // alert-100
+  "Direitos Humanos e Minorias": "#EF8D80", // error-100
+  "Economia, Trabalho e Desenvolvimento": "#FFE01A", // alert-300
+  "Segurança Pública e Violência": "#E33A24", // error-300
+};
+
+interface EnemReferenceTextJson {
+  title: string;
+  font?: string;
+  paragraphs: ReferenceTextParagraph[];
+}
+
+interface EnemThemeJson {
+  title: string;
+  enemYear: number | null;
+  topic: string;
+  referenceTexts: EnemReferenceTextJson[];
+}
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const enemThemesDir = join(__dirname, "seed-data", "enem-temas");
+
+function loadEnemThemes(): EnemThemeJson[] {
+  return readdirSync(enemThemesDir)
+    .filter((file) => file.endsWith(".json"))
+    .map((file) => JSON.parse(readFileSync(join(enemThemesDir, file), "utf-8")) as EnemThemeJson);
+}
+
 async function main() {
   const now = new Date();
+  const enemThemesJson = loadEnemThemes();
 
-  const topics = [
-    // Cores da paleta de exemplo do Figma para os cards de tema/redação (tokens `primary-100`/`info-300`/`error-100`
-    // do design system, ver frontend/src/index.css) — o Figma não usa uma cor "de eixo" fixa por tópico, só ilustra
-    // com essa paleta, então seguimos ela em vez de inventar uma cor fora do DS.
-    ThemeTopic.reconstitute({ id: await id(), title: "Meio ambiente", color: "#81EEB7", createdAt: now, updatedAt: now }),
-    ThemeTopic.reconstitute({ id: await id(), title: "Tecnologia", color: "#7AD3FF", createdAt: now, updatedAt: now }),
-    ThemeTopic.reconstitute({ id: await id(), title: "Cidadania", color: "#EF8D80", createdAt: now, updatedAt: now }),
-  ];
+  const topicNames = [...new Set(enemThemesJson.map((theme) => theme.topic))];
+  const topicsByName = new Map<string, ThemeTopic>();
+  for (const name of topicNames) {
+    const color = TOPIC_COLORS[name];
+    if (!color) throw new Error(`Cor não definida para o eixo "${name}" — atualize TOPIC_COLORS.`);
+    topicsByName.set(name, ThemeTopic.reconstitute({ id: await id(), title: name, color, createdAt: now, updatedAt: now }));
+  }
+  const topics = [...topicsByName.values()];
 
-  const themes = [
-    Theme.reconstitute({
-      id: await id(),
-      title: "Desafios para a valorização de comunidades e povos tradicionais no Brasil",
-      enemYear: 2023,
-      topicId: topics[0]!.id,
-      createdAt: now,
-      updatedAt: now,
-    }),
-    Theme.reconstitute({
-      id: await id(),
-      title: "Invisibilidade e registro civil: garantia de acesso à cidadania no Brasil",
-      enemYear: 2022,
-      topicId: topics[2]!.id,
-      createdAt: now,
-      updatedAt: now,
-    }),
-    Theme.reconstitute({
-      id: await id(),
-      title: "Os desafios da regulação da inteligência artificial no Brasil",
-      enemYear: null,
-      topicId: topics[1]!.id,
-      createdAt: now,
-      updatedAt: now,
-    }),
-  ];
+  const themes: Theme[] = [];
+  const referenceTexts: ReferenceText[] = [];
 
-  const referenceTexts = [
-    ReferenceText.reconstitute({
+  for (const themeJson of enemThemesJson) {
+    const topic = topicsByName.get(themeJson.topic);
+    if (!topic) throw new Error(`Eixo "${themeJson.topic}" não encontrado para o tema "${themeJson.title}".`);
+
+    const theme = Theme.reconstitute({
       id: await id(),
-      title: "Texto motivador 1",
-      font: "serif",
-      paragraphs: [
-        { type: "TEXT", content: "O reconhecimento de comunidades e povos tradicionais é um processo recente..." },
-      ],
-      themeId: themes[0]!.id,
+      title: themeJson.title,
+      enemYear: themeJson.enemYear,
+      topicId: topic.id,
       createdAt: now,
       updatedAt: now,
-    }),
-    ReferenceText.reconstitute({
-      id: await id(),
-      title: "Texto motivador 2",
-      font: "serif",
-      paragraphs: [{ type: "IMAGE", content: { fileKey: "seed/mapa-comunidades.png", font: "sans-serif" } }],
-      themeId: themes[0]!.id,
-      createdAt: now,
-      updatedAt: now,
-    }),
-  ];
+    });
+    themes.push(theme);
+
+    for (const referenceTextJson of themeJson.referenceTexts) {
+      referenceTexts.push(
+        ReferenceText.reconstitute({
+          id: await id(),
+          title: referenceTextJson.title,
+          font: referenceTextJson.font ?? "",
+          paragraphs: referenceTextJson.paragraphs,
+          themeId: theme.id,
+          createdAt: now,
+          updatedAt: now,
+        }),
+      );
+    }
+  }
 
   for (const topic of topics) {
     await documentClient.send(new PutCommand({ TableName: tableName, Item: toThemeTopicItem(topic) }));

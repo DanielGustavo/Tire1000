@@ -1,0 +1,17 @@
+{
+  "title": "A persistência da violência contra a mulher na sociedade brasileira",
+  "enemYear": 2015,
+  "topic": "Segurança Pública e Violência",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "WALSELFISZ, J. J. Mapa da Violência 2012. Atualização: Homicídio de mulheres no Brasil. Disponível em: www.mapadaviolencia.org.br. Acesso em: 8 jun. 2015.",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Nos 30 anos decorridos entre 1980 e 2010 foram assassinadas no país acima de 92 mil mulheres, 43,7 mil só na última década. O número de mortes nesse período passou de 1.353 para 4.465, que representa um aumento de 230%, mais que triplicando o quantitativo de mulheres vítimas de assassinato no país."
+        }
+      ]
+    }
+  ]
+}

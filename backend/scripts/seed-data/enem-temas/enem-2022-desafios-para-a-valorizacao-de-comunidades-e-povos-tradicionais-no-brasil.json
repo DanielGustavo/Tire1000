@@ -1,0 +1,81 @@
+{
+  "title": "Desafios para a valorização de comunidades e povos tradicionais no Brasil",
+  "enemYear": 2022,
+  "topic": "Direitos Humanos e Minorias",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "Disponível em: https://g1.globo.com/economia/agronegocios/agro-a-industria-riqueza-do-brasil/noticia/2022/01/29/gente-do-campo-descubra-quais-sao-os-28-povos-e-comunidades-tradicionais-do-brasil.ghtml (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Você sabe quais são as comunidades e os povos tradicionais brasileiros? Talvez indígenas e quilombolas sejam os primeiros que passam pela cabeça, mas, na verdade, além deles, existem 26 reconhecidos oficialmente e muitos outros que ainda não foram incluídos na legislação."
+        },
+        {
+          "type": "TEXT",
+          "content": "São pescadores artesanais, quebradeiras de coco babaçu, apanhadores de flores sempre-vivas, caatingueiros, extrativistas, para citar alguns, todos considerados culturalmente diferenciados, capazes de se reconhecerem entre si."
+        },
+        {
+          "type": "TEXT",
+          "content": "Para uma pesquisadora da UnB, essas populações consideram a terra como uma mãe, e há uma relação de reciprocidade com a natureza. Nessa troca, a natureza fornece \"alimento, um lugar saudável para habitar, para ter água. E elas se responsabilizam por cuidar dela, por tirar dela apenas o suficiente para viver bem e respeitam o tempo de regeneração da própria natureza\". diz."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 2",
+      "font": "Disponível em: http://mds.gov.br/assuntos/seguranca-alimentar/direito-a-alimentacao/povos-e-comunidades-tradicionais#:~:text=O Ministério do Desenvolvimento Social,13 de julho de 2006. (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Povos e comunidades tradicionais"
+        },
+        {
+          "type": "TEXT",
+          "content": "O Ministério do Desenvolvimento Social (MDS) preside, desde 2007, a Comissão Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais (CNPCT), criada em 2006. Fruto dos trabalhos da CNPCT, foi instituída, por meio do Decreto número 6040, de 7 de fevereiro de 2017, a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais (PNPCT). A PNPCT foi criada em um contexto de busca de reconhecimento e preservação de outras formas de organização social por parte do Estado."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 3",
+      "font": "Disponível em: https://s3.amazonaws.com/appforest_uf/f1635878454366x123986991266021200/CARTA DA AMAZÔNIA 2021_COP 26_PORT.pdf (adaptad0).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Carta da Amazônia 2021"
+        },
+        {
+          "type": "TEXT",
+          "content": "Aos participantes da 26ª Conferência das Nações Unidas sobre Mudanças Climáticas (COP26)"
+        },
+        {
+          "type": "TEXT",
+          "content": "Não podia ser mais estratégico para nós, Povos Indígenas, Populações e Comunidades Tradicionais brasileiras, reafirmarmos a defesa da sociobiodiversidade amazônica neste momento em que o mundo se volta a debater a crise climática da COP26. Uma crise que atinge, em todos os contextos, os viventes da Terra!"
+        },
+        {
+          "type": "TEXT",
+          "content": "Nossos territórios protegidos e direitos respeitados são as reivindicações dos movimentos sociais e ambientais brasileiros."
+        },
+        {
+          "type": "TEXT",
+          "content": "Não compactuamos com qualquer tentativa e estratégia baseada somente na lógica do mercado, com empresas que apoiam legislações ambientais que ameaçam nossos direitos e com mecanismos de financiamento que não condizem com a realidade dos nossos territórios."
+        },
+        {
+          "type": "TEXT",
+          "content": "Propomos o que temos de melhor: a experiência das nossas sociedades e culturas históricas, construídas com base em nossos saberes tradicionais e ancestrais, além de nosso profundo conhecimento da natureza."
+        },
+        {
+          "type": "TEXT",
+          "content": "Inovação, para nós, não pode resultar em processos que venham a ameaçar nossos territórios, nossas formas tradicionais e harmônicas de viver e produzir."
+        },
+        {
+          "type": "TEXT",
+          "content": "Amazônia, Brasil, 20 de outubro de 2021."
+        },
+        {
+          "type": "TEXT",
+          "content": "Entidades signatárias: CNS; Coiab; Conaq; MIQCB; Coica; ANA Amazônia e Confrem."
+        }
+      ]
+    }
+  ]
+}

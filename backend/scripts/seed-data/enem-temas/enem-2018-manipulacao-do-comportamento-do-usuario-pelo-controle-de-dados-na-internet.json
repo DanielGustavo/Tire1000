@@ -1,0 +1,37 @@
+{
+  "title": "Manipulação do comportamento do usuário pelo controle de dados na internet",
+  "enemYear": 2018,
+  "topic": "Ciência e Tecnologia",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "VERDÚ, Daniel. O gosto na era do algoritmo. Disponível em: https://brasil.elpais.com. Acesso em: 11 jun. 2018 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Às segundas-feiras pela manhã, os usuários de um serviço de música digital recebem uma lista personalizada de músicas que lhes permite descobrir novidades. Assim como os sistemas de outros aplicativos e redes sociais, este cérebro artificial consegue traçar um retrato automatizado do gosto de seus assinantes e constrói uma máquina de sugestões que não costuma falhar. O sistema se baseia em um algoritmo cuja evolução e usos aplicados ao consumo cultural são infinitos. De fato, plataformas de transmissão de video on-line começam a desenhar suas séries de sucesso rastreando o banco de dados gerado por todos os movimentos dos usuários para analisar o que os satisfaz. O algoritmo constrói assim um universo cultural adequado e complacente com o gosto do consumidor, que pode avançar até chegar sempre a lugares reconhecíveis. Dessa forma, a filtragem feita pelas redes sociais ou pelos sistemas de busca pode moldar nossa maneira de pensar. E esse é o problema principal: a ilusão da liberdade de escolha que muitas vezes é gerada pelos algoritmos."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 2",
+      "font": "PEPE ESCOBAR. A silenciosa ditadura do algoritmo. Disponível em: https://outraspalavras.net. Acesso em: 5 jun. 2017 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Nos sistemas dos gigantes da internet, a filtragem de dados é transferida para um exército de moderadores em empresas localizadas do Oriente Médio ao Sul da Ásia, que têm um papel importante no controle daquilo que deve ser eliminado da rede social, a partir de sinalizações dos usuários. Mas a informação é então processada por um algoritmo, que tem a decisão final. Os algoritmos são literais. Em poucas palavras, são uma opinião embrulhada em código. E estamos caminhando para um estágio em que é a máquina que decide qual notícia deve ou não ser lida."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 3",
+      "font": "CHATFIELD, Tom. Como a Internet influencia secretamente nossas escolhas. Disponível em: www.bbc.com. Acesso em: 3 jun. 2017 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Mudanças sutis nas informações às quais somos expostos podem transformar nosso comportamento. As redes têm selecionado as notícias sob titulos chamativos como “trending topics” ou critérios como “relevância”. Mas nós praticamente não sabemos como tudo isso é filtrado. Quanto mais informações relevantes tivermos nas pontas dos dedos, melhor equipados estamos para tomar decisões. No entanto, surgem algumas tensões fundamentais: entre a conveniência e a deliberação; entre o que o usuário deseja e o que é melhor para ele; entre a transparência e o lado comercial. Quanto mais os sistemas souberem sobre você em comparação ao que você sabe sobre eles, há mais riscos de suas escolhas se tornarem apenas uma série de reações a “cutucadas” invisíveis. O que está em jogo não é tanto a questão “homem versus máquina”, mas sim a disputa “decisão informada versus obediência influenciada”."
+        }
+      ]
+    }
+  ]
+}

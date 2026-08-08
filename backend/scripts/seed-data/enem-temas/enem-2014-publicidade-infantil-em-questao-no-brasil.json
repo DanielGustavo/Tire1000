@@ -1,0 +1,35 @@
+{
+  "title": "Publicidade infantil em questão no Brasil",
+  "enemYear": 2014,
+  "topic": "Sociedade, Cultura e Comportamento",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "IDOETA, P. A.; BARBA, M. D. A publicidade infantil deve ser proibida? Disponível em: www.bbc.co.uk. Acesso em: 23 maio 2014 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "A aprovação, em abril de 2014, de uma resolução que considera abusiva a publicidade infantil, emitida pelo Conselho Nacional de Direitos da Criança e do Adolescente (Conanda), deu início a um verdadeiro cabo de guerra envolvendo ONGs de defesa dos direitos das crianças e setores interessados na continuidade das propagandas dirigidas a esse público."
+        },
+        {
+          "type": "TEXT",
+          "content": "Elogiada por pais, ativistas e entidades, a resolução estabelece como abusiva toda propaganda dirigida à criança que tem “a intenção de persuadi-la para o consumo de qualquer produto ou serviço” e que utilize aspectos como desenhos animados, bonecos, linguagem infantil, trilhas sonoras com temas infantis, oferta de prêmios, brindes ou artigos colecionáveis que tenham apelo às crianças."
+        },
+        {
+          "type": "TEXT",
+          "content": "Ainda há dúvidas, porém, sobre como será a aplicação prática da resolução. E associações de anunciantes, emissoras, revistas e de empresas de licenciamento e fabricantes de produtos infantis criticam a medida e dizem não reconhecer a legitimidade constitucional do Conanda para legislar sobre publicidade e para impor a resolução tanto às famílias quanto ao mercado publicitário. Além disso, defendem que a autorregulamentação pelo Conselho Nacional de Autorregulamentação Publicitária (Conar) já seria uma forma de controlar e evitar abusos."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 2",
+      "font": "SILVA, A. M. D.; VASCONCELOS, L. R. A criança e o marketing: informações essenciais para proteger as crianças dos apelos do marketing infantil. São Paulo: Summus, 2012 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Precisamos preparar a criança, desde pequena, para receber as informações do mundo exterior, para compreender o que está por trás da divulgação de produtos. Só assim ela se tornará o consumidor do futuro, aquele capaz de saber o que, como e por que comprar, ciente de suas reais necessidades e consciente de suas responsabilidades consigo mesma e com o mundo."
+        }
+      ]
+    }
+  ]
+}

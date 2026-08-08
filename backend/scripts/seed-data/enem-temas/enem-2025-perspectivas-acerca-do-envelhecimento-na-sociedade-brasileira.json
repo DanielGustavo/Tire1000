@@ -1,0 +1,85 @@
+{
+  "title": "Perspectivas acerca do envelhecimento na sociedade brasileira",
+  "enemYear": 2025,
+  "topic": "Sociedade, Cultura e Comportamento",
+  "referenceTexts": [
+    {
+      "title": "Texto motivador 1",
+      "font": "GOMES, I.; BRITTO, V. Censo 2022. Disponível em: https://agenciadenoticias.ibge.gov.br.",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Em 2022, o total de pessoas com 65 anos de idade ou mais no pais chegou a 10,9% da população, com alta de 57,4% frente a 2010, quando esse contingente era 7,4% da população. É o que revelam os resultados do universo da população do Brasil desagregada por idade e sexo do Censo Demográfico 2022. \"O Estatuto do Idoso define como idoso a pessoa de 60 anos ou mais. O corte de 65 anos ou mais foi utilizado nessa análise para manter comparabilidade internacional e com outras pesquisas que utilizam essa faixa etária, como de mercado de trabalho\", justifica a gerente de Estudos e Análises da Dinâmica Demográfica do IBGE. O aumento da população de 65 anos ou mais e a diminuição da parcela da população de até 14 anos no mesmo período, que passou de 24,1% para 19,8%, evidenciam o franco envelhecimento da população brasileira."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 2",
+      "font": "",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Um movimento na internet, contrário ao pictograma com a bengala para os idosos, iniciou uma campanha para modificar essa imagem. A empreitada coletiva acabou com a elaboração de um novo desenho, uma figura mais altiva, ao lado da inscrição \"60+\"."
+        },
+        {
+          "type": "IMAGE",
+          "content": {
+            "fileKey": "images/enem-2025-perspectivas-acerca-do-envelhecimento-na-sociedade-brasileira/texto-motivador-2-img-1.jpg",
+            "font": "Disponível em: www12.senado.leg.br./"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 3",
+      "font": "",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "A velhice é tempo de se retratar consigo mesma, de falar da doença, da sexualidade, do tédio e da liberdade de não se encaixar mais nas expectativas sociais. \"A velhice não é doença. É destino\", escreve Rita Lee. Mas ela mesma mostra que esse destino não é sinônimo de mero encaminhamento para o fim - é campo de novas escolhas, inclusive a de desafiar estereótipos reservados para essa fase da vida. A atriz Fernanda Montenegro, 95 anos, oferece em suas memórias uma síntese luminosa desse gesto de habitar o tempo com dignidade: \"A velhice é o tempo em que a vida já foi vivida e, por isso mesmo, pode finalmente ser olhada de frente, sem o pânico do ineditismo\"."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 4",
+      "font": "",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Um novo estereótipo: o \"velho ativo\", saudável e com recursos pressiona o \"velho inativo\", doente e pobre. Nem todos os idosos têm recursos à disposição para aderir a essa corrida."
+        },
+        {
+          "type": "TEXT",
+          "content": "Idosos são os principais mantenedores dos lares"
+        },
+        {
+          "type": "IMAGE",
+          "content": {
+            "fileKey": "images/enem-2025-perspectivas-acerca-do-envelhecimento-na-sociedade-brasileira/texto-motivador-4-img-1.jpg",
+            "font": "Disponível em: g1.globo.com. Acesso em: 4 jun. 2025 (adaptado)"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 5",
+      "font": "LISPECTOR, C. Onde estivestes de noite. Rio de Janeiro: Francisco Alves, 1974.",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Dona Maria Rita era tão antiga que na casa da filha estavam habituados a ela como a um móvel velho. Ela não era novidade para ninguém. Mas nunca lhe passara pela cabeça que era uma solitária. Só que não tinha nada para fazer. Era um lazer forçado que em certos momentos se tornava lancinante: nada tinha a fazer no mundo. Senão viver como um gato, como um cachorro. Seu ideal era ser dama de companhia de alguma senhora, mas isso nem se usava mais e mesmo ninguém acreditaria nos seus fortes setenta e sete anos, pensariam que era uma fraca. Não fazia nada, fazia só isso: ser velha. Às vezes ficava deprimida achava que não servia a nada, não servia sequer a Deus."
+        }
+      ]
+    },
+    {
+      "title": "Texto motivador 6",
+      "font": "Disponível em: g1.globo.com. Acesso em: 10 jun. 2025 (adaptado).",
+      "paragraphs": [
+        {
+          "type": "TEXT",
+          "content": "Quem tem direito de viver mais? O documentário Quantos dias. Quantas noites bus- investigar quem, afinal, tem direito a uma vida longa no Brasil, \"São inúmeros os marcadores que definem quem vai viver, quem vai sucumbir diante de uma realidade imposta por sistema bastante perverso\", afirma o diretor do documentário. \"O envelhecimento leva a maioria das pessoas a declínio funcional. Mas, se você chega aos 75 tendo acumulado desigualdades, principalmente pelo racismo, é muito diferente sobreviver com qualidade de vida\", diz um médico gerontólogo."
+        }
+      ]
+    }
+  ]
+}
