@@ -38,7 +38,7 @@ export function PaperCard({ className, children }: PaperCardProps) {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-2 top-0 h-[18px] bg-no-repeat"
-        style={{ backgroundImage: `url(${paperEdge})`, backgroundSize: "100% 100%" }}
+        style={{ backgroundImage: `url("${paperEdge}")`, backgroundSize: "100% 100%" }}
       />
     </div>
   );
