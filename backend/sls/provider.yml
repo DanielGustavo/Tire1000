@@ -13,6 +13,7 @@ environment:
   STRIPE_WEBHOOK_SECRET: ${env:STRIPE_WEBHOOK_SECRET, ''}
   FRONTEND_URL: ${env:FRONTEND_URL, ''}
   ESSAYS_BUCKET_NAME: ${self:custom.essaysBucketName}
+  THEME_ASSETS_CDN_DOMAIN: !Sub https://${ThemeAssetsDistribution.DomainName}
   ESSAY_VALIDATION_QUEUE_URL: !Ref EssayValidationQueue
   ESSAY_EVALUATION_QUEUE_URL: !Ref EssayEvaluationQueue
   DEV_ALERTS_TOPIC_ARN: !Ref DevAlertsTopic

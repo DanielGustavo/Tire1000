@@ -13,3 +13,8 @@ Resources:
   EssayEvaluationQueue: ${file(sls/resources/essays.yml):EssayEvaluationQueue}
   DevAlertsTopic: ${file(sls/resources/essays.yml):DevAlertsTopic}
   DevAlertsSubscription: ${file(sls/resources/essays.yml):DevAlertsSubscription}
+
+  ThemeAssetsBucket: ${file(sls/resources/theme-assets.yml):ThemeAssetsBucket}
+  ThemeAssetsOriginAccessControl: ${file(sls/resources/theme-assets.yml):ThemeAssetsOriginAccessControl}
+  ThemeAssetsDistribution: ${file(sls/resources/theme-assets.yml):ThemeAssetsDistribution}
+  ThemeAssetsBucketPolicy: ${file(sls/resources/theme-assets.yml):ThemeAssetsBucketPolicy}

@@ -8,6 +8,7 @@ import { toTopicDTO, type TopicDTO } from "../../dtos/topic-dto.js";
 export interface GetThemeDeps {
   themeRepository: ThemeRepository;
   themeTopicRepository: ThemeTopicRepository;
+  themeAssetsBaseUrl: string;
 }
 
 export interface GetThemeInput {
@@ -20,7 +21,7 @@ export interface GetThemeOutput {
   topic: TopicDTO | null;
 }
 
-export function createGetTheme({ themeRepository, themeTopicRepository }: GetThemeDeps) {
+export function createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl }: GetThemeDeps) {
   return async function getTheme({ themeId }: GetThemeInput): Promise<GetThemeOutput> {
     const result = await themeRepository.findById(themeId);
     if (!result) throw new NotFoundError("Tema não encontrado");
@@ -29,7 +30,7 @@ export function createGetTheme({ themeRepository, themeTopicRepository }: GetThe
 
     return {
       theme: toThemeDTO(result.theme),
-      referenceTexts: result.referenceTexts.map(toReferenceTextDTO),
+      referenceTexts: result.referenceTexts.map((referenceText) => toReferenceTextDTO(referenceText, themeAssetsBaseUrl)),
       topic: topic ? toTopicDTO(topic) : null,
     };
   };

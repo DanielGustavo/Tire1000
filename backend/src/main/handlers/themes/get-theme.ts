@@ -7,6 +7,7 @@ import { createGetTheme } from "../../../application/use-cases/get-theme/get-the
 const getTheme = createGetTheme({
   themeRepository: new DynamoThemeRepository(),
   themeTopicRepository: new DynamoThemeTopicRepository(),
+  themeAssetsBaseUrl: process.env.THEME_ASSETS_CDN_DOMAIN ?? "",
 });
 
 export const handler = apigwAdapter(new GetThemeController(getTheme));

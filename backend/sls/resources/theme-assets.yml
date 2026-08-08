@@ -1,0 +1,49 @@
+# Imagens de Texto motivador (conteúdo editorial curado pela equipe, cadastro manual — ver
+# seed-themes.ts — não é dado sensível do aluno como a foto de redação). Bucket privado, servido
+# via CloudFront com Origin Access Control; a Lambda nunca lê/escreve aqui, só monta a URL pública
+# no DTO (ver toReferenceTextDTO) a partir de THEME_ASSETS_CDN_DOMAIN.
+ThemeAssetsBucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:custom.themeAssetsBucketName}
+
+ThemeAssetsOriginAccessControl:
+  Type: AWS::CloudFront::OriginAccessControl
+  Properties:
+    OriginAccessControlConfig:
+      Name: ${self:custom.themeAssetsBucketName}-oac
+      OriginAccessControlOriginType: s3
+      SigningBehavior: always
+      SigningProtocol: sigv4
+
+ThemeAssetsDistribution:
+  Type: AWS::CloudFront::Distribution
+  Properties:
+    DistributionConfig:
+      Enabled: true
+      DefaultCacheBehavior:
+        TargetOriginId: ThemeAssetsBucketOrigin
+        ViewerProtocolPolicy: redirect-to-https
+        # Managed-CachingOptimized
+        CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+      Origins:
+        - Id: ThemeAssetsBucketOrigin
+          DomainName: !GetAtt ThemeAssetsBucket.RegionalDomainName
+          OriginAccessControlId: !GetAtt ThemeAssetsOriginAccessControl.Id
+          S3OriginConfig:
+            OriginAccessIdentity: ""
+
+ThemeAssetsBucketPolicy:
+  Type: AWS::S3::BucketPolicy
+  Properties:
+    Bucket: !Ref ThemeAssetsBucket
+    PolicyDocument:
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: cloudfront.amazonaws.com
+          Action: s3:GetObject
+          Resource: !Sub ${ThemeAssetsBucket.Arn}/*
+          Condition:
+            StringEquals:
+              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${ThemeAssetsDistribution}

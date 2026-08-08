@@ -50,7 +50,7 @@ describe("GetTheme", () => {
     const topic = buildTopic();
     const themeRepository = new InMemoryThemeRepository([theme], [referenceText]);
     const themeTopicRepository = new InMemoryThemeTopicRepository([topic]);
-    const getTheme = createGetTheme({ themeRepository, themeTopicRepository });
+    const getTheme = createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl: "https://assets.tire1000.com" });
 
     const result = await getTheme({ themeId: "theme-1" });
 
@@ -69,11 +69,27 @@ describe("GetTheme", () => {
     });
   });
 
+  it("turns an IMAGE paragraph's fileKey into a URL under themeAssetsBaseUrl", async () => {
+    const theme = buildTheme();
+    const referenceText = buildReferenceText({
+      paragraphs: [{ type: "IMAGE", content: { fileKey: "seed/mapa.png", font: "sans-serif" } }],
+    });
+    const themeRepository = new InMemoryThemeRepository([theme], [referenceText]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository([buildTopic()]);
+    const getTheme = createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl: "https://assets.tire1000.com" });
+
+    const result = await getTheme({ themeId: "theme-1" });
+
+    expect(result.referenceTexts[0]!.paragraphs).toEqual([
+      { type: "IMAGE", content: { url: "https://assets.tire1000.com/seed/mapa.png", font: "sans-serif" } },
+    ]);
+  });
+
   it("returns an empty reference text list when the theme has none", async () => {
     const theme = buildTheme();
     const themeRepository = new InMemoryThemeRepository([theme]);
     const themeTopicRepository = new InMemoryThemeTopicRepository([buildTopic()]);
-    const getTheme = createGetTheme({ themeRepository, themeTopicRepository });
+    const getTheme = createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl: "https://assets.tire1000.com" });
 
     const result = await getTheme({ themeId: "theme-1" });
 
@@ -84,7 +100,7 @@ describe("GetTheme", () => {
     const theme = buildTheme();
     const themeRepository = new InMemoryThemeRepository([theme]);
     const themeTopicRepository = new InMemoryThemeTopicRepository();
-    const getTheme = createGetTheme({ themeRepository, themeTopicRepository });
+    const getTheme = createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl: "https://assets.tire1000.com" });
 
     const result = await getTheme({ themeId: "theme-1" });
 
@@ -94,7 +110,7 @@ describe("GetTheme", () => {
   it("throws NotFoundError when the theme does not exist", async () => {
     const themeRepository = new InMemoryThemeRepository();
     const themeTopicRepository = new InMemoryThemeTopicRepository();
-    const getTheme = createGetTheme({ themeRepository, themeTopicRepository });
+    const getTheme = createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl: "https://assets.tire1000.com" });
 
     await expect(getTheme({ themeId: "missing-theme" })).rejects.toThrow(NotFoundError);
   });

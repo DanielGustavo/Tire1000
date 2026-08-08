@@ -13,7 +13,7 @@ export interface Theme {
 
 export type ReferenceTextParagraph =
   | { type: "TEXT"; content: string }
-  | { type: "IMAGE"; content: { fileKey: string; font: string } };
+  | { type: "IMAGE"; content: { url: string; font: string } };
 
 export interface ReferenceText {
   id: string;

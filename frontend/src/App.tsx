@@ -7,7 +7,7 @@ import { EssayUploadPage } from "./pages/essay-upload";
 import { HomePage } from "./pages/home/home";
 import { LandingPage } from "./pages/landing/landing";
 import { ThemesPage } from "./pages/themes/themes";
-import { ThemeDetailPage } from "./pages/theme-detail";
+import { ThemeDetailPage } from "./pages/themes/theme-detail";
 
 function RootRoute() {
   return getAccessToken() ? (

@@ -66,3 +66,5 @@ See `src/main/handlers/auth/`, `src/application/controllers/auth/`, and `src/mai
 ## Seeding themes/topics for local development
 
 Cadastro de temas/eixos/textos motivadores não tem API de escrita neste MVP (é manual, direto no banco). `scripts/seed-themes.ts` popula alguns exemplos direto na tabela via `pnpm seed:themes` (requer `TABLE_NAME`; aponte `AWS_ENDPOINT_URL` para um DynamoDB local, se houver um rodando). Não é um comando `sls`, mas ainda assim escreve numa tabela real — só o dev deve rodar.
+
+Um `ReferenceTextParagraph` do tipo `IMAGE` guarda um `fileKey` (ex.: `seed/mapa-comunidades.png`) que o backend transforma em URL pública via `THEME_ASSETS_CDN_DOMAIN` (`toReferenceTextDTO`) — mas o cadastro do objeto em si também é manual: depois do deploy, suba o arquivo pro bucket `ThemeAssetsBucket` com esse mesmo `fileKey` (`aws s3 cp <arquivo> s3://<nome-do-bucket>/seed/mapa-comunidades.png`). Sem isso, a imagem do Texto motivador aparece quebrada no front.

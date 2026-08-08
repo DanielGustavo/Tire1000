@@ -1,6 +1,7 @@
 tableName: ${self:service}-${self:provider.stage}-MainTable
 userPoolName: ${self:service}-${self:provider.stage}-user-pool
 essaysBucketName: ${self:service}-${self:provider.stage}-essays
+themeAssetsBucketName: ${self:service}-${self:provider.stage}-theme-assets
 essayValidationQueueName: ${self:service}-${self:provider.stage}-essay-validation
 essayValidationDlqName: ${self:service}-${self:provider.stage}-essay-validation-dlq
 essayEvaluationQueueName: ${self:service}-${self:provider.stage}-essay-evaluation
