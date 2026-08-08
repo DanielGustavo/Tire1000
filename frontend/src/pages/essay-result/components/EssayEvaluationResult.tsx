@@ -14,11 +14,11 @@ export function EssayEvaluationResult({ evaluation, textContent }: { evaluation:
       {COMPETENCY_IDS.map((competencyId) => {
         const competency = evaluation.scores[competencyId];
         return (
-          <div key={competencyId} className="flex w-full flex-col gap-2">
+          <div key={competencyId} className="flex w-full flex-col items-start gap-2">
             <Bullet size="auto" color={COMPETENCY_COLORS[competencyId]}>
               {competencyId}
             </Bullet>
-            <TexturedCard color={COMPETENCY_COLORS[competencyId]} className="w-full" contentClassName="items-end gap-4 p-2.5">
+            <TexturedCard color={COMPETENCY_COLORS[competencyId]} texture={false} className="w-full" contentClassName="items-end gap-4 p-2.5">
               <div className="flex w-full items-start gap-4">
                 <Bullet variant="white" size="auto" rotate="left">
                   {competency.score}
@@ -30,7 +30,7 @@ export function EssayEvaluationResult({ evaluation, textContent }: { evaluation:
         );
       })}
 
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col items-start gap-2">
         <Bullet variant="dark-outline" size="auto">
           Nota final
         </Bullet>
