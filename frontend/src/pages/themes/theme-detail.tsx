@@ -77,7 +77,7 @@ export function ThemeDetailPage() {
               className="w-full"
               icon={<Camera size={20} />}
               disabled={ctaDisabled}
-              onClick={handleStartEssay}
+              onClick={() => handleStartEssay("camera")}
             >
               Tirar foto da redação
             </Button>
@@ -86,7 +86,7 @@ export function ThemeDetailPage() {
               className="w-full"
               icon={<Upload size={20} />}
               disabled={ctaDisabled}
-              onClick={handleStartEssay}
+              onClick={() => handleStartEssay("upload")}
             >
               Fazer upload da redação
             </Button>

@@ -5,6 +5,7 @@ const VARIANT_CLASSES = {
   neutral: "bg-neutral-300 text-neutral-0 border-neutral-900 shadow-hard",
   secondary: "bg-alert-300 text-neutral-900 border-neutral-900 shadow-hard",
   dark: "bg-neutral-900 text-neutral-0 border-neutral-0 shadow-hard-pink",
+  error: "bg-error-300 text-neutral-0 border-neutral-900 shadow-hard",
 } as const;
 
 const SIZE_CLASSES = {

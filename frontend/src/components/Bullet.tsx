@@ -17,16 +17,26 @@ type BulletProps = {
   variant?: keyof typeof VARIANT_STYLES;
   /** Overrides the variant's background with an arbitrary hex — e.g. a topic's color. Border/text/shadow still come from `variant`. */
   color?: string;
-  /** "fixed" is the classic 51px square (landing page). "auto" hugs its text — badges/labels of varying length. */
-  size?: "fixed" | "auto";
+  /**
+   * "fixed" is the classic 51px square (landing page). "auto" hugs its text — badges/labels of varying length.
+   * "large"/"small" are the 56px/40px icon-badge sizes used by the essay-upload flow's modals.
+   */
+  size?: "fixed" | "large" | "small" | "auto";
   rotate?: "left" | "right";
   children: ReactNode;
 };
 
+const SIZE_CLASSES = {
+  fixed: "size-[51px]",
+  large: "size-14",
+  small: "size-10",
+  auto: "min-h-10 w-auto max-w-full",
+} as const;
+
 export function Bullet({ variant = "default", color, size = "fixed", rotate, children }: BulletProps) {
   const { classes, shadow } = VARIANT_STYLES[variant];
   const isSlot = variant === "slot" || variant === "dark-slot";
-  const sizeClasses = size === "fixed" ? "size-[51px]" : "min-h-10 w-auto max-w-full";
+  const sizeClasses = SIZE_CLASSES[size];
 
   const box = (
     <div
