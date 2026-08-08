@@ -15,7 +15,7 @@ export function ThemeListItem({ theme, topic }: ThemeWithTopic) {
       </div>
 
       <TexturedCard color={color} className="w-full h-[295px]" contentClassName="justify-between p-2.5">
-        <p className="line-clamp-3 text-subtitle font-bold capitalize text-neutral-900">{theme.title}</p>
+        <p className="line-clamp-4 text-subtitle font-bold capitalize text-neutral-900">{theme.title}</p>
         <Link to={`/themes/${theme.id}`} className="self-end">
           <Button variant="dark">Ver tema</Button>
         </Link>
