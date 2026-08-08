@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { getAccessToken } from "./libs/auth";
 import { AppLayout } from "./layouts/AppLayout";
 import { CreditsPage } from "./pages/credits";
-import { EssayResultPage } from "./pages/essay-result";
+import { EssayResultPage } from "./pages/essay-result/essay-result";
 import { EssayUploadPage } from "./pages/essay-upload/essay-upload";
 import { HomePage } from "./pages/home/home";
 import { LandingPage } from "./pages/landing/landing";

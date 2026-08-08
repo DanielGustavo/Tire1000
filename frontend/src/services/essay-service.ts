@@ -83,6 +83,17 @@ export const REJECTION_REASON_LABELS: Record<string, string> = {
 // redrive by the team, not a user resend.
 export const RESENDABLE_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
 
+// The Correção result page (ticket 07) is only reachable while the essay is still going through the
+// pipeline or once it succeeded — these 4 terminal non-success statuses redirect to Home instead (the
+// Homepage card is where the user acts on them: resend, or nothing for EVALUATION_FAILED).
+export const BLOCKED_ESSAY_RESULT_STATUSES: EssayStatus[] = ["REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED", "EVALUATION_FAILED"];
+
+// Still going through the fila de Revisão.
+export const VALIDATING_STATUSES: EssayStatus[] = ["UPLOADING", "QUEUED", "VALIDATING"];
+// Revisão passed, still going through the fila de Avaliação.
+export const EVALUATING_STATUSES: EssayStatus[] = ["VALIDATED", "EVALUATING"];
+export const PENDING_STATUSES: EssayStatus[] = [...VALIDATING_STATUSES, ...EVALUATING_STATUSES];
+
 // Score bands (0–1000, in steps of 200 — one per competência) mapped to the evaluated essay card's color,
 // per the Figma mock. Colors match the DS tokens: primary-100, info-300, alert-100, pink-300, error-100.
 const SCORE_BAND_COLORS: readonly [min: number, color: string][] = [
@@ -92,6 +103,26 @@ const SCORE_BAND_COLORS: readonly [min: number, color: string][] = [
   [200, "#EF80BD"],
   [0, "#EF8D80"],
 ];
+
+export const COMPETENCY_IDS: CompetencyId[] = ["C1", "C2", "C3", "C4", "C5"];
+
+// One color per competência, reused for its tag, its highlights in the essay text, and its evaluation
+// card — matches the DS tokens (primary-100/alert-100/error-100/info-300/pink-300) per the Figma mock.
+export const COMPETENCY_COLORS: Record<CompetencyId, string> = {
+  C1: "#81EEB7",
+  C2: "#FFED7A",
+  C3: "#EF8D80",
+  C4: "#7AD3FF",
+  C5: "#EF80BD",
+};
+
+export const COMPETENCY_ROMAN_NUMERALS: Record<CompetencyId, string> = {
+  C1: "I",
+  C2: "II",
+  C3: "III",
+  C4: "IV",
+  C5: "V",
+};
 
 export function scoreCardColor(score: number): string {
   return SCORE_BAND_COLORS.find(([min]) => score >= min)![1];

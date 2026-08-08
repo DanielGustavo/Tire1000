@@ -12,7 +12,7 @@ export function EssayUploadPage() {
     photoUrl,
     photoSizeError,
     fileInputRef,
-    uploadMutation,
+    submitMutation,
     handleOpenCamera,
     handleOpenFilePicker,
     handleFileChange,
@@ -21,7 +21,7 @@ export function EssayUploadPage() {
     handleSubmit,
   } = useEssayUploadPage();
 
-  const showStep = !uploadMutation.isPending && !uploadMutation.isError;
+  const showStep = !submitMutation.isPending && !submitMutation.isError;
 
   return (
     <>
@@ -34,9 +34,9 @@ export function EssayUploadPage() {
         className="hidden"
       />
 
-      {uploadMutation.isPending && <PhotoConfirmationLoadingModal />}
+      {submitMutation.isPending && <PhotoConfirmationLoadingModal />}
 
-      {uploadMutation.isError && <PhotoConfirmationErrorModal onClose={handleGoHome} />}
+      {submitMutation.isError && <PhotoConfirmationErrorModal onClose={handleGoHome} />}
 
       {showStep && step === "tips" && (
         <TipsModal

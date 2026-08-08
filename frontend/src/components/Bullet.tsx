@@ -4,6 +4,8 @@ import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/har
 const VARIANT_STYLES = {
   default: { classes: "bg-primary-100 border-neutral-900 text-neutral-900", shadow: "black" },
   dark: { classes: "bg-neutral-900 border-neutral-0 text-neutral-0", shadow: "pink" },
+  /** Same look as "dark", but with a black border instead of white — for use directly on a light page background rather than inside a dark card, e.g. the "Nota final" tag in the Correção result. */
+  "dark-outline": { classes: "bg-neutral-900 border-neutral-900 text-neutral-0", shadow: "pink" },
   white: { classes: "bg-neutral-0 border-neutral-900 text-neutral-900", shadow: "black" },
   alert: { classes: "bg-alert-100 border-neutral-900 text-neutral-900", shadow: "black" },
   error: { classes: "bg-error-100 border-neutral-900 text-neutral-900", shadow: "black" },
