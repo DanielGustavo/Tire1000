@@ -39,7 +39,8 @@ export function EssayEvaluationResult({ evaluation, textContent }: { evaluation:
             <Bullet size="auto" rotate="left">
               {evaluation.scores.final.score}
             </Bullet>
-            <p className="flex-1 text-default text-neutral-900">{evaluation.scores.final.evaluationText}</p>
+            {/* leading-[1.7] must match PaperCard's ruled-line spacing, or the text drifts off its line over the length of the card. */}
+            <p className="flex-1 text-default leading-[1.7] text-neutral-900">{evaluation.scores.final.evaluationText}</p>
           </div>
         </PaperCard>
       </div>
