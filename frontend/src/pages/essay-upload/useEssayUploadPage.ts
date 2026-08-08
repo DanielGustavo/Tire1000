@@ -8,14 +8,22 @@ const MAX_PHOTO_SIZE_IN_BYTES = 10 * 1024 * 1024;
 export type EssayUploadMode = "camera" | "upload";
 type Step = "tips" | "permission-revoked" | "permission-accepted" | "confirmation";
 
+// Firefox and Safari don't support querying "camera" via the Permissions API (the query throws) — on those
+// browsers we can't read the current state ahead of time, so we remember the outcome of our own past grants
+// instead. Without this, "accepted" would show on every single visit rather than only the first one.
+const CAMERA_PERMISSION_GRANTED_STORAGE_KEY = "essayUpload:cameraPermissionGranted";
+
 async function checkCameraPermission(): Promise<"granted" | "denied" | "unknown"> {
-  if (!navigator.permissions?.query) return "unknown";
-  try {
-    const status = await navigator.permissions.query({ name: "camera" });
-    return status.state === "granted" || status.state === "denied" ? status.state : "unknown";
-  } catch {
-    return "unknown";
+  if (navigator.permissions?.query) {
+    try {
+      const status = await navigator.permissions.query({ name: "camera" });
+      if (status.state === "granted" || status.state === "denied") return status.state;
+      return "unknown";
+    } catch {
+      // Permissions API doesn't support "camera" here — fall through to the remembered state below.
+    }
   }
+  return localStorage.getItem(CAMERA_PERMISSION_GRANTED_STORAGE_KEY) === "true" ? "granted" : "unknown";
 }
 
 /**
@@ -29,8 +37,10 @@ async function requestCameraPermissionGate(): Promise<boolean> {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     stream.getTracks().forEach((track) => track.stop());
+    localStorage.setItem(CAMERA_PERMISSION_GRANTED_STORAGE_KEY, "true");
     return true;
   } catch {
+    localStorage.removeItem(CAMERA_PERMISSION_GRANTED_STORAGE_KEY);
     return false;
   }
 }
