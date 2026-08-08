@@ -23,7 +23,7 @@ export function Modal({ onClose, children }: ModalProps) {
       <div
         role="dialog"
         aria-modal="true"
-        className="flex w-full max-w-[377px] flex-col items-center gap-6 border-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-6 shadow-hard"
+        className="flex max-h-full w-full max-w-[377px] flex-col items-center gap-6 overflow-y-auto border-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-6 shadow-hard"
         onClick={(event) => event.stopPropagation()}
       >
         {children}

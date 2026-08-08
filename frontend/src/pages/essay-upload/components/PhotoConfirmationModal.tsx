@@ -28,8 +28,8 @@ export function PhotoConfirmationModal({ mode, photoUrl, error, onRetake, onConf
           Aqui está a imagem da sua redação. Se estiver satisfeito, você pode enviá-la.
         </p>
 
-        <div className="aspect-square w-full overflow-clip border-2 border-solid border-neutral-900 bg-alert-100 shadow-hard">
-          <img src={photoUrl} alt="Foto da redação" className="size-full object-cover" />
+        <div className="w-full overflow-clip border-2 border-solid border-neutral-900 bg-alert-100 shadow-hard">
+          <img src={photoUrl} alt="Foto da redação" className="max-h-[45vh] w-full object-contain" />
         </div>
 
         {error && <p className="w-full text-small text-error-300">{error}</p>}
