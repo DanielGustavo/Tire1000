@@ -6,9 +6,13 @@
 
 **Status:** ready-for-agent
 
-- [ ] `ReferenceText` (entidade/props): remove `title`, adiciona `order: number`.
-- [ ] Item mapper do DynamoDB: SK e `GSI2SK` passam a codificar `REFERENCE_TEXT#<order com zero-padding de 2 dígitos>#<id>`.
-- [ ] `DynamoThemeRepository.findById`: a query GSI2 projeta `order` no lugar de `title`.
-- [ ] `ReferenceTextDTO`/`toReferenceTextDTO`: remove `title`, adiciona `order`.
-- [ ] `InMemoryThemeRepository.findById`: ordena os `referenceTexts` retornados por `order` ascendente.
-- [ ] `get-theme.test.ts`: fixtures/assertions passam a usar `order` em vez de `title`; novo teste com fixtures semeadas fora de ordem, afirmando que o retorno vem ordenado por `order`.
+- [x] `ReferenceText` (entidade/props): remove `title`, adiciona `order: number`.
+- [x] Item mapper do DynamoDB: SK e `GSI2SK` passam a codificar `REFERENCE_TEXT#<order com zero-padding de 2 dígitos>#<id>`.
+- [x] `DynamoThemeRepository.findById`: a query GSI2 projeta `order` no lugar de `title`.
+- [x] `ReferenceTextDTO`/`toReferenceTextDTO`: remove `title`, adiciona `order`.
+- [x] `InMemoryThemeRepository.findById`: ordena os `referenceTexts` retornados por `order` ascendente.
+- [x] `get-theme.test.ts`: fixtures/assertions passam a usar `order` em vez de `title`; novo teste com fixtures semeadas fora de ordem, afirmando que o retorno vem ordenado por `order`.
+
+## Comments
+
+Implementado em `8923765`. `pnpm typecheck`/`pnpm test` (162 testes) passando. Novo teste "returns reference texts sorted by order, regardless of insertion order" cobre o cenário de ordenação. `referenceTextPK`/`referenceTextGSI2PK` (escopados por `themeId`) não foram alterados — fora do escopo desta ticket.

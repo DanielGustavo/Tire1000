@@ -6,6 +6,10 @@
 
 **Status:** ready-for-agent
 
-- [ ] `EnemReferenceTextJson` (tipo usado pelo script): remove `title`.
-- [ ] Script atribui `order` = índice zero-based dentro do array `referenceTexts` do tema, ao montar cada chamada `ReferenceText.reconstitute(...)`.
-- [ ] Script continua compilando e rodando sem erros contra uma tabela local/dynamodb-local (verificado localmente, não contra a tabela real).
+- [x] `EnemReferenceTextJson` (tipo usado pelo script): remove `title`.
+- [x] Script atribui `order` = índice zero-based dentro do array `referenceTexts` do tema, ao montar cada chamada `ReferenceText.reconstitute(...)`.
+- [x] Script continua compilando e rodando sem erros contra uma tabela local/dynamodb-local (verificado localmente, não contra a tabela real).
+
+## Comments
+
+Implementado em `8923765`, usando `themeJson.referenceTexts.entries()` para obter `order`. `pnpm typecheck` passa com zero erros. Sem DynamoDB local disponível no ambiente do agente — verificado até o ponto da chamada de rede (`ECONNREFUSED`), confirmando que a construção das entidades com `order` funciona.
