@@ -7,18 +7,24 @@ const VARIANT_STYLES = {
   gray: { classes: "bg-neutral-700 border-neutral-900", shadow: "black" },
 } as const;
 
+const SIZE_CLASSES = {
+  default: "size-10",
+  large: "size-12",
+} as const;
+
 type IconButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: keyof typeof VARIANT_STYLES;
+  size?: keyof typeof SIZE_CLASSES;
   rotate?: "left" | "right";
   icon: ReactNode;
 };
 
-export function IconButton({ variant = "default", rotate, icon, className, ...props }: IconButtonProps) {
+export function IconButton({ variant = "default", size = "default", rotate, icon, className, ...props }: IconButtonProps) {
   const { classes, shadow } = VARIANT_STYLES[variant];
 
   const button = (
     <button
-      className={`flex size-10 shrink-0 items-center justify-center border-2 border-solid ${classes} ${rotate ? "" : SHADOW_CLASSES[shadow]} ${className ?? ""}`}
+      className={`flex ${SIZE_CLASSES[size]} shrink-0 items-center justify-center border-2 border-solid ${classes} ${rotate ? "" : SHADOW_CLASSES[shadow]} ${className ?? ""}`}
       {...props}
     >
       {icon}

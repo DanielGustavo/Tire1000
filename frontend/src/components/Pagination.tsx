@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { IconButton } from "../../../components/IconButton";
+import { IconButton } from "./IconButton";
 
 /** Always keeps first/last/neighbors-of-current visible, collapsing gaps into "...". */
 function buildPageNumbers(current: number, total: number): (number | "...")[] {
@@ -18,7 +18,7 @@ function buildPageNumbers(current: number, total: number): (number | "...")[] {
   return result;
 }
 
-export function EssaysPagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (page: number) => void }) {
+export function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (page: number) => void }) {
   if (totalPages <= 1) return null;
 
   return (

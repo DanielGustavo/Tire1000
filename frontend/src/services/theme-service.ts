@@ -1,6 +1,9 @@
 import { Service } from "./service";
 import type { ThemeTopic } from "./topic-service";
 
+/** Fallback accent color for a Theme whose Topic failed to resolve. */
+export const DEFAULT_THEME_COLOR = "#EDEDED";
+
 export interface Theme {
   id: string;
   title: string;

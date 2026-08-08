@@ -6,7 +6,7 @@ import { EssayResultPage } from "./pages/essay-result";
 import { EssayUploadPage } from "./pages/essay-upload";
 import { HomePage } from "./pages/home/home";
 import { LandingPage } from "./pages/landing/landing";
-import { ThemesPage } from "./pages/themes";
+import { ThemesPage } from "./pages/themes/themes";
 import { ThemeDetailPage } from "./pages/theme-detail";
 
 function RootRoute() {

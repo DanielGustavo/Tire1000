@@ -20,7 +20,7 @@ src/
   main.tsx     App bootstrap: QueryClientProvider, BrowserRouter.
 ```
 
-`home` and `landing` already follow this convention; the remaining pages (`themes`, `theme-detail`,
+`home`, `landing`, and `themes` already follow this convention; the remaining pages (`theme-detail`,
 `essay-upload`, `essay-result`, `credits`) are flat files still and get migrated opportunistically, not as
 a standalone retrofit task.
 

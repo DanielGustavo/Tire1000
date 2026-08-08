@@ -1,6 +1,6 @@
+import { Pagination } from "../../../components/Pagination";
 import { EssayCard } from "./EssayCard";
 import { EssaysEmptyState } from "./EssaysEmptyState";
-import { EssaysPagination } from "./EssaysPagination";
 import { useEssaysSection } from "./useEssaysSection";
 
 export function EssaysSection() {
@@ -22,7 +22,7 @@ export function EssaysSection() {
         </div>
       )}
 
-      <EssaysPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </section>
   );
 }
