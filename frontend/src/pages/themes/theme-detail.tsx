@@ -14,10 +14,10 @@ import { useThemeDetailPage } from "./useThemeDetailPage";
 const referenceTextMarkdownComponents: Components = {
   h2: ({ node, ...props }) => <h3 className="text-default font-bold text-neutral-900" {...props} />,
   h3: ({ node, ...props }) => <h4 className="text-small font-bold text-neutral-900" {...props} />,
-  p: ({ node, ...props }) => <p className="text-default text-neutral-600" {...props} />,
-  ul: ({ node, ...props }) => <ul className="list-disc pl-5 text-default text-neutral-600" {...props} />,
-  ol: ({ node, ...props }) => <ol className="list-decimal pl-5 text-default text-neutral-600" {...props} />,
-  li: ({ node, ...props }) => <li className="text-default text-neutral-600" {...props} />,
+  p: ({ node, ...props }) => <p className="break-words text-default text-neutral-600" {...props} />,
+  ul: ({ node, ...props }) => <ul className="list-disc break-words pl-5 text-default text-neutral-600" {...props} />,
+  ol: ({ node, ...props }) => <ol className="list-decimal break-words pl-5 text-default text-neutral-600" {...props} />,
+  li: ({ node, ...props }) => <li className="break-words text-default text-neutral-600" {...props} />,
 };
 
 export function ThemeDetailPage() {
@@ -62,11 +62,11 @@ export function ThemeDetailPage() {
                         alt=""
                         className="w-full border-2 border-solid border-neutral-900 object-fit"
                       />
-                      <p className="text-small text-neutral-600">{paragraph.content.font}</p>
+                      <p className="break-words text-small text-neutral-600">{paragraph.content.font}</p>
                     </div>
                   ),
                 )}
-                <p className="text-small text-neutral-600">{referenceText.font}</p>
+                <p className="break-words text-small text-neutral-600">{referenceText.font}</p>
               </section>
             ))}
           </div>
