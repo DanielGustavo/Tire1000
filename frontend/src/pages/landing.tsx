@@ -127,9 +127,9 @@ function Steps() {
         <ol className="flex w-full flex-col gap-4">
           {STEPS.map((description, index) => (
             <li key={description} className="flex w-full items-center gap-4">
-              <div className={index % 2 === 0 ? "-rotate-5" : "rotate-5"}>
-                <Bullet variant="dark">{index + 1}</Bullet>
-              </div>
+              <Bullet variant="dark" rotate={index % 2 === 0 ? "left" : "right"}>
+                {index + 1}
+              </Bullet>
               <p className="min-w-0 flex-1 text-default font-bold text-neutral-900">{description}</p>
             </li>
           ))}
@@ -155,12 +155,12 @@ function Illustration() {
         className="h-auto w-full max-w-[338px] object-contain"
       />
       <div className="flex w-full flex-col gap-6">
-        {COMPETENCIES.map(({ code, variant, title, description }, index) => (
+        {COMPETENCIES.map(({ code, variant, title, description }) => (
           <div key={code} className="flex w-full flex-col items-center gap-2">
             <div className="flex w-full items-center gap-4">
-              <div className={index === 0 ? undefined : "-rotate-5"}>
-                <Bullet variant={variant}>{code}</Bullet>
-              </div>
+              <Bullet variant={variant} rotate="left">
+                {code}
+              </Bullet>
               <p className="min-w-0 flex-1 text-subtitle font-bold capitalize text-neutral-900">{title}</p>
             </div>
             <p className="w-full text-default lowercase text-neutral-900">{description}</p>
