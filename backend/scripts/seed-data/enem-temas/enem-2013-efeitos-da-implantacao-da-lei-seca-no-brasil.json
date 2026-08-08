@@ -4,12 +4,11 @@
   "topic": "Segurança Pública e Violência",
   "referenceTexts": [
     {
-      "title": "Texto motivador 1",
       "font": "Disponível em: www.dprf.gov.br. Acesso em: 20 jun. 2013.",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Qual o objetivo da “Lei Seca ao volante”?"
+          "content": "## Qual o objetivo da “Lei Seca ao volante”?"
         },
         {
           "type": "TEXT",
@@ -22,12 +21,11 @@
       ]
     },
     {
-      "title": "Texto motivador 2",
       "font": "Disponível em: www.operacaoleisecarj.rj.gov.br. Acesso em: 20 jun. 2013 (adaptado).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Repulsão magnética a beber e dirigir"
+          "content": "## Repulsão magnética a beber e dirigir"
         },
         {
           "type": "TEXT",

@@ -30,10 +30,11 @@ const THEME_PROJECTION_NAMES = {
 // GSI2 returns the Theme together with its ReferenceTexts (they share GSI2PK = THEME#<themeId>
 // by design, see ADR-0004) — the projection covers both entities' attributes plus #type to split them.
 const THEME_WITH_REFERENCE_TEXTS_PROJECTION_EXPRESSION =
-  "#type, #id, #title, #enemYear, #topicId, #font, #paragraphs, #themeId, #createdAt, #updatedAt";
+  "#type, #id, #title, #enemYear, #topicId, #order, #font, #paragraphs, #themeId, #createdAt, #updatedAt";
 const THEME_WITH_REFERENCE_TEXTS_PROJECTION_NAMES = {
   ...THEME_PROJECTION_NAMES,
   "#type": "type",
+  "#order": "order",
   "#font": "font",
   "#paragraphs": "paragraphs",
   "#themeId": "themeId",

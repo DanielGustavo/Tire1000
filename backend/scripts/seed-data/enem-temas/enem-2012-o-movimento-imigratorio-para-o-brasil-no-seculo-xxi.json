@@ -4,7 +4,6 @@
   "topic": "Direitos Humanos e Minorias",
   "referenceTexts": [
     {
-      "title": "Texto motivador 1",
       "font": "Disponível em: http://www.museudaimigracao.org.br. Acesso em: 19 jul. 2012 (adaptado).",
       "paragraphs": [
         {
@@ -18,12 +17,11 @@
       ]
     },
     {
-      "title": "Texto motivador 2",
       "font": "Disponível em: http://www.dpf.gov.br. Acesso em: 19 jul. 2012 (adaptado).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Acre sofre com invasão de imigrantes do Haiti"
+          "content": "## Acre sofre com invasão de imigrantes do Haiti"
         },
         {
           "type": "TEXT",
@@ -44,12 +42,11 @@
       ]
     },
     {
-      "title": "Texto motivador 3",
       "font": "OLIVEIRA, R.T. Disponível em: http://www.ipea.gov.br. Acesso em: 19 jul. 2012 (adaptado).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Trilha da Costura"
+          "content": "## Trilha da Costura"
         },
         {
           "type": "TEXT",

@@ -6,7 +6,7 @@ export type ReferenceTextParagraph =
 
 export interface ReferenceTextProps {
   id: string;
-  title: string;
+  order: number;
   font: string;
   paragraphs: ReferenceTextParagraph[];
   themeId: string;
@@ -17,14 +17,14 @@ export interface ReferenceTextProps {
 export class ReferenceText extends Entity {
   declare readonly type: "REFERENCE_TEXT";
 
-  readonly title: string;
+  readonly order: number;
   readonly font: string;
   readonly paragraphs: ReferenceTextParagraph[];
   readonly themeId: string;
 
   private constructor(props: ReferenceTextProps) {
     super({ id: props.id, type: "REFERENCE_TEXT", createdAt: props.createdAt, updatedAt: props.updatedAt });
-    this.title = props.title;
+    this.order = props.order;
     this.font = props.font;
     this.paragraphs = props.paragraphs;
     this.themeId = props.themeId;

@@ -4,7 +4,6 @@
   "topic": "Direitos Humanos e Minorias",
   "referenceTexts": [
     {
-      "title": "Texto motivador 1",
       "font": "HOUAISS, A.; VILLAR, M. S. Dicionário Houaiss da língua portuguesa. Rio de Janeiro: Objetiva, 2009 (adaptado)",
       "paragraphs": [
         {
@@ -14,7 +13,6 @@
       ]
     },
     {
-      "title": "Texto motivador 2",
       "font": "OLIVEIRA, E. D. A epistemologia da ancestralidade. Entrelugares: revista de sociopoética e abordagens afins, 2009.",
       "paragraphs": [
         {
@@ -24,12 +22,11 @@
       ]
     },
     {
-      "title": "Texto motivador 3",
       "font": "Disponível em: https://jornal.unesp.br. Acesso em: 3 jun. 2024 (Adaptado).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "História afro-brasileira nas escolas: professoras comentam avanços e dificuldades"
+          "content": "## História afro-brasileira nas escolas: professoras comentam avanços e dificuldades"
         },
         {
           "type": "TEXT",
@@ -42,16 +39,15 @@
       ]
     },
     {
-      "title": "Texto motivador 4",
       "font": "Disponível em: www.mangueira.com.br. Acesso em: 30 maio 2024 (fragmento)",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Histórias Para Ninar Gente Grande"
+          "content": "## Histórias Para Ninar Gente Grande"
         },
         {
           "type": "TEXT",
-          "content": "G.R.E.S. Estação Primeira de Mangueira"
+          "content": "### G.R.E.S. Estação Primeira de Mangueira"
         },
         {
           "type": "TEXT",

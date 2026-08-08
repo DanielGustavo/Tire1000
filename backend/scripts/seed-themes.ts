@@ -57,7 +57,6 @@ const TOPIC_COLORS: Record<string, string> = {
 };
 
 interface EnemReferenceTextJson {
-  title: string;
   font?: string;
   paragraphs: ReferenceTextParagraph[];
 }
@@ -128,11 +127,11 @@ async function main() {
     });
     themes.push(theme);
 
-    for (const referenceTextJson of themeJson.referenceTexts) {
+    for (const [order, referenceTextJson] of themeJson.referenceTexts.entries()) {
       referenceTexts.push(
         ReferenceText.reconstitute({
           id: await id(),
-          title: referenceTextJson.title,
+          order,
           font: referenceTextJson.font ?? "",
           paragraphs: referenceTextJson.paragraphs,
           themeId: theme.id,

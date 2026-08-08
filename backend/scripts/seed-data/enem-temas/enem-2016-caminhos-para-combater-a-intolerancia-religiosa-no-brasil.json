@@ -4,7 +4,6 @@
   "topic": "Direitos Humanos e Minorias",
   "referenceTexts": [
     {
-      "title": "Texto motivador 1",
       "font": "Disponível em: www.mprj.mp.br. Acesso em: 21 maio 2016 (fragmento).",
       "paragraphs": [
         {
@@ -14,7 +13,6 @@
       ]
     },
     {
-      "title": "Texto motivador 2",
       "font": "STECK, J. Intolerância religiosa é crime de ódio e fere a dignidade. Jornal do Senado. Acesso em: 21 maio 2016 (fragmento).",
       "paragraphs": [
         {
@@ -24,32 +22,31 @@
       ]
     },
     {
-      "title": "Texto motivador 3",
       "font": "BRASIL. Código Penal. Disponível em: www.planalto.gov.br. Acesso em: 21 maio 2016 (fragmento",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "CAPÍTULO I"
+          "content": "## CAPÍTULO I"
         },
         {
           "type": "TEXT",
-          "content": "Dos Crimes Contra o Sentimento Religioso"
+          "content": "### Dos Crimes Contra o Sentimento Religioso"
         },
         {
           "type": "TEXT",
-          "content": "Ultraje a culto e impedimento ou perturbação de ato a ele relativo"
+          "content": "### Ultraje a culto e impedimento ou perturbação de ato a ele relativo"
         },
         {
           "type": "TEXT",
-          "content": "Art. 208 – Escarnecer de alguém publicamente, por motivo de crença ou função religiosa; impedir ou perturbar cerimônia ou prática de culto religioso; vilipendiar publicamente ato ou objeto de culto religioso:"
+          "content": "**Art. 208 –** Escarnecer de alguém publicamente, por motivo de crença ou função religiosa; impedir ou perturbar cerimônia ou prática de culto religioso; vilipendiar publicamente ato ou objeto de culto religioso:"
         },
         {
           "type": "TEXT",
-          "content": "Pena – detenção, de um mês a um ano, ou multa."
+          "content": "**Pena –** detenção, de um mês a um ano, ou multa."
         },
         {
           "type": "TEXT",
-          "content": "Parágrafo único – Se há emprego de violência, a pena é aumentada de um terço, sem prejuízo da correspondente à violência."
+          "content": "**Parágrafo único –** Se há emprego de violência, a pena é aumentada de um terço, sem prejuízo da correspondente à violência."
         }
       ]
     }

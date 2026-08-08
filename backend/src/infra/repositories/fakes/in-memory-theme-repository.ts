@@ -16,7 +16,10 @@ export class InMemoryThemeRepository implements ThemeRepository {
     const theme = this.themes.find((theme) => theme.id === id);
     if (!theme) return null;
 
-    return { theme, referenceTexts: this.referenceTexts.filter((text) => text.themeId === id) };
+    return {
+      theme,
+      referenceTexts: this.referenceTexts.filter((text) => text.themeId === id).sort((a, b) => a.order - b.order),
+    };
   }
 
   async list({ topicId, search }: ListThemesFilter = {}): Promise<Theme[]> {

@@ -17,7 +17,7 @@ export type ReferenceTextParagraph =
 
 export interface ReferenceText {
   id: string;
-  title: string;
+  order: number;
   font: string;
   paragraphs: ReferenceTextParagraph[];
 }

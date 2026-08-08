@@ -4,7 +4,6 @@
   "topic": "Direitos Humanos e Minorias",
   "referenceTexts": [
     {
-      "title": "Texto motivador 1",
       "font": "Disponível em: https://g1.globo.com/economia/agronegocios/agro-a-industria-riqueza-do-brasil/noticia/2022/01/29/gente-do-campo-descubra-quais-sao-os-28-povos-e-comunidades-tradicionais-do-brasil.ghtml (adaptado).",
       "paragraphs": [
         {
@@ -22,12 +21,11 @@
       ]
     },
     {
-      "title": "Texto motivador 2",
       "font": "Disponível em: http://mds.gov.br/assuntos/seguranca-alimentar/direito-a-alimentacao/povos-e-comunidades-tradicionais#:~:text=O Ministério do Desenvolvimento Social,13 de julho de 2006. (adaptado).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Povos e comunidades tradicionais"
+          "content": "## Povos e comunidades tradicionais"
         },
         {
           "type": "TEXT",
@@ -36,16 +34,15 @@
       ]
     },
     {
-      "title": "Texto motivador 3",
       "font": "Disponível em: https://s3.amazonaws.com/appforest_uf/f1635878454366x123986991266021200/CARTA DA AMAZÔNIA 2021_COP 26_PORT.pdf (adaptad0).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "Carta da Amazônia 2021"
+          "content": "## Carta da Amazônia 2021"
         },
         {
           "type": "TEXT",
-          "content": "Aos participantes da 26ª Conferência das Nações Unidas sobre Mudanças Climáticas (COP26)"
+          "content": "### Aos participantes da 26ª Conferência das Nações Unidas sobre Mudanças Climáticas (COP26)"
         },
         {
           "type": "TEXT",

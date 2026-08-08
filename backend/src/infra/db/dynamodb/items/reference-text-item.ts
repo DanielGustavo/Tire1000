@@ -7,7 +7,7 @@ export interface ReferenceTextItem {
   GSI2SK: string;
   id: string;
   type: "REFERENCE_TEXT";
-  title: string;
+  order: number;
   font: string;
   paragraphs: ReferenceTextParagraph[];
   themeId: string;
@@ -19,27 +19,27 @@ export function referenceTextPK(themeId: string): string {
   return `REFERENCE_TEXT#${themeId}`;
 }
 
-export function referenceTextSK(referenceTextId: string): string {
-  return `REFERENCE_TEXT#${referenceTextId}`;
+export function referenceTextSK(order: number, referenceTextId: string): string {
+  return `REFERENCE_TEXT#${String(order).padStart(2, "0")}#${referenceTextId}`;
 }
 
 export function referenceTextGSI2PK(themeId: string): string {
   return `THEME#${themeId}`;
 }
 
-export function referenceTextGSI2SK(referenceTextId: string): string {
-  return `REFERENCE_TEXT#${referenceTextId}`;
+export function referenceTextGSI2SK(order: number, referenceTextId: string): string {
+  return `REFERENCE_TEXT#${String(order).padStart(2, "0")}#${referenceTextId}`;
 }
 
 export function toReferenceTextItem(referenceText: ReferenceText): ReferenceTextItem {
   return {
     PK: referenceTextPK(referenceText.themeId),
-    SK: referenceTextSK(referenceText.id),
+    SK: referenceTextSK(referenceText.order, referenceText.id),
     GSI2PK: referenceTextGSI2PK(referenceText.themeId),
-    GSI2SK: referenceTextGSI2SK(referenceText.id),
+    GSI2SK: referenceTextGSI2SK(referenceText.order, referenceText.id),
     id: referenceText.id,
     type: referenceText.type,
-    title: referenceText.title,
+    order: referenceText.order,
     font: referenceText.font,
     paragraphs: referenceText.paragraphs,
     themeId: referenceText.themeId,
@@ -51,7 +51,7 @@ export function toReferenceTextItem(referenceText: ReferenceText): ReferenceText
 export function fromReferenceTextItem(item: ReferenceTextItem): ReferenceText {
   return ReferenceText.reconstitute({
     id: item.id,
-    title: item.title,
+    order: item.order,
     font: item.font,
     paragraphs: item.paragraphs,
     themeId: item.themeId,

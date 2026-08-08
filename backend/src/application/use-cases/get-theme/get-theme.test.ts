@@ -22,7 +22,7 @@ function buildTheme(overrides: Partial<ThemeProps> = {}): Theme {
 function buildReferenceText(overrides: Partial<ReferenceTextProps> = {}): ReferenceText {
   return ReferenceText.reconstitute({
     id: "reference-1",
-    title: "Texto motivador 1",
+    order: 0,
     font: "serif",
     paragraphs: [{ type: "TEXT", content: "Lorem ipsum dolor sit amet." }],
     themeId: "theme-1",
@@ -59,7 +59,7 @@ describe("GetTheme", () => {
       referenceTexts: [
         {
           id: referenceText.id,
-          title: referenceText.title,
+          order: referenceText.order,
           font: referenceText.font,
           themeId: referenceText.themeId,
           paragraphs: referenceText.paragraphs,
@@ -83,6 +83,20 @@ describe("GetTheme", () => {
     expect(result.referenceTexts[0]!.paragraphs).toEqual([
       { type: "IMAGE", content: { url: "https://assets.tire1000.com/seed/mapa.png", font: "sans-serif" } },
     ]);
+  });
+
+  it("returns reference texts sorted by order, regardless of insertion order", async () => {
+    const theme = buildTheme();
+    const referenceTextOrder1 = buildReferenceText({ id: "reference-2", order: 1 });
+    const referenceTextOrder0 = buildReferenceText({ id: "reference-1", order: 0 });
+    const themeRepository = new InMemoryThemeRepository([theme], [referenceTextOrder1, referenceTextOrder0]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository([buildTopic()]);
+    const getTheme = createGetTheme({ themeRepository, themeTopicRepository, themeAssetsBaseUrl: "https://assets.tire1000.com" });
+
+    const result = await getTheme({ themeId: "theme-1" });
+
+    expect(result.referenceTexts.map((referenceText) => referenceText.order)).toEqual([0, 1]);
+    expect(result.referenceTexts.map((referenceText) => referenceText.id)).toEqual(["reference-1", "reference-2"]);
   });
 
   it("returns an empty reference text list when the theme has none", async () => {

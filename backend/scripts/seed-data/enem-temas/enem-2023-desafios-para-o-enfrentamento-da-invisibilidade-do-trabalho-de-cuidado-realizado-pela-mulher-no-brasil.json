@@ -4,12 +4,11 @@
   "topic": "Economia, Trabalho e Desenvolvimento",
   "referenceTexts": [
     {
-      "title": "Texto motivador 1",
       "font": "Documento informativo – Tempo de Cuidar. Disponível em: www.oxfam.org.br. Acesso em: 18 jul. 2023 (adaptado).",
       "paragraphs": [
         {
           "type": "TEXT",
-          "content": "O trabalho de cuidado não remunerado e mal pago e a crise global da desigualdade"
+          "content": "## O trabalho de cuidado não remunerado e mal pago e a crise global da desigualdade"
         },
         {
           "type": "TEXT",
@@ -18,7 +17,6 @@
       ]
     },
     {
-      "title": "Texto motivador 2",
       "paragraphs": [
         {
           "type": "IMAGE",
@@ -30,7 +28,6 @@
       ]
     },
     {
-      "title": "Texto motivador 3",
       "font": "Disponível em: https://repositorio.ipea.gov.br. Acesso em: 24 maio 2023 (adaptado).",
       "paragraphs": [
         {
@@ -40,7 +37,6 @@
       ]
     },
     {
-      "title": "Texto motivador 4",
       "paragraphs": [
         {
           "type": "IMAGE",

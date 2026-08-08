@@ -6,7 +6,7 @@ export type ReferenceTextParagraphDTO =
 
 export interface ReferenceTextDTO {
   id: string;
-  title: string;
+  order: number;
   font: string;
   themeId: string;
   paragraphs: ReferenceTextParagraphDTO[];
@@ -16,7 +16,7 @@ export interface ReferenceTextDTO {
 export function toReferenceTextDTO(referenceText: ReferenceText, themeAssetsBaseUrl: string): ReferenceTextDTO {
   return {
     id: referenceText.id,
-    title: referenceText.title,
+    order: referenceText.order,
     font: referenceText.font,
     themeId: referenceText.themeId,
     paragraphs: referenceText.paragraphs.map((paragraph) =>
