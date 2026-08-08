@@ -5,11 +5,14 @@ import cardTextureDark from "../assets/card-texture-dark.png";
 type TexturedCardProps = {
   /** A hex background color, or "dark" for the black/error-processing variant. */
   color: string | "dark";
+  /** Sizing/self-participation in the parent layout (e.g. `flex-1`, `w-full`) — goes on the outer box. */
   className?: string;
+  /** Padding and arrangement of `children` (e.g. `gap-4`, `justify-between`, `p-2.5`) — goes on the div that actually wraps them, so the texture/gradient overlay behind it can stay full-bleed to the border. */
+  contentClassName?: string;
   children: ReactNode;
 };
 
-export function TexturedCard({ color, className, children }: TexturedCardProps) {
+export function TexturedCard({ color, className, contentClassName, children }: TexturedCardProps) {
   const isDark = color === "dark";
 
   return (
@@ -23,8 +26,12 @@ export function TexturedCard({ color, className, children }: TexturedCardProps) 
           className={`absolute inset-0 bg-[length:40px_40px] bg-top-left ${isDark ? "mix-blend-hard-light" : "opacity-[0.11]"}`}
           style={{ backgroundImage: `url(${isDark ? cardTextureDark : cardTexture})` }}
         />
+        <div
+          className="absolute inset-0"
+          style={{ backgroundImage: isDark ? "linear-gradient(75deg, #000000 4%, #00000000 90%)" : `linear-gradient(75deg, ${color} 4%, ${color}00 78%)` }}
+        />
       </div>
-      <div className="relative flex flex-1 flex-col">{children}</div>
+      <div className={`relative flex flex-1 flex-col ${contentClassName ?? ""}`}>{children}</div>
     </div>
   );
 }

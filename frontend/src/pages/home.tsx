@@ -9,7 +9,7 @@ import { Button } from "../components/Button";
 import { IconButton } from "../components/IconButton";
 import { PriceModal } from "../components/PriceModal";
 import { TexturedCard } from "../components/TexturedCard";
-import { essayService, REJECTION_REASON_LABELS, RESENDABLE_STATUSES, type Essay, type EssayStatus } from "../services/essay-service";
+import { essayService, REJECTION_REASON_LABELS, RESENDABLE_STATUSES, scoreCardColor, type Essay, type EssayStatus } from "../services/essay-service";
 import { themeService, type ThemeWithTopic } from "../services/theme-service";
 import { userService } from "../services/user-service";
 import logo from "../assets/landing/logo.png";
@@ -67,7 +67,7 @@ function Header({ credits }: { credits: number | undefined }) {
       <img src={logo} alt="Tire 1000" className="h-10 w-[45px] object-contain" />
       <div className="flex items-center gap-4">
         <IconButton
-          variant="dark"
+          variant="gray"
           rotate="left"
           aria-label="Comprar créditos"
           onClick={() => setPriceModalOpen(true)}
@@ -107,7 +107,7 @@ function UserMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: 
   return (
     <div ref={rootRef} className="relative">
       <IconButton
-        variant="dark"
+        variant="gray"
         rotate="left"
         aria-label="Menu do usuário"
         aria-expanded={open}
@@ -164,9 +164,10 @@ function ThemesSection() {
 
 function ThemeCard({ theme, topic }: ThemeWithTopic) {
   return (
-    <div className="flex h-[295px] w-[309px] shrink-0 flex-col gap-2">
-      {theme.enemYear && <Bullet size="auto">{`ENEM ${theme.enemYear}`}</Bullet>}
-      <TexturedCard color={topic?.color ?? DEFAULT_THEME_COLOR} className="flex-1 justify-between p-2.5">
+    <div className="flex h-[295px] w-[309px] shrink-0 flex-col items-start gap-2">
+      <Bullet size="auto" color={topic?.color ?? DEFAULT_THEME_COLOR}>{theme.enemYear ? `ENEM ${theme.enemYear}` : `Tire 1000`}</Bullet>
+
+      <TexturedCard color={topic?.color ?? DEFAULT_THEME_COLOR} className="flex-1 w-full" contentClassName="justify-between p-2.5">
         <p className="line-clamp-3 text-subtitle font-bold capitalize text-neutral-900">{theme.title}</p>
         <Link to={`/themes/${theme.id}`} className="self-end">
           <Button variant="dark">Ver tema</Button>
@@ -181,8 +182,8 @@ function EssayStatusHeader({ essay }: { essay: Essay }) {
 
   return (
     <div className="flex w-full items-center gap-2">
-      <div className={`${rotateClass("left")} flex size-6 shrink-0 items-center justify-center border-2 border-solid border-neutral-900 ${isError ? "bg-error-300" : "bg-alert-300"} ${ROTATED_SHADOW_CLASSES.black}`}>
-        {isError ? <X size={14} className="text-neutral-900" /> : <span className="text-default font-bold text-neutral-900">!</span>}
+      <div className={`${rotateClass("left")} flex w-[21px] h-[38px] shrink-0 items-center justify-center border-2 border-solid border-neutral-900 ${isError ? "bg-error-300" : "bg-alert-300"} ${ROTATED_SHADOW_CLASSES.black}`}>
+        {isError ? <X size={24} strokeWidth={3} className="text-neutral-0" /> : <span className="text-subtitle font-bold text-neutral-900">!</span>}
       </div>
       <p className="flex-1 text-default font-bold text-neutral-900">{statusMessage(essay)}</p>
     </div>
@@ -192,7 +193,7 @@ function EssayStatusHeader({ essay }: { essay: Essay }) {
 function EssayCard({ essay }: { essay: Essay }) {
   if (essay.status === "SUCCESS") {
     return (
-      <TexturedCard color={essay.topicColor} className="w-full gap-4 p-2.5">
+      <TexturedCard color={scoreCardColor(essay.finalScore ?? 0)} className="w-full" contentClassName="gap-4 p-2.5">
         <div className="flex w-full items-center gap-4">
           <Bullet variant="white" size="auto" rotate="left">
             {essay.finalScore ?? "—"}
@@ -214,7 +215,7 @@ function EssayCard({ essay }: { essay: Essay }) {
   return (
     <div className="flex w-full flex-col gap-2">
       <EssayStatusHeader essay={essay} />
-      <TexturedCard color="dark" className="w-full gap-4 p-2.5">
+      <TexturedCard color="dark" className="w-full" contentClassName="gap-4 p-2.5">
         <div className="flex w-full items-center gap-4">
           <Bullet variant="dark" size="auto" rotate="left">
             ???

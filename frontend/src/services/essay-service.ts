@@ -83,6 +83,20 @@ export const REJECTION_REASON_LABELS: Record<string, string> = {
 // redrive by the team, not a user resend.
 export const RESENDABLE_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
 
+// Score bands (0–1000, in steps of 200 — one per competência) mapped to the evaluated essay card's color,
+// per the Figma mock. Colors match the DS tokens: primary-100, info-300, alert-100, pink-300, error-100.
+const SCORE_BAND_COLORS: readonly [min: number, color: string][] = [
+  [800, "#81EEB7"],
+  [600, "#7AD3FF"],
+  [400, "#FFED7A"],
+  [200, "#EF80BD"],
+  [0, "#EF8D80"],
+];
+
+export function scoreCardColor(score: number): string {
+  return SCORE_BAND_COLORS.find(([min]) => score >= min)![1];
+}
+
 class EssayService extends Service {
   async upload(themeId: string): Promise<UploadEssayResponse> {
     const { data } = await this.client.post<UploadEssayResponse>("/essays", { themeId });

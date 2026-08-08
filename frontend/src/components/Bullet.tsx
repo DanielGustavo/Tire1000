@@ -15,13 +15,15 @@ const VARIANT_STYLES = {
 
 type BulletProps = {
   variant?: keyof typeof VARIANT_STYLES;
+  /** Overrides the variant's background with an arbitrary hex — e.g. a topic's color. Border/text/shadow still come from `variant`. */
+  color?: string;
   /** "fixed" is the classic 51px square (landing page). "auto" hugs its text — badges/labels of varying length. */
   size?: "fixed" | "auto";
   rotate?: "left" | "right";
   children: ReactNode;
 };
 
-export function Bullet({ variant = "default", size = "fixed", rotate, children }: BulletProps) {
+export function Bullet({ variant = "default", color, size = "fixed", rotate, children }: BulletProps) {
   const { classes, shadow } = VARIANT_STYLES[variant];
   const isSlot = variant === "slot" || variant === "dark-slot";
   const sizeClasses = size === "fixed" ? "size-[51px]" : "h-10 w-auto whitespace-nowrap";
@@ -29,6 +31,7 @@ export function Bullet({ variant = "default", size = "fixed", rotate, children }
   const box = (
     <div
       className={`flex ${sizeClasses} shrink-0 items-center justify-center overflow-clip border-2 border-solid ${classes} ${rotate ? "" : SHADOW_CLASSES[shadow]} ${isSlot ? "" : "px-3 py-1"}`}
+      style={color ? { backgroundColor: color } : undefined}
     >
       {isSlot ? (
         children

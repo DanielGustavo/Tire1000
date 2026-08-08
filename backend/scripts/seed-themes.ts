@@ -34,9 +34,12 @@ async function main() {
   const now = new Date();
 
   const topics = [
-    ThemeTopic.reconstitute({ id: await id(), title: "Meio ambiente", color: "#2E7D32", createdAt: now, updatedAt: now }),
-    ThemeTopic.reconstitute({ id: await id(), title: "Tecnologia", color: "#1565C0", createdAt: now, updatedAt: now }),
-    ThemeTopic.reconstitute({ id: await id(), title: "Cidadania", color: "#C62828", createdAt: now, updatedAt: now }),
+    // Cores da paleta de exemplo do Figma para os cards de tema/redação (tokens `primary-100`/`info-300`/`error-100`
+    // do design system, ver frontend/src/index.css) — o Figma não usa uma cor "de eixo" fixa por tópico, só ilustra
+    // com essa paleta, então seguimos ela em vez de inventar uma cor fora do DS.
+    ThemeTopic.reconstitute({ id: await id(), title: "Meio ambiente", color: "#81EEB7", createdAt: now, updatedAt: now }),
+    ThemeTopic.reconstitute({ id: await id(), title: "Tecnologia", color: "#7AD3FF", createdAt: now, updatedAt: now }),
+    ThemeTopic.reconstitute({ id: await id(), title: "Cidadania", color: "#EF8D80", createdAt: now, updatedAt: now }),
   ];
 
   const themes = [
