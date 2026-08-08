@@ -9,7 +9,7 @@ export function ThemeListItem({ theme, topic }: ThemeWithTopic) {
 
   return (
     <div className="flex h-[295px] w-full shrink-0 flex-col items-start gap-2">
-      <div className="flex items-center gap-2">
+      <div className="flex w-full flex-wrap items-center gap-2">
         <Bullet size="auto" color={color}>{theme.enemYear ? `ENEM ${theme.enemYear}` : `Tire 1000`}</Bullet>
         {topic && <Bullet size="auto" color={color}>{topic.title}</Bullet>}
       </div>
