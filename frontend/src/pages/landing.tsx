@@ -117,7 +117,7 @@ function Hero() {
 
 function Steps() {
   return (
-    <section className="flex w-full flex-col items-center px-4 py-0.5">
+    <section className="mt-6 flex w-full flex-col items-center px-4 py-0.5">
       <div className="flex w-full flex-col items-center gap-8 border-2 border-solid border-neutral-900 bg-alert-100 px-6 py-4 shadow-hard">
         <h2 className="w-full text-center text-title font-extrabold uppercase text-neutral-900">
           Correção em
@@ -141,7 +141,7 @@ function Steps() {
 
 function Illustration() {
   return (
-    <section className="flex w-full flex-col items-center gap-8 px-8 py-4">
+    <section className="mt-6 flex w-full flex-col items-center gap-8 px-8 py-4">
       <h2 className="w-full text-hero font-extrabold uppercase text-neutral-900">
         Avaliamos
         <br />
@@ -152,7 +152,7 @@ function Illustration() {
       <img
         src={correctionIllustration}
         alt="Cada trecho da redação recebe um comentário por competência"
-        className="h-[288px] w-[338px] object-cover"
+        className="h-auto w-full max-w-[338px] object-contain"
       />
       <div className="flex w-full flex-col gap-6">
         {COMPETENCIES.map(({ code, variant, title, description }, index) => (
@@ -173,7 +173,7 @@ function Illustration() {
 
 function Cta() {
   return (
-    <section className="flex w-full flex-col items-center px-4 py-0.5">
+    <section className="mt-6 flex w-full flex-col items-center px-4 py-0.5">
       <div className="flex w-full flex-col items-center gap-6 border-2 border-solid border-neutral-900 bg-pink-300 px-6 py-4 shadow-hard">
         <h2 className="w-full text-center text-title font-extrabold uppercase text-neutral-900">
           Quer uma
@@ -196,7 +196,7 @@ function Cta() {
 
 function Footer() {
   return (
-    <footer className="flex h-[100px] w-full items-center justify-center gap-4 bg-neutral-900 p-2">
+    <footer className="mt-6 flex h-[100px] w-full items-center justify-center gap-4 bg-neutral-900 p-2">
       <p className="text-small text-neutral-0">Todos os direitos reservados à</p>
       <img src={logo} alt="Tire 1000" className="h-[35px] w-[39px] object-contain" />
     </footer>

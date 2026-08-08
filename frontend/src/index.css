@@ -3,6 +3,9 @@
 @theme {
   --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
 
+  /* Lato's static family only ships 400/700/900 — "ExtraBold" in Figma maps to the 900 (Black) cut, not the CSS-standard 800 */
+  --font-weight-extrabold: 900;
+
   --color-neutral-0: #ffffff;
   --color-neutral-30: #ededed;
   --color-neutral-300: #696c6b;
