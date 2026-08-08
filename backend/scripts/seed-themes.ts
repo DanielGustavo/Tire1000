@@ -22,14 +22,19 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import KSUID from "ksuid";
 import { Theme } from "../src/domain/entities/theme.js";
 import { ThemeTopic } from "../src/domain/entities/theme-topic.js";
-import { ReferenceText, ReferenceTextParagraph } from "../src/domain/entities/reference-text.js";
+import {
+  ReferenceText,
+  ReferenceTextParagraph,
+} from "../src/domain/entities/reference-text.js";
 import { toThemeItem } from "../src/infra/db/dynamodb/items/theme-item.js";
 import { toThemeTopicItem } from "../src/infra/db/dynamodb/items/theme-topic-item.js";
 import { toReferenceTextItem } from "../src/infra/db/dynamodb/items/reference-text-item.js";
 
 const tableName = process.env.TABLE_NAME;
 if (!tableName) {
-  throw new Error("TABLE_NAME env var is required, e.g. TABLE_NAME=tire1000-dev-MainTable pnpm seed:themes");
+  throw new Error(
+    "TABLE_NAME env var is required, e.g. TABLE_NAME=tire1000-dev-MainTable pnpm seed:themes",
+  );
 }
 
 const documentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
@@ -43,12 +48,12 @@ async function id(): Promise<string> {
 const TOPIC_COLORS: Record<string, string> = {
   "Sociedade, Cultura e Comportamento": "#EF80BD", // pink-300
   "Ciência e Tecnologia": "#7AD3FF", // info-300
-  "Educação": "#25E283", // primary-300
+  Educação: "#25E283", // primary-300
   "Meio Ambiente e Sustentabilidade": "#81EEB7", // primary-100
   "Saúde e Bem-Estar": "#FFED7A", // alert-100
   "Direitos Humanos e Minorias": "#EF8D80", // error-100
   "Economia, Trabalho e Desenvolvimento": "#FFE01A", // alert-300
-  "Segurança Pública e Violência": "#E33A24", // error-300
+  "Segurança Pública e Violência": "#E85B49",
 };
 
 interface EnemReferenceTextJson {
@@ -70,7 +75,12 @@ const enemThemesDir = join(__dirname, "seed-data", "enem-temas");
 function loadEnemThemes(): EnemThemeJson[] {
   return readdirSync(enemThemesDir)
     .filter((file) => file.endsWith(".json"))
-    .map((file) => JSON.parse(readFileSync(join(enemThemesDir, file), "utf-8")) as EnemThemeJson);
+    .map(
+      (file) =>
+        JSON.parse(
+          readFileSync(join(enemThemesDir, file), "utf-8"),
+        ) as EnemThemeJson,
+    );
 }
 
 async function main() {
@@ -81,8 +91,20 @@ async function main() {
   const topicsByName = new Map<string, ThemeTopic>();
   for (const name of topicNames) {
     const color = TOPIC_COLORS[name];
-    if (!color) throw new Error(`Cor não definida para o eixo "${name}" — atualize TOPIC_COLORS.`);
-    topicsByName.set(name, ThemeTopic.reconstitute({ id: await id(), title: name, color, createdAt: now, updatedAt: now }));
+    if (!color)
+      throw new Error(
+        `Cor não definida para o eixo "${name}" — atualize TOPIC_COLORS.`,
+      );
+    topicsByName.set(
+      name,
+      ThemeTopic.reconstitute({
+        id: await id(),
+        title: name,
+        color,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
   }
   const topics = [...topicsByName.values()];
 
@@ -91,7 +113,10 @@ async function main() {
 
   for (const themeJson of enemThemesJson) {
     const topic = topicsByName.get(themeJson.topic);
-    if (!topic) throw new Error(`Eixo "${themeJson.topic}" não encontrado para o tema "${themeJson.title}".`);
+    if (!topic)
+      throw new Error(
+        `Eixo "${themeJson.topic}" não encontrado para o tema "${themeJson.title}".`,
+      );
 
     const theme = Theme.reconstitute({
       id: await id(),
@@ -119,16 +144,27 @@ async function main() {
   }
 
   for (const topic of topics) {
-    await documentClient.send(new PutCommand({ TableName: tableName, Item: toThemeTopicItem(topic) }));
+    await documentClient.send(
+      new PutCommand({ TableName: tableName, Item: toThemeTopicItem(topic) }),
+    );
   }
   for (const theme of themes) {
-    await documentClient.send(new PutCommand({ TableName: tableName, Item: toThemeItem(theme) }));
+    await documentClient.send(
+      new PutCommand({ TableName: tableName, Item: toThemeItem(theme) }),
+    );
   }
   for (const referenceText of referenceTexts) {
-    await documentClient.send(new PutCommand({ TableName: tableName, Item: toReferenceTextItem(referenceText) }));
+    await documentClient.send(
+      new PutCommand({
+        TableName: tableName,
+        Item: toReferenceTextItem(referenceText),
+      }),
+    );
   }
 
-  console.log(`Seeded ${topics.length} topics, ${themes.length} themes, ${referenceTexts.length} reference texts.`);
+  console.log(
+    `Seeded ${topics.length} topics, ${themes.length} themes, ${referenceTexts.length} reference texts.`,
+  );
 }
 
 main();

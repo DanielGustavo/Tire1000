@@ -43,7 +43,7 @@ export function ThemeDetailPage() {
                       <img
                         src={paragraph.content.url}
                         alt=""
-                        className="aspect-[812/544] w-full border-2 border-solid border-neutral-900 object-cover"
+                        className="w-full border-2 border-solid border-neutral-900 object-fit"
                       />
                       <p className="text-small text-neutral-600">{paragraph.content.font}</p>
                     </div>

@@ -26,7 +26,7 @@ type BulletProps = {
 export function Bullet({ variant = "default", color, size = "fixed", rotate, children }: BulletProps) {
   const { classes, shadow } = VARIANT_STYLES[variant];
   const isSlot = variant === "slot" || variant === "dark-slot";
-  const sizeClasses = size === "fixed" ? "size-[51px]" : "h-10 w-auto whitespace-nowrap";
+  const sizeClasses = size === "fixed" ? "size-[51px]" : "min-h-10 w-auto max-w-full";
 
   const box = (
     <div
