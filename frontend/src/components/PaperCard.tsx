@@ -12,15 +12,18 @@ type PaperCardProps = {
 // round differently than the browser's own line-box math and drift more with every line.
 const LINE_HEIGHT_EM = 1.7;
 
-/** A bordered card styled like ruled notebook paper — the scalloped edge peeking above it, horizontal rules behind its content. Used for the essay text and the final score in the Correção result. */
+/**
+ * A bordered card styled like ruled notebook paper — the scalloped edge straddling its top border,
+ * horizontal rules behind its content. Used for the essay text and the final score in the Correção
+ * result.
+ *
+ * The scallop overlay comes *after* the bordered box in the DOM (and is drawn with `bg-no-repeat` at
+ * the card's actual width, not tiled — the source asset is one full pre-rendered strip of bumps, not a
+ * single repeatable tile) so it paints on top of the straight border and visually breaks it up.
+ */
 export function PaperCard({ className, children }: PaperCardProps) {
   return (
-    <div className="relative w-full pt-[18px]">
-      <div
-        aria-hidden
-        className="absolute inset-x-2 top-0 h-[18px] bg-repeat-x"
-        style={{ backgroundImage: `url(${paperEdge})`, backgroundSize: "34px 18px" }}
-      />
+    <div className="relative w-full">
       <div
         className={`relative border-2 border-solid border-neutral-900 bg-neutral-0 bg-repeat-y p-4 text-default shadow-hard ${className ?? ""}`}
         style={{
@@ -32,6 +35,11 @@ export function PaperCard({ className, children }: PaperCardProps) {
       >
         {children}
       </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-2 top-0 h-[18px] bg-no-repeat"
+        style={{ backgroundImage: `url(${paperEdge})`, backgroundSize: "100% 100%" }}
+      />
     </div>
   );
 }
