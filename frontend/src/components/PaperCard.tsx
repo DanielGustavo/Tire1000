@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import paperEdge from "../assets/paper-edge.svg";
+import paperEdge from "../assets/paper-edge.svg?url";
 
 type PaperCardProps = {
   className?: string;
