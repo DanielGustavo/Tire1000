@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { getAccessToken } from "./libs/auth";
 import { CreditsPage } from "./pages/credits";
-import { EssayHistoryPage } from "./pages/essay-history";
 import { EssayResultPage } from "./pages/essay-result";
 import { EssayUploadPage } from "./pages/essay-upload";
 import { HomePage } from "./pages/home";
@@ -25,7 +24,6 @@ function App() {
       <Route path="/login" element={<PublicOnlyRoute authModal="signin" />} />
       <Route path="/themes" element={<ThemesPage />} />
       <Route path="/themes/:themeId" element={<ThemeDetailPage />} />
-      <Route path="/essays" element={<EssayHistoryPage />} />
       <Route path="/essays/new" element={<EssayUploadPage />} />
       <Route path="/essays/:essayId" element={<EssayResultPage />} />
       <Route path="/credits" element={<CreditsPage />} />

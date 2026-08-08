@@ -7,3 +7,7 @@ export function getAccessToken(): string | null {
 export function setAccessToken(accessToken: string): void {
   localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, accessToken);
 }
+
+export function clearAccessToken(): void {
+  localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+}

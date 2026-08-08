@@ -48,6 +48,7 @@ describe("GetEssayDetail", () => {
         themeId: "theme-1",
         themeTitle: "A importância da educação financeira no Brasil",
         topicColor: "#2E7D32",
+        finalScore: null,
         createdAt: "2026-08-01T00:00:00.000Z",
         textContent: null,
         evaluation: null,

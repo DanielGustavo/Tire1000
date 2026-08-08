@@ -30,6 +30,7 @@ export interface Essay {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  finalScore: number | null;
   createdAt: string;
 }
 
@@ -67,6 +68,20 @@ export interface GetEssayDetailResponse {
 export interface ListUserEssaysResponse {
   essays: Essay[];
 }
+
+export const REJECTION_REASON_LABELS: Record<string, string> = {
+  NOT_AN_ESSAY: "A foto não é de uma redação",
+  ILLEGIBLE_HANDWRITING: "Letra ilegível",
+  LOW_LIGHTING: "Iluminação baixa",
+  BLURRY_PHOTO: "Foto desfocada",
+  INCOMPLETE_PHOTO: "Foto corta parte do texto",
+  TOO_FEW_LINES: "Menos de 7 linhas",
+  TOO_MANY_LINES: "Mais de 30 linhas",
+};
+
+// EVALUATION_FAILED is deliberately excluded — its credit isn't refunded (ADR-0001), so the fix is a DLQ
+// redrive by the team, not a user resend.
+export const RESENDABLE_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
 
 class EssayService extends Service {
   async upload(themeId: string): Promise<UploadEssayResponse> {

@@ -2,19 +2,17 @@ import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "reac
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../libs/axios";
-import { essayService, type CompetencyId, type EssayEvaluation, type EssayHighlight, type EssayStatus } from "../services/essay-service";
+import {
+  essayService,
+  REJECTION_REASON_LABELS,
+  RESENDABLE_STATUSES,
+  type CompetencyId,
+  type EssayEvaluation,
+  type EssayHighlight,
+  type EssayStatus,
+} from "../services/essay-service";
 
 const MAX_PHOTO_SIZE_IN_BYTES = 10 * 1024 * 1024;
-
-const REJECTION_REASON_LABELS: Record<string, string> = {
-  NOT_AN_ESSAY: "A foto não é de uma redação",
-  ILLEGIBLE_HANDWRITING: "Letra ilegível",
-  LOW_LIGHTING: "Iluminação baixa",
-  BLURRY_PHOTO: "Foto desfocada",
-  INCOMPLETE_PHOTO: "Foto corta parte do texto",
-  TOO_FEW_LINES: "Menos de 7 linhas",
-  TOO_MANY_LINES: "Mais de 30 linhas",
-};
 
 const COMPETENCY_IDS: CompetencyId[] = ["C1", "C2", "C3", "C4", "C5"];
 
@@ -39,7 +37,6 @@ const VALIDATING_STATUSES: EssayStatus[] = ["UPLOADING", "QUEUED", "VALIDATING"]
 // Revisão passed, still going through the fila de Avaliação — keep polling.
 const EVALUATING_STATUSES: EssayStatus[] = ["VALIDATED", "EVALUATING"];
 const PENDING_STATUSES: EssayStatus[] = [...VALIDATING_STATUSES, ...EVALUATING_STATUSES];
-const RESENDABLE_STATUSES: EssayStatus[] = ["UPLOADING", "REJECTED", "UPLOAD_FAILED", "VALIDATION_FAILED"];
 
 interface HighlightedTextSegment {
   text: string;
@@ -266,7 +263,7 @@ export function EssayResultPage() {
       )}
 
       <p className="mt-6 space-x-4 text-sm">
-        <Link to="/essays" className="font-medium text-gray-900 underline">
+        <Link to="/" className="font-medium text-gray-900 underline">
           Minhas redações
         </Link>
         <Link to="/themes" className="font-medium text-gray-900 underline">

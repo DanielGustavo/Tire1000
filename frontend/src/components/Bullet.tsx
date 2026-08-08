@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
+import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/hard-shadow";
 
 const VARIANT_STYLES = {
   default: { classes: "bg-primary-100 border-neutral-900 text-neutral-900", shadow: "black" },
   dark: { classes: "bg-neutral-900 border-neutral-0 text-neutral-0", shadow: "pink" },
+  white: { classes: "bg-neutral-0 border-neutral-900 text-neutral-900", shadow: "black" },
   alert: { classes: "bg-alert-100 border-neutral-900 text-neutral-900", shadow: "black" },
   error: { classes: "bg-error-100 border-neutral-900 text-neutral-900", shadow: "black" },
   info: { classes: "bg-info-300 border-neutral-900 text-neutral-900", shadow: "black" },
@@ -11,32 +13,22 @@ const VARIANT_STYLES = {
   "dark-slot": { classes: "bg-neutral-900 border-neutral-0", shadow: "pink" },
 } as const;
 
-const SHADOW_CLASSES = {
-  black: "shadow-hard",
-  pink: "shadow-hard-pink",
-} as const;
-
-// box-shadow (hard, unblurred) on a rotated element leaves a jagged seam where its
-// edge nearly meets the border — drop-shadow filters the element's own rasterized
-// silhouette instead, so rotated instances stay crisp.
-const ROTATED_SHADOW_CLASSES = {
-  black: "drop-shadow-[2px_2px_0px_#1e1e1e]",
-  pink: "drop-shadow-[2px_2px_0px_var(--color-pink-300)]",
-} as const;
-
 type BulletProps = {
   variant?: keyof typeof VARIANT_STYLES;
+  /** "fixed" is the classic 51px square (landing page). "auto" hugs its text — badges/labels of varying length. */
+  size?: "fixed" | "auto";
   rotate?: "left" | "right";
   children: ReactNode;
 };
 
-export function Bullet({ variant = "default", rotate, children }: BulletProps) {
+export function Bullet({ variant = "default", size = "fixed", rotate, children }: BulletProps) {
   const { classes, shadow } = VARIANT_STYLES[variant];
   const isSlot = variant === "slot" || variant === "dark-slot";
+  const sizeClasses = size === "fixed" ? "size-[51px]" : "h-10 w-auto whitespace-nowrap";
 
   const box = (
     <div
-      className={`flex size-[51px] shrink-0 items-center justify-center overflow-clip border-2 border-solid ${classes} ${rotate ? "" : SHADOW_CLASSES[shadow]} ${isSlot ? "" : "px-3 py-1"}`}
+      className={`flex ${sizeClasses} shrink-0 items-center justify-center overflow-clip border-2 border-solid ${classes} ${rotate ? "" : SHADOW_CLASSES[shadow]} ${isSlot ? "" : "px-3 py-1"}`}
     >
       {isSlot ? (
         children
@@ -48,7 +40,5 @@ export function Bullet({ variant = "default", rotate, children }: BulletProps) {
 
   if (!rotate) return box;
 
-  return (
-    <div className={`${rotate === "left" ? "-rotate-5" : "rotate-5"} ${ROTATED_SHADOW_CLASSES[shadow]}`}>{box}</div>
-  );
+  return <div className={`${rotateClass(rotate)} ${ROTATED_SHADOW_CLASSES[shadow]}`}>{box}</div>;
 }

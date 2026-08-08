@@ -1,23 +1,31 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/hard-shadow";
 
-const VARIANT_CLASSES = {
-  default: "bg-primary-300 border-neutral-900 shadow-hard",
-  dark: "bg-neutral-900 border-neutral-0 shadow-hard-pink",
-  gray: "bg-neutral-700 border-neutral-900 shadow-hard",
+const VARIANT_STYLES = {
+  default: { classes: "bg-primary-300 border-neutral-900", shadow: "black" },
+  dark: { classes: "bg-neutral-900 border-neutral-0", shadow: "pink" },
+  gray: { classes: "bg-neutral-700 border-neutral-900", shadow: "black" },
 } as const;
 
 type IconButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: keyof typeof VARIANT_CLASSES;
+  variant?: keyof typeof VARIANT_STYLES;
+  rotate?: "left" | "right";
   icon: ReactNode;
 };
 
-export function IconButton({ variant = "default", icon, className, ...props }: IconButtonProps) {
-  return (
+export function IconButton({ variant = "default", rotate, icon, className, ...props }: IconButtonProps) {
+  const { classes, shadow } = VARIANT_STYLES[variant];
+
+  const button = (
     <button
-      className={`flex size-10 shrink-0 items-center justify-center border-2 border-solid ${VARIANT_CLASSES[variant]} ${className ?? ""}`}
+      className={`flex size-10 shrink-0 items-center justify-center border-2 border-solid ${classes} ${rotate ? "" : SHADOW_CLASSES[shadow]} ${className ?? ""}`}
       {...props}
     >
       {icon}
     </button>
   );
+
+  if (!rotate) return button;
+
+  return <div className={`${rotateClass(rotate)} ${ROTATED_SHADOW_CLASSES[shadow]}`}>{button}</div>;
 }

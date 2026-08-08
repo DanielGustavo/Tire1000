@@ -13,6 +13,7 @@ export interface EssayDTO {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  finalScore: number | null;
   createdAt: string;
 }
 
@@ -24,6 +25,7 @@ export function toEssayDTO(essay: Essay): EssayDTO {
     themeId: essay.themeId,
     themeTitle: essay.themeTitle,
     topicColor: essay.topicColor,
+    finalScore: essay.finalScore,
     createdAt: essay.createdAt.toISOString(),
   };
 }
