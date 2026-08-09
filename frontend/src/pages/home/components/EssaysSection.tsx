@@ -22,7 +22,7 @@ export function EssaysSection() {
     // "Suas redações" lands visibly below it instead of tucked underneath.
     <section
       ref={sectionRef}
-      className="flex w-full scroll-mt-[72px] flex-col gap-4 px-4 lg:w-[847px] lg:shrink-0 lg:px-10"
+      className="flex w-full scroll-mt-[72px] flex-col gap-4 px-4 lg:flex-[0.8] lg:shrink-0 lg:px-10"
     >
       <h2 className="text-title font-extrabold text-neutral-900">Suas redações</h2>
 

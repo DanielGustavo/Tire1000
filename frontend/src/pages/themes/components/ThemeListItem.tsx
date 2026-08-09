@@ -8,7 +8,7 @@ export function ThemeListItem({ theme, topic }: ThemeWithTopic) {
   const color = topic?.color ?? DEFAULT_THEME_COLOR;
 
   return (
-    <div className="flex w-full shrink-0 flex-col items-start gap-2">
+    <div className="flex w-full shrink-0 flex-col items-start gap-2 mt-auto">
       <ThemeBadges theme={theme} topic={topic} />
 
       <TexturedCard color={color} className="w-full h-[295px]" contentClassName="justify-between p-2.5">

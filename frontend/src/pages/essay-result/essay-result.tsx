@@ -34,7 +34,7 @@ export function EssayResultPage() {
     // where the sidebar's content stacks below. Teto/padding scoped to this page only, same pattern as
     // tickets 08/09/10/11.
     <div className="flex w-full flex-col gap-6 lg:mx-auto lg:max-w-[1280px] lg:flex-row lg:items-start lg:px-10">
-      <div className="flex flex-1 flex-col items-start gap-6 px-4 lg:px-0">
+      <div className="flex flex-1 flex-col items-start gap-6 px-4 lg:px-0  lg:sticky lg:top-[88px]">
         <div className="flex flex-col items-start gap-4">
           <Link to="/" className="flex items-center gap-0.5 text-small font-bold text-neutral-900">
             <ChevronRight size={16} className="rotate-180" />
@@ -61,14 +61,14 @@ export function EssayResultPage() {
         // visible while the essay text column beside it scrolls, releasing naturally once this column
         // ends — same sticky-column pattern as theme-detail.tsx's CTA card. Content here (5 competency
         // cards + final score) is short/fixed-size, so no internal scroll is needed.
-        <div className="flex w-full flex-col gap-6 px-4 lg:sticky lg:top-[72px] lg:w-[403px] lg:shrink-0 lg:px-0">
+        <div className="flex w-full flex-col gap-6 px-4 lg:w-[403px] lg:shrink-0 lg:px-0">
           <CompetencyScores evaluation={evaluationResult.evaluation} />
         </div>
       ) : (
         // Skeleton sidebar is desktop-only (Figma "in progress"/"loading" frames) — mobile keeps ticket
         // 07's single-column pending state (just PendingResult's sticky note, no sidebar at all).
         // Same sticky treatment as the success-state sidebar above.
-        <div className="hidden lg:sticky lg:top-[72px] lg:flex lg:w-[403px] lg:shrink-0 lg:flex-col lg:gap-6 lg:opacity-45">
+        <div className="hidden lg:flex lg:w-[403px] lg:shrink-0 lg:flex-col lg:gap-6 lg:opacity-45 lg:px-0">
           <CompetencyScoresSkeleton status={essay.status} />
         </div>
       )}
