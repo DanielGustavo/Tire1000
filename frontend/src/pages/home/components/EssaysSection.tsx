@@ -1,3 +1,4 @@
+import { Loading } from "../../../components/Loading";
 import { Pagination } from "../../../components/Pagination";
 import { EssayCard } from "./EssayCard";
 import { EssaysEmptyState } from "./EssaysEmptyState";
@@ -10,7 +11,7 @@ export function EssaysSection() {
     <section className="flex w-full flex-col gap-4 px-4">
       <h2 className="text-title font-extrabold text-neutral-900">Suas redações</h2>
 
-      {essaysQuery.isPending && <p className="text-default text-neutral-700">Carregando...</p>}
+      {essaysQuery.isPending && <Loading />}
       {essaysQuery.isError && <p className="text-default text-error-300">Não foi possível carregar suas redações.</p>}
       {essaysQuery.isSuccess && essays.length === 0 && <EssaysEmptyState />}
 

@@ -102,7 +102,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col items-center gap-6 bg-neutral-0">
       <Header credits={user?.credits} />
-      <div className="flex w-full flex-1 flex-col items-center">{children ?? <Outlet />}</div>
+      <div className="flex w-full flex-1 gap-6 flex-col items-center">{children ?? <Outlet />}</div>
       <Footer />
     </div>
   );

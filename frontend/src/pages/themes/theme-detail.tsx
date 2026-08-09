@@ -1,6 +1,7 @@
 import { Camera, ChevronRight, Upload } from "lucide-react";
 import Markdown, { type Components } from "react-markdown";
 import { Button } from "../../components/Button";
+import { Loading } from "../../components/Loading";
 import { PriceModal } from "../../components/PriceModal";
 import { ThemeBadges } from "../../components/ThemeBadges";
 import { EssayUploadFlow } from "./components/EssayUploadFlow";
@@ -46,7 +47,7 @@ export function ThemeDetailPage() {
           Voltar
         </button>
 
-        {themeQuery.isPending && <p className="text-default text-neutral-700">Carregando...</p>}
+        {themeQuery.isPending && <Loading text="Carregando tema..." />}
         {themeQuery.isError && <p className="text-default text-error-300">Não foi possível carregar o tema.</p>}
 
         {themeQuery.isSuccess && (

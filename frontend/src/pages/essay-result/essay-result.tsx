@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { PageLoading } from "../../components/PageLoading";
+import { Loading } from "../../components/Loading";
 import { formatDate } from "../../libs/date";
 import { EssayEvaluationResult } from "./components/EssayEvaluationResult";
 import { PendingResult } from "./components/PendingResult";
@@ -10,7 +10,7 @@ export function EssayResultPage() {
   const { essayQuery, blocked } = useEssayResultPage();
 
   if (essayQuery.isPending || blocked) {
-    return <PageLoading />;
+    return <Loading text="Carregando..." />;
   }
 
   if (essayQuery.isError) {

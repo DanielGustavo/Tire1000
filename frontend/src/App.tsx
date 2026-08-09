@@ -1,6 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { PageLoading } from "./components/PageLoading";
+import { Loading } from "./components/Loading";
 import { Toaster } from "./components/Toaster";
 import { AppLayout } from "./layouts/AppLayout";
 import { CreditsPage } from "./pages/credits";
@@ -14,7 +14,7 @@ function RootRoute() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <PageLoading fullScreen />;
+    return <Loading fullScreen text="Carregando..." />;
   }
 
   return isAuthenticated ? (
@@ -30,7 +30,7 @@ function RequireAuth() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <PageLoading fullScreen />;
+    return <Loading fullScreen text="Carregando..." />;
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;

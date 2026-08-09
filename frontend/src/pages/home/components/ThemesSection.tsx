@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { themeService } from "../../../services/theme-service";
+import { Loading } from "../../../components/Loading";
 import { ThemeCard } from "./ThemeCard";
 
 const RECENT_THEMES_COUNT = 5;
@@ -22,7 +23,7 @@ export function ThemesSection() {
         </Link>
       </div>
 
-      {themesQuery.isPending && <p className="text-default text-neutral-700">Carregando...</p>}
+      {themesQuery.isPending && <Loading />}
       {themesQuery.isError && <p className="text-default text-error-300">Não foi possível carregar os temas.</p>}
 
       {recentThemes.length > 0 && (

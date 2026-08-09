@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight, SlidersHorizontal } from "lucide-react";
 import { Field } from "../../components/Field";
 import { IconButton } from "../../components/IconButton";
+import { Loading } from "../../components/Loading";
 import { Pagination } from "../../components/Pagination";
 import { ThemeListItem } from "./components/ThemeListItem";
 import { ThemesFilterModal } from "./components/ThemesFilterModal";
@@ -40,7 +41,7 @@ export function ThemesPage() {
       </div>
 
       <div className="flex w-full flex-col gap-4 px-4">
-        {themesQuery.isPending && <p className="text-default text-neutral-700">Carregando...</p>}
+        {themesQuery.isPending && <Loading />}
         {themesQuery.isError && <p className="text-default text-error-300">Não foi possível carregar os temas.</p>}
         {themesQuery.isSuccess && themes.length === 0 && (
           <p className="text-default text-neutral-700">Nenhum tema encontrado.</p>
