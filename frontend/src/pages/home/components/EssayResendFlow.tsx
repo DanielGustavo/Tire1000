@@ -1,7 +1,7 @@
-import { PhotoConfirmationErrorModal } from "../../essay-upload/components/PhotoConfirmationErrorModal";
-import { PhotoConfirmationLoadingModal } from "../../essay-upload/components/PhotoConfirmationLoadingModal";
-import { PhotoConfirmationModal } from "../../essay-upload/components/PhotoConfirmationModal";
-import { TipsModal } from "../../essay-upload/components/TipsModal";
+import { PhotoConfirmationErrorModal } from "../../../flows/essayCapture/components/PhotoConfirmationErrorModal";
+import { PhotoConfirmationLoadingModal } from "../../../flows/essayCapture/components/PhotoConfirmationLoadingModal";
+import { PhotoConfirmationModal } from "../../../flows/essayCapture/components/PhotoConfirmationModal";
+import { TipsModal } from "../../../flows/essayCapture/components/TipsModal";
 import { useEssayResendFlow } from "./useEssayResendFlow";
 
 /** The same modal chain as a new essay upload (ticket 06), opened in place over the Homepage instead of at its own route — triggered by "Tentar novamente" on a rejected/failed essay's card. */

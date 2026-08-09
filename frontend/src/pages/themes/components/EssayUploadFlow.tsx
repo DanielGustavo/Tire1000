@@ -1,9 +1,9 @@
-import { CameraPermissionModal } from "../../essay-upload/components/CameraPermissionModal";
-import { PhotoConfirmationErrorModal } from "../../essay-upload/components/PhotoConfirmationErrorModal";
-import { PhotoConfirmationLoadingModal } from "../../essay-upload/components/PhotoConfirmationLoadingModal";
-import { PhotoConfirmationModal } from "../../essay-upload/components/PhotoConfirmationModal";
-import { TipsModal } from "../../essay-upload/components/TipsModal";
-import type { EssayUploadMode } from "../../essay-upload/useEssayCaptureFlow";
+import { CameraPermissionModal } from "../../../flows/essayCapture/components/CameraPermissionModal";
+import { PhotoConfirmationErrorModal } from "../../../flows/essayCapture/components/PhotoConfirmationErrorModal";
+import { PhotoConfirmationLoadingModal } from "../../../flows/essayCapture/components/PhotoConfirmationLoadingModal";
+import { PhotoConfirmationModal } from "../../../flows/essayCapture/components/PhotoConfirmationModal";
+import { TipsModal } from "../../../flows/essayCapture/components/TipsModal";
+import type { EssayUploadMode } from "../../../flows/essayCapture/hooks/useEssayCaptureFlow";
 import { useEssayUploadFlow } from "./useEssayUploadFlow";
 
 /** The upload flow (ticket 06), opened in place over the theme detail page instead of at its own route (`/essays/new`) — triggered by the "Tirar foto"/"Fazer upload" CTAs. */

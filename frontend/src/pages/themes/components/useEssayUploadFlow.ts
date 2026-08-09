@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { toast } from "sonner";
 import { applyFieldErrors } from "../../../libs/axios";
 import { essayService } from "../../../services/essay-service";
-import { useEssayCaptureFlow, type EssayUploadMode } from "../../essay-upload/useEssayCaptureFlow";
+import { useEssayCaptureFlow, type EssayUploadMode } from "../../../flows/essayCapture/hooks/useEssayCaptureFlow";
 
 export function useEssayUploadFlow(themeId: string, mode: EssayUploadMode, onDone: (essayId: string) => void) {
   const essayIdRef = useRef<string | null>(null);

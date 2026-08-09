@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import type { EssayUploadMode } from "../essay-upload/useEssayCaptureFlow";
+import type { EssayUploadMode } from "../../flows/essayCapture/hooks/useEssayCaptureFlow";
 import { useAuth } from "../../contexts/AuthContext";
 import { themeService } from "../../services/theme-service";
 

@@ -2,7 +2,7 @@ import { Camera, NotepadText, Send, Upload } from "lucide-react";
 import { Bullet } from "../../../components/Bullet";
 import { Button } from "../../../components/Button";
 import { Modal } from "../../../components/Modal";
-import type { EssayUploadMode } from "../useEssayCaptureFlow";
+import type { EssayUploadMode } from "../hooks/useEssayCaptureFlow";
 
 type PhotoConfirmationModalProps = {
   mode: EssayUploadMode;
