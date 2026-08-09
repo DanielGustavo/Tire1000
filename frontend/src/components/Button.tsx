@@ -3,14 +3,14 @@ import { Loader } from "lucide-react";
 
 const VARIANT_CLASSES = {
   primary:
-    "bg-primary-300 text-neutral-900 border-neutral-900 shadow-hard hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
+    "bg-primary-300 text-neutral-900 border-neutral-900 shadow-hard hover:shadow-[4px_4px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
   neutral:
-    "bg-neutral-300 text-neutral-0 border-neutral-900 shadow-hard hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
+    "bg-neutral-300 text-neutral-0 border-neutral-900 shadow-hard hover:shadow-[4px_4px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
   secondary:
-    "bg-alert-300 text-neutral-900 border-neutral-900 shadow-hard hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
-  dark: "bg-neutral-900 text-neutral-0 border-neutral-0 shadow-hard-pink hover:shadow-[3px_3px_0px_0px_var(--color-pink-300)] focus-visible:outline-neutral-0",
+    "bg-alert-300 text-neutral-900 border-neutral-900 shadow-hard hover:shadow-[4px_4px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
+  dark: "bg-neutral-900 text-neutral-0 border-neutral-0 shadow-hard-pink hover:shadow-[4px_4px_0px_0px_var(--color-pink-300)] focus-visible:outline-neutral-0",
   error:
-    "bg-error-300 text-neutral-0 border-neutral-900 shadow-hard hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
+    "bg-error-300 text-neutral-0 border-neutral-900 shadow-hard hover:shadow-[4px_4px_0px_0px_#1e1e1e] focus-visible:outline-neutral-900",
 } as const;
 
 const SIZE_CLASSES = {

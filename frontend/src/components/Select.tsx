@@ -95,14 +95,12 @@ export function Select({
   const selected = options.find((option) => option.value === value);
   const isBlocked = disabled || loading;
   const borderColor = error ? "border-error-300" : "border-neutral-900";
-  const focusWithinOutlineColor = error ? "focus-within:outline-error-300" : "focus-within:outline-neutral-900";
-  const focusVisibleOutlineColor = error ? "focus-visible:outline-error-300" : "focus-visible:outline-neutral-900";
   const boxClasses = isBlocked
     ? `${borderColor} opacity-50 shadow-none`
-    : `${borderColor} hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 ${focusWithinOutlineColor}`;
+    : `${borderColor} hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-within:shadow-[6px_6px_0px_0px_#1e1e1e]!`;
   const closedButtonClasses = isBlocked
     ? `${borderColor} opacity-50 shadow-none`
-    : `${borderColor} hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${focusVisibleOutlineColor}`;
+    : `${borderColor} hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-within:shadow-[6px_6px_0px_0px_#1e1e1e]!`;
 
   function close() {
     setOpen(false);
@@ -158,7 +156,7 @@ export function Select({
             onChange={(event) => setSearch(event.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Pesquisar..."
-            className="w-full text-default text-neutral-900 outline-none placeholder:text-neutral-300"
+            className="w-full text-default text-neutral-900 outline-none! placeholder:text-neutral-300"
           />
           <ChevronDown size={24} className="shrink-0 text-neutral-900" />
         </div>
@@ -204,9 +202,8 @@ export function Select({
                 aria-selected={option.value === value}
                 onMouseEnter={() => setHighlightedValue(option.value)}
                 onClick={() => selectOption(option)}
-                className={`w-full p-2 text-left text-default text-neutral-900 ${
-                  option.value === highlightedValue ? "bg-neutral-30" : ""
-                }`}
+                className={`w-full p-2 text-left text-default text-neutral-900 ${option.value === highlightedValue ? "bg-neutral-30" : ""
+                  }`}
               >
                 {option.label}
               </button>

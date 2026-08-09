@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 @theme {
   --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
 
