@@ -22,6 +22,7 @@ export function EssayCard({ essay }: { essay: Essay }) {
   if (essay.status === "SUCCESS") {
     return (
       <TexturedCard color={scoreCardColor(essay.finalScore ?? 0)} className="w-full" contentClassName="gap-4 p-2.5">
+        <Link to={`/essays/${essay.id}`} aria-label={`Ver resultado da redação sobre ${essay.themeTitle}`} className="absolute inset-0 z-10" />
         <div className="flex w-full items-center gap-4">
           <Bullet variant="white" size="auto" rotate="left">
             {essay.finalScore ?? "—"}
@@ -30,20 +31,25 @@ export function EssayCard({ essay }: { essay: Essay }) {
         </div>
         <div className="flex w-full items-end justify-between">
           <p className="text-small font-bold text-neutral-900">{formatDate(essay.createdAt)}</p>
-          <Link to={`/essays/${essay.id}`}>
-            <IconButton variant="dark" aria-label="Ver resultado" icon={<ChevronRight size={24} className="text-neutral-0" />} />
-          </Link>
+          <IconButton variant="dark" tabIndex={-1} aria-hidden icon={<ChevronRight size={24} className="text-neutral-0" />} />
         </div>
       </TexturedCard>
     );
   }
 
   const inlineResend = INLINE_RESEND_STATUSES.includes(essay.status);
+  // EVALUATION_FAILED gets no action row at all (nothing to retry, nothing to view yet), so it
+  // stays unlinked just like the inline-resend statuses — only they have a real reason to (the
+  // resend button needs the card to stay non-clickable so it doesn't compete with the link).
+  const isClickable = !inlineResend && essay.status !== "EVALUATION_FAILED";
 
   return (
     <div className="flex w-full flex-col gap-2">
       <EssayStatusHeader essay={essay} />
       <TexturedCard color="dark" className="w-full" contentClassName="gap-4 p-2.5">
+        {isClickable && (
+          <Link to={`/essays/${essay.id}`} aria-label={`Ver redação sobre ${essay.themeTitle}`} className="absolute inset-0 z-10" />
+        )}
         <div className="flex w-full items-center gap-4">
           <Bullet variant="dark" size="auto" rotate="left">
             ???
@@ -57,14 +63,12 @@ export function EssayCard({ essay }: { essay: Essay }) {
             </Button>
           )}
           {essay.status === "UPLOADING" && (
-            <Link to={`/essays/${essay.id}`}>
-              <Button variant="dark">Tentar novamente</Button>
-            </Link>
+            <Button variant="dark" tabIndex={-1} aria-hidden>
+              Acompanhar envio
+            </Button>
           )}
           {!inlineResend && essay.status !== "UPLOADING" && essay.status !== "EVALUATION_FAILED" && (
-            <Link to={`/essays/${essay.id}`}>
-              <IconButton variant="dark" aria-label="Ver detalhes" icon={<ChevronRight size={24} className="text-neutral-0" />} />
-            </Link>
+            <IconButton variant="dark" tabIndex={-1} aria-hidden icon={<ChevronRight size={24} className="text-neutral-0" />} />
           )}
         </div>
       </TexturedCard>
