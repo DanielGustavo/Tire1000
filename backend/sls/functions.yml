@@ -1,5 +1,6 @@
 authSignup: ${file(sls/functions/auth.yml):authSignup}
 authLogin: ${file(sls/functions/auth.yml):authLogin}
+authRefresh: ${file(sls/functions/auth.yml):authRefresh}
 authPreTokenGeneration: ${file(sls/functions/auth.yml):authPreTokenGeneration}
 
 themesList: ${file(sls/functions/themes.yml):themesList}
