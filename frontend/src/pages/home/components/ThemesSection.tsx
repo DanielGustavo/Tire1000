@@ -15,7 +15,12 @@ export function ThemesSection() {
   const themeCards = recentThemes.map(({ theme, topic }) => <ThemeCard key={theme.id} theme={theme} topic={topic} />);
 
   return (
-    <section className="flex w-full flex-col gap-4 px-4 lg:min-w-0 lg:flex-1 lg:px-10">
+    // lg: sticks below the fixed AppLayout header (72px, see AppLayout.tsx) and claims the full
+    // remaining viewport height so the section itself never scrolls with the page — only the theme
+    // list below the "Temas"/"Ver todos" row scrolls internally (overflow-y-auto further down).
+    // min-w-[320px] reuses ThemeCard's mobile carousel snap-width so the column never gets
+    // squeezed too narrow on smaller desktop viewports.
+    <section className="flex w-full flex-col gap-4 px-4 lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:min-w-[320px] lg:flex-1 lg:px-10">
       <div className="flex w-full items-center justify-between">
         <h2 className="text-title font-extrabold text-neutral-900">Temas</h2>
         <Link to="/themes" className="flex items-center gap-0.5 text-small font-bold text-neutral-900">
@@ -35,7 +40,9 @@ export function ThemesSection() {
           <div className="w-full overflow-hidden lg:hidden" ref={emblaRef}>
             <div className="flex w-full gap-4 pb-2">{themeCards}</div>
           </div>
-          <div className="hidden w-full flex-col gap-2.5 lg:flex">
+          {/* lg:min-h-0 lets this flex child shrink below its content height so overflow-y-auto can
+              actually kick in inside the section's fixed height, instead of stretching past it. */}
+          <div className="hidden w-full flex-col gap-2.5 lg:flex lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
             {themeCards}
             <Link to="/themes" className="w-full py-2 text-center text-small font-bold text-neutral-900">
               Ver todos temas
