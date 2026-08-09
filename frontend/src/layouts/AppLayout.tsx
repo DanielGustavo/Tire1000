@@ -13,28 +13,27 @@ function Header({ credits }: { credits: number | undefined }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   return (
-    <header className="flex w-full items-center justify-between bg-neutral-20 p-4 lg:h-[72px] lg:px-10 lg:py-4">
-      <Link to="/">
-        <img src={logo} alt="Tire 1000" className="h-10 w-[45px] object-contain" />
-      </Link>
-      <div className="flex items-center gap-4">
-        {/* Figma's desktop Header/Homepage frames only show the user menu trigger — no separate
-            credits icon. We keep it as the credits/PriceModal entry point below lg: (its only one
-            site-wide) rather than dropping the affordance outright; see map.md decision for 09. */}
-        <IconButton
-          variant="gray"
-          rotate="left"
-          aria-label="Comprar créditos"
-          onClick={() => setPriceModalOpen(true)}
-          className="lg:hidden"
-          icon={
-            <span className="flex items-center gap-0.5 text-default font-bold text-neutral-0">
-              {credits ?? "…"}
-              <NotepadText size={20} />
-            </span>
-          }
-        />
-        <UserMenu open={userMenuOpen} onOpenChange={setUserMenuOpen} />
+    <header className="sticky top-0 z-40 w-full bg-neutral-20">
+      <div className="flex items-center justify-between p-4 lg:mx-auto lg:h-[72px] lg:max-w-[1280px] lg:px-10 lg:py-4">
+        <Link to="/">
+          <img src={logo} alt="Tire 1000" className="h-10 w-[45px] object-contain" />
+        </Link>
+        <div className="flex items-center gap-4">
+          {/* Credits/PriceModal entry point, visible at all breakpoints. */}
+          <IconButton
+            variant="gray"
+            rotate="left"
+            aria-label="Comprar créditos"
+            onClick={() => setPriceModalOpen(true)}
+            icon={
+              <span className="flex items-center gap-0.5 text-default font-bold text-neutral-0">
+                {credits ?? "…"}
+                <NotepadText size={20} />
+              </span>
+            }
+          />
+          <UserMenu open={userMenuOpen} onOpenChange={setUserMenuOpen} />
+        </div>
       </div>
       {priceModalOpen && <PriceModal onClose={() => setPriceModalOpen(false)} />}
     </header>
