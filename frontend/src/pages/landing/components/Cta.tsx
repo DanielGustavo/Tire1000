@@ -3,7 +3,7 @@ import { Button } from "../../../components/Button";
 export function Cta({ onSignUp }: { onSignUp: () => void }) {
   return (
     <section className="mt-6 flex w-full flex-col items-center px-4 py-0.5">
-      <div className="flex w-full flex-col items-center gap-6 border-2 border-solid border-neutral-900 bg-pink-300 px-6 py-4 shadow-hard">
+      <div className="flex w-full flex-col items-center gap-6 border-2 border-solid border-neutral-900 bg-pink-300 px-6 py-4 shadow-hard lg:max-w-[372px]">
         <h2 className="w-full text-center text-title font-extrabold uppercase text-neutral-900">
           Quer uma
           <br />

@@ -14,8 +14,8 @@ export function LandingPage() {
   const [authModal, setAuthModal] = useState<AuthModalKind | null>(null);
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center bg-neutral-0">
-      <Header onSignIn={() => setAuthModal("signin")} />
+    <div className="flex min-h-screen w-full flex-col items-center bg-neutral-0 lg:mx-auto lg:max-w-[1280px]">
+      <Header onSignIn={() => setAuthModal("signin")} onSignUp={() => setAuthModal("signup")} />
       <div className="flex w-full flex-1 flex-col items-center">
         <Hero onSignUp={() => setAuthModal("signup")} />
         <Steps />

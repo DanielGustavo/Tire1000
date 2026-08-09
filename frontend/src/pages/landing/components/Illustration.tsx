@@ -40,31 +40,33 @@ const COMPETENCIES = [
 
 export function Illustration() {
   return (
-    <section className="mt-6 flex w-full flex-col items-center gap-8 px-8 py-4">
+    <section className="mt-6 flex w-full flex-col items-center gap-8 px-8 py-4 lg:px-10">
       <h2 className="w-full text-hero font-extrabold uppercase text-neutral-900">
-        Avaliamos
-        <br />
-        cada
-        <br />
+        Avaliamos{" "}
+        <br className="lg:hidden" />
+        cada{" "}
+        <br className="lg:hidden" />
         Competência
       </h2>
-      <img
-        src={correctionIllustration}
-        alt="Cada trecho da redação recebe um comentário por competência"
-        className="h-auto w-full max-w-[338px] object-contain"
-      />
-      <div className="flex w-full flex-col gap-6">
-        {COMPETENCIES.map(({ code, variant, title, description }) => (
-          <div key={code} className="flex w-full flex-col items-center gap-2">
-            <div className="flex w-full items-center gap-4">
-              <Bullet variant={variant} rotate="left">
-                {code}
-              </Bullet>
-              <p className="min-w-0 flex-1 text-subtitle font-bold capitalize text-neutral-900">{title}</p>
+      <div className="flex w-full flex-col items-center gap-8 lg:gap-16">
+        <img
+          src={correctionIllustration}
+          alt="Cada trecho da redação recebe um comentário por competência"
+          className="h-auto w-full max-w-[338px] object-contain lg:max-w-[374px]"
+        />
+        <div className="flex w-full flex-col gap-6 lg:grid lg:grid-cols-2 lg:gap-x-6 lg:gap-y-6">
+          {COMPETENCIES.map(({ code, variant, title, description }) => (
+            <div key={code} className="flex w-full flex-col items-center gap-2">
+              <div className="flex w-full items-center gap-4">
+                <Bullet variant={variant} rotate="left">
+                  {code}
+                </Bullet>
+                <p className="min-w-0 flex-1 text-subtitle font-bold capitalize text-neutral-900">{title}</p>
+              </div>
+              <p className="w-full text-default lowercase text-neutral-900">{description}</p>
             </div>
-            <p className="w-full text-default lowercase text-neutral-900">{description}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
