@@ -4,7 +4,7 @@ import { Modal } from "../../../components/Modal";
 import { fieldErrorMessages } from "../../../libs/form-errors";
 import { AuthDivider } from "./AuthDivider";
 import { CreditsStep } from "./CreditsStep";
-import { useSignUpWizard } from "./useSignUpWizard";
+import { useSignUpWizard } from "../hooks/useSignUpWizard";
 import type { SignUpFormValues } from "./signup-schema";
 
 export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void; onSwitchToSignIn: () => void }) {

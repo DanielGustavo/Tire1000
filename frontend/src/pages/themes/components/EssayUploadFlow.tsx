@@ -4,7 +4,7 @@ import { PhotoConfirmationLoadingModal } from "../../../flows/essayCapture/compo
 import { PhotoConfirmationModal } from "../../../flows/essayCapture/components/PhotoConfirmationModal";
 import { TipsModal } from "../../../flows/essayCapture/components/TipsModal";
 import type { EssayUploadMode } from "../../../flows/essayCapture/hooks/useEssayCaptureFlow";
-import { useEssayUploadFlow } from "./useEssayUploadFlow";
+import { useEssayUploadFlow } from "../hooks/useEssayUploadFlow";
 
 /** The upload flow (ticket 06), opened in place over the theme detail page instead of at its own route (`/essays/new`) — triggered by the "Tirar foto"/"Fazer upload" CTAs. */
 export function EssayUploadFlow({

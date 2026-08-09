@@ -3,7 +3,7 @@ import { Loading } from "../../../components/Loading";
 import { Pagination } from "../../../components/Pagination";
 import { EssayCard } from "./EssayCard";
 import { EssaysEmptyState } from "./EssaysEmptyState";
-import { useEssaysSection } from "./useEssaysSection";
+import { useEssaysSection } from "../hooks/useEssaysSection";
 
 export function EssaysSection() {
   const sectionRef = useRef<HTMLElement>(null);

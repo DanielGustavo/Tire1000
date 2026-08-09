@@ -2,7 +2,7 @@ import { PhotoConfirmationErrorModal } from "../../../flows/essayCapture/compone
 import { PhotoConfirmationLoadingModal } from "../../../flows/essayCapture/components/PhotoConfirmationLoadingModal";
 import { PhotoConfirmationModal } from "../../../flows/essayCapture/components/PhotoConfirmationModal";
 import { TipsModal } from "../../../flows/essayCapture/components/TipsModal";
-import { useEssayResendFlow } from "./useEssayResendFlow";
+import { useEssayResendFlow } from "../hooks/useEssayResendFlow";
 
 /** The same modal chain as a new essay upload (ticket 06), opened in place over the Homepage instead of at its own route — triggered by "Tentar novamente" on a rejected/failed essay's card. */
 export function EssayResendFlow({ essayId, onClose }: { essayId: string; onClose: () => void }) {
