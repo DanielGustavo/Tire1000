@@ -94,6 +94,12 @@ export const VALIDATING_STATUSES: EssayStatus[] = ["UPLOADING", "QUEUED", "VALID
 export const EVALUATING_STATUSES: EssayStatus[] = ["VALIDATED", "EVALUATING"];
 export const PENDING_STATUSES: EssayStatus[] = [...VALIDATING_STATUSES, ...EVALUATING_STATUSES];
 
+// Short heading for the Correção result page while pending — used by PendingResult's sticky note and,
+// on desktop (ticket 13), repeated by the score sidebar's skeleton placeholder next to each "???".
+export function pendingResultHeading(status: EssayStatus): string {
+  return VALIDATING_STATUSES.includes(status) ? "Analisando a foto" : "Corrigindo sua redação";
+}
+
 // Score bands (0–1000, in steps of 200 — one per competência) mapped to the evaluated essay card's color,
 // per the Figma mock. Colors match the DS tokens: primary-100, info-300, alert-100, pink-300, error-100.
 const SCORE_BAND_COLORS: readonly [min: number, color: string][] = [
