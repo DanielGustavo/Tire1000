@@ -2,7 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Loading } from "./components/Loading";
 import { Toaster } from "./components/Toaster";
-import { AppLayout } from "./layouts/AppLayout";
+import { AppLayout } from "./layouts/AppLayout/AppLayout";
 import { EssayResultPage } from "./pages/essay-result/essay-result";
 import { HomePage } from "./pages/home/home";
 import { LandingPage } from "./pages/landing/landing";
