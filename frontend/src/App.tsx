@@ -3,7 +3,6 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Loading } from "./components/Loading";
 import { Toaster } from "./components/Toaster";
 import { AppLayout } from "./layouts/AppLayout";
-import { CreditsPage } from "./pages/credits";
 import { EssayResultPage } from "./pages/essay-result/essay-result";
 import { HomePage } from "./pages/home/home";
 import { LandingPage } from "./pages/landing/landing";
@@ -47,7 +46,6 @@ function App() {
             <Route path="/themes" element={<ThemesPage />} />
             <Route path="/themes/:themeId" element={<ThemeDetailPage />} />
             <Route path="/essays/:essayId" element={<EssayResultPage />} />
-            <Route path="/credits" element={<CreditsPage />} />
           </Route>
         </Route>
       </Routes>
