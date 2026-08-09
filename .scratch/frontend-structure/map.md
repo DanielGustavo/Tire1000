@@ -27,6 +27,8 @@ Achados que originaram o esforço (levantados por leitura direta do código, con
 ## Decisions so far
 
 - [Remover página de créditos não utilizada](issues/01-remover-pagina-creditos.md) — `pages/credits.tsx` e a rota `/credits` removidos de `App.tsx`; `credits-service.ts` mantido (usado por `PriceModal.tsx`); build limpo
+- [Mover pages/essay-upload/ para src/flows/essayCapture/](issues/02-mover-essay-upload-para-flows.md) — hook e 5 componentes movidos para `flows/essayCapture/{hooks,components}/`, imports atualizados nos 5 consumidores em `pages/themes`/`pages/home` mais 2 imports internos quebrados corrigidos
+- [Dividir AppLayout.tsx em pasta própria](issues/06-dividir-applayout.md) — `layouts/AppLayout.tsx` dividido em `AppLayout/{AppLayout.tsx,components/{Header,UserMenu,Footer}.tsx}`, sem barrel; `Header`/`UserMenu`/`Footer` viram exports nomeados; import em `App.tsx` atualizado
 
 ## Not yet specified
 
