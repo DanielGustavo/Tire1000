@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Camera, ChevronRight, Upload } from "lucide-react";
 import Markdown, { type Components } from "react-markdown";
 import { Button } from "../../components/Button";
@@ -26,6 +25,7 @@ export function ThemeDetailPage() {
     themeQuery,
     ctaDisabled,
     handleStartEssay,
+    handleGoBack,
     priceModalOpen,
     setPriceModalOpen,
     uploadThemeId,
@@ -37,10 +37,14 @@ export function ThemeDetailPage() {
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="flex flex-col items-start gap-4 px-4">
-        <Link to="/themes" className="flex items-center gap-0.5 text-small font-bold text-neutral-900">
+        <button
+          type="button"
+          onClick={handleGoBack}
+          className="flex items-center gap-0.5 text-small font-bold text-neutral-900"
+        >
           <ChevronRight size={16} className="rotate-180" />
           Voltar
-        </Link>
+        </button>
 
         {themeQuery.isPending && <p className="text-default text-neutral-700">Carregando...</p>}
         {themeQuery.isError && <p className="text-default text-error-300">Não foi possível carregar o tema.</p>}

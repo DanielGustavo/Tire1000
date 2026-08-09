@@ -31,6 +31,7 @@ export function useThemeDetailPage() {
     themeQuery,
     ctaDisabled: isLoading,
     handleStartEssay,
+    handleGoBack: () => navigate(-1),
     priceModalOpen,
     setPriceModalOpen,
     uploadThemeId: themeQuery.data?.theme.id,
