@@ -4,7 +4,7 @@ Type: task
 
 Blocked by: 08, 09, 10, 11, 13
 
-Status: claimed
+Status: resolved
 
 ## Question
 
@@ -53,4 +53,14 @@ Depois que as tickets 08-13 fecharam o passe desktop completo do map, o usuário
 
 ## Answer
 
-_(preenchido pelo orquestrador depois que as 5 frentes de implementação abaixo finalizarem e commitarem)_
+Implementado em 5 frentes, cada uma por um agente separado (mesmo padrão das tickets 08-13), sequenciais pra evitar concorrência de commit — apesar de os arquivos serem disjuntos entre as 5 frentes, o que teria permitido paralelismo real.
+
+- **14a — `frontend/src/layouts/AppLayout.tsx`** (`d9f6c20`): `<header>` virou `sticky top-0 z-40` em todos os breakpoints (abaixo do `z-50` do `Modal.tsx`), mantendo `w-full`/bg full-bleed; o conteúdo interno (logo + créditos/user-menu) foi movido pra uma `<div>` própria com `lg:mx-auto lg:max-w-[1280px]`, mesmo padrão de cap das páginas desde a ticket 08. Botão de créditos voltou a aparecer no desktop (removido o `lg:hidden` da ticket 09).
+- **14b — Homepage** (`deafa05`): `ThemesSection.tsx` ganhou `lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:min-w-[320px]`; só o bloco de cards (não o título "Temas"/"Ver todos") ganhou `lg:overflow-y-auto`, então o header da seção fica fixo e só a lista rola. `EssaysSection.tsx` ganhou scroll-to-top (mobile+desktop) ao trocar de página via `scrollIntoView` + `scroll-mt-[72px]` (achado pelo `/code-review` desta frente: sem o `scroll-mt`, o scroll aterrissava atrás do header fixo, que também é sticky no mobile).
+- **14c — `frontend/src/pages/themes/theme-detail.tsx`** (`3db4cf6`): fix do loading descentralizado (`w-full` no wrapper que faltava, causa raiz documentada nos "Achados de fato" acima). Card de CTA virou `sticky top-[72px] bottom-auto` no desktop (mobile mantém `sticky bottom-0`) — tratamento mais simples que o da Home (sem `overflow`/altura calculada), já que o conteúdo é curto e fixo. Botão "Tirar foto da redação" escondido em `lg:`; "Fazer upload da redação" vira "Fazer upload" no desktop (o " da redação" fica num `<span className="lg:hidden">`).
+- **14d — `frontend/src/pages/themes/useThemesPage.ts`** (`6392218`): novo hook `frontend/src/hooks/useIsDesktop.ts` (primeiro hook genérico do repo, não colocado por página) usando `matchMedia("(min-width: 1024px)")` + evento `change`. `THEMES_PER_PAGE` virou computado (3 mobile / 9 desktop); um `useEffect` com guarda de primeira renderização (`useRef`) limpa o parâmetro `page` da URL sempre que a contagem efetiva muda (crossing de breakpoint ao vivo), evitando página fora do range. `themes.tsx` não precisou de nenhuma mudança (grid `lg:grid-cols-3` já existente da ticket 10 comporta 9 itens/página perfeitamente).
+- **14e — `frontend/src/pages/essay-result/`** (`f1a03ec`): as duas sidebars (`CompetencyScores` no estado de sucesso, `CompetencyScoresSkeleton` no estado pendente) ganharam `lg:sticky lg:top-[72px]`, mesmo tratamento simples da 14c. `HighlightedEssayText.tsx`: o boundary de "clique fora" (que antes era o `<p>` inteiro do texto da redação, então clicar em qualquer trecho não-destacado do próprio texto não fechava o popup) foi estreitado pra só a marca aberta (`openMarkRef`) + o popup (`popupRef`) — `rootRef` antigo removido. Comportamento de trocar de highlight clicando em outro (sem passar por "fechar" explicitamente) preservado, confirmado por rastreamento manual da ordem mousedown→click (sem browser disponível nesta sessão pra QA visual).
+
+Achado colateral registrado por um dos agentes (14d): o frontend deste repo não tem nenhum test runner configurado (nem vitest nem jest, sem script `test` no `package.json` do frontend — só o `backend/` usa vitest) — não é um gap desta ticket, só uma constatação de fato pra referência futura.
+
+Todos os 5 commits passaram por `tsc -b`/`oxlint`/`vite build` limpos e por `/code-review` (Standards+Spec) antes de commitar, com achados reais corrigidos em quase todas as frentes (overlap de scroll com header fixo na 14b, redundância `lg:sticky`/comentário faltando na 14c, duplicação de `URLSearchParams`-clone na 14d, comentário faltando na 14e). QA manual em browser não foi possível em nenhuma das 5 frentes — mesma limitação já registrada nas tickets 04/06/07/08-13 deste map.
