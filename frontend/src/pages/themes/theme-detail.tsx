@@ -41,7 +41,7 @@ export function ThemeDetailPage() {
     // scoped to this page only, same pattern as tickets 08/09/10.
     <div className="flex w-full flex-col gap-6 lg:mx-auto lg:max-w-[1280px] lg:flex-row lg:items-start lg:gap-16 lg:px-10">
       <div className="flex flex-1 flex-col items-start gap-6 px-4 lg:px-0">
-        <div className="flex flex-col items-start gap-4">
+        <div className="flex w-full flex-col items-start gap-4">
           <button
             type="button"
             onClick={handleGoBack}
@@ -93,7 +93,12 @@ export function ThemeDetailPage() {
       </div>
 
       {themeQuery.isSuccess && (
-        <div className="sticky bottom-0 z-10 flex flex-col gap-8 border-t-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-2.5 lg:static lg:w-[295px] lg:shrink-0 lg:border-2 lg:p-4 lg:shadow-hard">
+        // Mobile keeps its own `sticky bottom-0` bar behavior. lg: switches the anchor to the top
+        // instead, sticking below AppLayout's fixed 72px header (see AppLayout.tsx) so the card
+        // stays visible while the article column beside it scrolls, releasing naturally once this
+        // column ends — same sticky-column pattern as ThemesSection.tsx. lg:bottom-auto clears the
+        // mobile bottom-0 so only the top offset is active at lg:.
+        <div className="sticky bottom-0 z-10 flex flex-col gap-8 border-t-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-2.5 lg:top-[72px] lg:bottom-auto lg:w-[295px] lg:shrink-0 lg:border-2 lg:p-4 lg:shadow-hard">
           <div className="hidden flex-col gap-1 lg:flex">
             <h2 className="text-subtitle font-bold capitalize text-neutral-900">Já finalizou sua redação?</h2>
             <p className="text-default text-neutral-900">Envie-a aqui para que possamos avaliá-la rapidamente!</p>
@@ -101,7 +106,7 @@ export function ThemeDetailPage() {
           <div className="flex flex-col gap-2.5">
             <Button
               variant="primary"
-              className="w-full"
+              className="w-full lg:hidden"
               icon={<Camera size={20} />}
               disabled={ctaDisabled}
               onClick={() => handleStartEssay("camera")}
@@ -115,7 +120,7 @@ export function ThemeDetailPage() {
               disabled={ctaDisabled}
               onClick={() => handleStartEssay("upload")}
             >
-              Fazer upload da redação
+              Fazer upload<span className="lg:hidden"> da redação</span>
             </Button>
           </div>
         </div>
