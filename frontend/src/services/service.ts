@@ -65,7 +65,15 @@ function attachAuthInterceptors(client: AxiosInstance): void {
       }
 
       const originalRequest = error.config as RetryableRequestConfig | undefined;
-      if (!originalRequest || originalRequest._retry) {
+
+      // A 401 on a request that never carried an access token (e.g. /auth/login,
+      // /auth/signup) means the credentials were rejected, not that a session expired —
+      // let it reject normally instead of trying to refresh or force-logging out.
+      if (!originalRequest?.headers.Authorization) {
+        throw error;
+      }
+
+      if (originalRequest._retry) {
         forceLogout();
         throw error;
       }
