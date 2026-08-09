@@ -2,7 +2,7 @@
 
 Type: task
 
-Status: open
+Status: resolved
 
 ## Question
 
@@ -45,3 +45,18 @@ A pasta global `frontend/src/hooks/` hoje só tem `useIsDesktop.ts`. Dividir em 
 Cada hook de página passa a chamar o hook global correspondente em vez de `useQuery`/`useMutation` direto, mantendo toda lógica de estado que é exclusiva da página (paginação, filtros de URL, passo do wizard, redirecionamento) onde já está.
 
 Esta ticket não mexe nas mutations de upload/reenvio de redação (`essayService.upload`/`resend`/`uploadPhoto`) — essas são escopo da ticket [Extrair useUploadEssay/useResendEssay](08-extrair-mutations-essay-upload.md), que depende da estrutura de pastas criada aqui.
+
+## Answer
+
+Criadas `frontend/src/hooks/{app,queries,mutations}/`:
+
+- `git mv src/hooks/useIsDesktop.ts src/hooks/app/useIsDesktop.ts` (conteúdo intocado). Único importer, `pages/themes/useThemesPage.ts`, atualizado para o novo caminho.
+- `hooks/queries/useThemes.ts` — `useThemes({ topicId, search })`, extraído tal qual do `useQuery` que vivia em `useThemesPage.ts`. `useThemesPage.ts` agora chama `useThemes({ topicId, search })` e mantém toda a lógica de paginação/URL state (`searchParams`, `withoutPage`, reset de página no breakpoint) como estava.
+- `hooks/queries/useTheme.ts` — `useTheme(themeId)`, extraído de `useThemeDetailPage.ts` (mesma `queryKey`/`queryFn`/`enabled`). `useThemeDetailPage.ts` passou a chamar `useTheme(themeId)`, mantendo modal de preço/redirecionamento de upload como estavam.
+- `hooks/queries/useEssays.ts` — `useEssays()`, extraído de `pages/home/hooks/useEssaysSection.ts` (mesma `queryKey`/`queryFn`/`refetchInterval` de polling de pendentes). `useEssaysSection.ts` mantém paginação local e agora só chama `useEssays()`.
+- `hooks/queries/useEssayDetail.ts` — `useEssayDetail(essayId)`, extraído de `pages/essay-result/useEssayResultPage.ts` (mesma `queryKey`/`queryFn`/`enabled`/`refetchInterval`). `useEssayResultPage.ts` mantém o redirecionamento de status bloqueado e agora só chama `useEssayDetail(essayId)`.
+- `hooks/mutations/useSignUp.ts` — `useSignUp()`, um `useMutation` fino sobre `authService.signUp(input: SignUpInput)`, expondo `{ signUp, signUpAsync, ...resto do estado da mutation }` (renomeando `mutate`/`mutateAsync`). `pages/landing/hooks/useSignUpWizard.ts` mantém toda a lógica de composição que era exclusiva da página — montar o `SignUpInput` a partir de `form.getValues()`, e o `onSuccess`/`onError` que mexe em `step`, `serverFieldErrors`, tokens e navegação — passando isso via `signUp(input, { onSuccess, onError })` no lugar de `onSuccess`/`onError` fixos no `useMutation`. O hook de página continua expondo `signUpMutation` com a mesma forma consumida por `SignUpModal.tsx` (`.mutate(creditsQty)`, `.isPending`), então o componente não precisou mudar.
+
+Fora de escopo mantido intocado: `useEssayUploadFlow.ts` e `useEssayResendFlow.ts` (ticket 08).
+
+`npx tsc -b` limpo depois das mudanças. Nenhum teste novo criado (reorganização mecânica de wrappers finos de `useQuery`/`useMutation`, sem lógica nova).

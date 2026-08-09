@@ -30,6 +30,7 @@ Achados que originaram o esforço (levantados por leitura direta do código, con
 - [Mover pages/essay-upload/ para src/flows/essayCapture/](issues/02-mover-essay-upload-para-flows.md) — hook e 5 componentes movidos para `flows/essayCapture/{hooks,components}/`, imports atualizados nos 5 consumidores em `pages/themes`/`pages/home` mais 2 imports internos quebrados corrigidos
 - [Dividir AppLayout.tsx em pasta própria](issues/06-dividir-applayout.md) — `layouts/AppLayout.tsx` dividido em `AppLayout/{AppLayout.tsx,components/{Header,UserMenu,Footer}.tsx}`, sem barrel; `Header`/`UserMenu`/`Footer` viram exports nomeados; import em `App.tsx` atualizado
 - [Extrair hooks colocalizados em components/ para hooks/ de cada página](issues/03-extrair-hooks-de-components.md) — 4 hooks (`useEssaysSection`, `useEssayResendFlow`, `useEssayUploadFlow`, `useSignUpWizard`) movidos de `components/` para `hooks/` própria em `pages/home`, `pages/themes` e `pages/landing`, imports dos consumidores e do import interno de `signup-schema.ts` atualizados
+- [Reestruturar hooks/ global em queries/mutations/app](issues/07-reestruturar-hooks-globais.md) — `hooks/` global dividido em `app/`, `queries/`, `mutations/`; `useIsDesktop` movido sem mudança de conteúdo e extraídos `useThemes`/`useTheme`/`useEssays`/`useEssayDetail`/`useSignUp` dos `useQuery`/`useMutation` inline de cada hook de página, que mantêm sua própria lógica de composição (paginação, URL state, passo do wizard, redirecionamento)
 
 ## Not yet specified
 
