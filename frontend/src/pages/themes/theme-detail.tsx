@@ -86,7 +86,7 @@ export function ThemeDetailPage() {
             ))}
           </div>
 
-          <div className="flex flex-col gap-2.5 px-4">
+          <div className="sticky bottom-0 z-10 flex flex-col gap-2.5 border-t-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-2.5">
             <Button
               variant="primary"
               className="w-full"
