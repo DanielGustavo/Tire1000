@@ -1,5 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { Toaster } from "./components/Toaster";
 import { AppLayout } from "./layouts/AppLayout";
 import { CreditsPage } from "./pages/credits";
 import { EssayResultPage } from "./pages/essay-result/essay-result";
@@ -37,6 +38,7 @@ function RequireAuth() {
 function App() {
   return (
     <AuthProvider>
+      <Toaster />
       <Routes>
         <Route path="/" element={<RootRoute />} />
         <Route element={<RequireAuth />}>

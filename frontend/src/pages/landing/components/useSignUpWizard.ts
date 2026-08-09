@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { applyFieldErrors, type ApiFieldErrors } from "../../../libs/axios";
 import { setTokens } from "../../../libs/auth";
+import { validatePassword } from "../../../libs/password";
 import { useAuth } from "../../../contexts/AuthContext";
 import { authService } from "../../../services/auth-service";
 
@@ -14,6 +17,8 @@ export function useSignUpWizard(onClose: () => void) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordsMismatch, setPasswordsMismatch] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<ApiFieldErrors>({});
 
   const signUpMutation = useMutation({
     mutationFn: (creditsQty?: number) => authService.signUp({ name, email, password, creditsQty }),
@@ -26,15 +31,27 @@ export function useSignUpWizard(onClose: () => void) {
       }
       navigate("/");
     },
+    onError: (error) => {
+      // Sending the user to the credits step calls this mutation directly (there's no form to
+      // resubmit) — an error here has nowhere to be fixed unless we send them back to "form",
+      // where name/email/password already live independently of `step`.
+      const { fieldErrors, toastMessage } = applyFieldErrors(
+        error,
+        "Não foi possível criar a conta. Tente novamente.",
+      );
+      setFieldErrors(fieldErrors);
+      setStep("form");
+      if (toastMessage) toast.error(toastMessage);
+    },
   });
 
   function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (password !== confirmPassword) {
-      setPasswordsMismatch(true);
-      return;
-    }
-    setPasswordsMismatch(false);
+    const nextPasswordErrors = validatePassword(password);
+    setPasswordErrors(nextPasswordErrors);
+    setPasswordsMismatch(password !== confirmPassword);
+    if (nextPasswordErrors.length > 0 || password !== confirmPassword) return;
+    setFieldErrors({});
     setStep("credits");
   }
 
@@ -49,6 +66,8 @@ export function useSignUpWizard(onClose: () => void) {
     confirmPassword,
     setConfirmPassword,
     passwordsMismatch,
+    passwordErrors,
+    fieldErrors,
     handleFormSubmit,
     signUpMutation,
     onClose,

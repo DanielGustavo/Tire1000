@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { getApiErrorMessage } from "../../../libs/axios";
+import { toast } from "sonner";
+import { applyFieldErrors, type ApiFieldErrors } from "../../../libs/axios";
 import { setTokens } from "../../../libs/auth";
 import { useAuth } from "../../../contexts/AuthContext";
 import { authService } from "../../../services/auth-service";
@@ -15,6 +16,7 @@ export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void
   const { refetch } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<ApiFieldErrors>({});
 
   const loginMutation = useMutation({
     mutationFn: () => authService.login({ email, password }),
@@ -22,6 +24,11 @@ export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void
       setTokens(tokens);
       await refetch();
       navigate("/");
+    },
+    onError: (error) => {
+      const { fieldErrors, toastMessage } = applyFieldErrors(error, "Email ou senha inválidos.");
+      setFieldErrors(fieldErrors);
+      if (toastMessage) toast.error(toastMessage);
     },
   });
 
@@ -43,6 +50,7 @@ export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void
             required
             autoComplete="email"
             value={email}
+            errors={fieldErrors.email}
             onChange={(event) => setEmail(event.target.value)}
           />
           <Field
@@ -53,19 +61,13 @@ export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void
             required
             autoComplete="current-password"
             value={password}
+            errors={fieldErrors.password}
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
-        <div className="flex w-full flex-col gap-2">
-          {loginMutation.isError && (
-            <p className="text-small text-error-300">
-              {getApiErrorMessage(loginMutation.error, "Email ou senha inválidos.")}
-            </p>
-          )}
-          <Button type="submit" variant="primary" className="w-full" loading={loginMutation.isPending}>
-            Acessar conta
-          </Button>
-        </div>
+        <Button type="submit" variant="primary" className="w-full" loading={loginMutation.isPending}>
+          Acessar conta
+        </Button>
       </form>
       <AuthDivider />
       <p className="text-center text-default text-neutral-900">

@@ -1,4 +1,3 @@
-import { getApiErrorMessage } from "../../../libs/axios";
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
 import { Modal } from "../../../components/Modal";
@@ -18,6 +17,8 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
     confirmPassword,
     setConfirmPassword,
     passwordsMismatch,
+    passwordErrors,
+    fieldErrors,
     handleFormSubmit,
     signUpMutation,
   } = useSignUpWizard(onClose);
@@ -27,11 +28,6 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
       <Modal onClose={onClose}>
         <CreditsStep
           pending={signUpMutation.isPending}
-          error={
-            signUpMutation.isError
-              ? getApiErrorMessage(signUpMutation.error, "Não foi possível criar a conta. Tente novamente.")
-              : null
-          }
           onSelect={(creditsQty) => signUpMutation.mutate(creditsQty)}
           onSkip={() => signUpMutation.mutate(undefined)}
         />
@@ -52,6 +48,7 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
             required
             autoComplete="name"
             value={name}
+            errors={fieldErrors.name}
             onChange={(event) => setName(event.target.value)}
           />
           <Field
@@ -62,6 +59,7 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
             required
             autoComplete="email"
             value={email}
+            errors={fieldErrors.email}
             onChange={(event) => setEmail(event.target.value)}
           />
           <Field
@@ -72,6 +70,7 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
             required
             autoComplete="new-password"
             value={password}
+            errors={passwordErrors.length > 0 ? passwordErrors : fieldErrors.password}
             onChange={(event) => setPassword(event.target.value)}
           />
           <Field

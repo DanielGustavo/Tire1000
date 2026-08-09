@@ -5,12 +5,10 @@ const CREDIT_OPTIONS = [1, 2, 3];
 
 export function CreditsStep({
   pending,
-  error,
   onSelect,
   onSkip,
 }: {
   pending: boolean;
-  error: string | null;
   onSelect: (creditsQty: number) => void;
   onSkip: () => void;
 }) {
@@ -39,7 +37,6 @@ export function CreditsStep({
           </div>
         ))}
       </div>
-      {error && <p className="text-small text-error-300">{error}</p>}
       <button
         type="button"
         onClick={onSkip}
