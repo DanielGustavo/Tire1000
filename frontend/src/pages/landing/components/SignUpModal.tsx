@@ -1,27 +1,23 @@
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
 import { Modal } from "../../../components/Modal";
+import { fieldErrorMessages } from "../../../libs/form-errors";
 import { AuthDivider } from "./AuthDivider";
 import { CreditsStep } from "./CreditsStep";
 import { useSignUpWizard } from "./useSignUpWizard";
+import type { SignUpFormValues } from "./signup-schema";
 
 export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void; onSwitchToSignIn: () => void }) {
+  const { step, form, serverFieldErrors, handleFormSubmit, signUpMutation } = useSignUpWizard();
   const {
-    step,
-    name,
-    setName,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    passwordsMismatch,
-    passwordErrors,
-    fieldErrors,
-    handleFormSubmit,
-    signUpMutation,
-  } = useSignUpWizard(onClose);
+    register,
+    formState: { errors },
+  } = form;
+
+  function fieldErrors(name: keyof SignUpFormValues): string[] {
+    const clientMessages = fieldErrorMessages(errors[name]);
+    return clientMessages.length > 0 ? clientMessages : (serverFieldErrors[name] ?? []);
+  }
 
   if (step === "credits") {
     return (
@@ -37,7 +33,7 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
 
   return (
     <Modal onClose={onClose}>
-      <form onSubmit={handleFormSubmit} className="flex w-full flex-col items-center gap-8">
+      <form onSubmit={handleFormSubmit} noValidate className="flex w-full flex-col items-center gap-8">
         <h1 className="w-full text-center text-title font-extrabold text-neutral-900">Crie Sua Conta</h1>
         <div className="flex w-full flex-col gap-4">
           <Field
@@ -45,44 +41,36 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
             label="Nome"
             type="text"
             placeholder="Insira seu nome"
-            required
             autoComplete="name"
-            value={name}
-            errors={fieldErrors.name}
-            onChange={(event) => setName(event.target.value)}
+            errors={fieldErrors("name")}
+            {...register("name")}
           />
           <Field
             id="signup-email"
             label="Email"
             type="email"
             placeholder="Insira seu e-mail"
-            required
             autoComplete="email"
-            value={email}
-            errors={fieldErrors.email}
-            onChange={(event) => setEmail(event.target.value)}
+            errors={fieldErrors("email")}
+            {...register("email")}
           />
           <Field
             id="signup-password"
             label="Senha"
             type="password"
             placeholder="Insira sua senha"
-            required
             autoComplete="new-password"
-            value={password}
-            errors={passwordErrors.length > 0 ? passwordErrors : fieldErrors.password}
-            onChange={(event) => setPassword(event.target.value)}
+            errors={fieldErrors("password")}
+            {...register("password")}
           />
           <Field
             id="signup-confirm-password"
             label="Confirmação de senha"
             type="password"
             placeholder="Confirme a sua senha"
-            required
             autoComplete="new-password"
-            value={confirmPassword}
-            errors={passwordsMismatch ? ["As senhas não coincidem"] : []}
-            onChange={(event) => setConfirmPassword(event.target.value)}
+            errors={fieldErrors("confirmPassword")}
+            {...register("confirmPassword")}
           />
         </div>
         <Button type="submit" variant="primary" className="w-full">
