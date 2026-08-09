@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 
 type ModalProps = {
@@ -7,12 +7,36 @@ type ModalProps = {
 };
 
 export function Modal({ onClose, children }: ModalProps) {
+  const closedByPopStateRef = useRef(false);
+
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  // Faz o botão/gesto de voltar fechar o modal em vez de navegar pra fora da página:
+  // empurra uma entrada de history ao montar e escuta o popstate pra fechar.
+  // Se o modal fechar por qualquer outro caminho (X, backdrop, Esc, sucesso de alguma
+  // ação interna), o cleanup consome essa entrada com history.back() pra não deixar
+  // um "degrau" órfão que o usuário precisaria voltar duas vezes pra passar.
+  useEffect(() => {
+    closedByPopStateRef.current = false;
+    window.history.pushState({ modal: true }, "");
+
+    function handlePopState() {
+      closedByPopStateRef.current = true;
+      onClose();
+    }
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      if (!closedByPopStateRef.current) window.history.back();
+    };
   }, [onClose]);
 
   return (
