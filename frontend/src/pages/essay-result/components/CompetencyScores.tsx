@@ -1,4 +1,5 @@
-import { COMPETENCY_IDS, type EssayEvaluation } from "../../../services/essay-service";
+import { COMPETENCY_IDS } from "../../../services/essay-service";
+import type { EssayEvaluation } from "../../../types/essay";
 import { CompetencyScoreCard } from "./CompetencyScoreCard";
 import { FinalScoreCard } from "./FinalScoreCard";
 

@@ -1,7 +1,8 @@
 import { PaperCard } from "../../../components/PaperCard";
 import { TypingAnimation } from "../../../components/TypingAnimation";
 import { ROTATED_SHADOW_CLASSES, rotateClass } from "../../../libs/hard-shadow";
-import { pendingResultHeading, type EssayStatus } from "../../../services/essay-service";
+import { pendingResultHeading } from "../../../services/essay-service";
+import type { EssayStatus } from "../../../types/essay";
 
 export function PendingResult({ status }: { status: EssayStatus }) {
   const message = pendingResultHeading(status);

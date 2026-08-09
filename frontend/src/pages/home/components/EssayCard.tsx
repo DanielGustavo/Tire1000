@@ -6,7 +6,8 @@ import { Button } from "../../../components/Button";
 import { IconButton } from "../../../components/IconButton";
 import { TexturedCard } from "../../../components/TexturedCard";
 import { formatDate } from "../../../libs/date";
-import { RESENDABLE_STATUSES, scoreCardColor, type Essay, type EssayStatus } from "../../../services/essay-service";
+import { RESENDABLE_STATUSES, scoreCardColor } from "../../../services/essay-service";
+import type { Essay, EssayStatus } from "../../../types/essay";
 import { EssayResendFlow } from "./EssayResendFlow";
 import { EssayStatusHeader } from "./EssayStatusHeader";
 

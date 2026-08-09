@@ -1,4 +1,5 @@
-import { COMPETENCY_IDS, pendingResultHeading, type EssayStatus } from "../../../services/essay-service";
+import { COMPETENCY_IDS, pendingResultHeading } from "../../../services/essay-service";
+import type { EssayStatus } from "../../../types/essay";
 import { CompetencyScoreCard } from "./CompetencyScoreCard";
 import { FinalScoreCard } from "./FinalScoreCard";
 

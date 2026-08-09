@@ -1,11 +1,5 @@
 import { Service } from "./service";
-
-export interface CurrentUser {
-  id: string;
-  email: string;
-  name: string;
-  credits: number;
-}
+import type { CurrentUser } from "../types/user";
 
 class UserService extends Service {
   async getCurrentUser(): Promise<CurrentUser> {

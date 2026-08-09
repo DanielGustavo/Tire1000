@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { Bullet } from "../../../components/Bullet";
 import { TexturedCard } from "../../../components/TexturedCard";
-import { COMPETENCY_COLORS, type CompetencyId } from "../../../services/essay-service";
+import { COMPETENCY_COLORS } from "../../../services/essay-service";
+import type { CompetencyId } from "../../../types/essay";
 
 type CompetencyScoreCardProps = {
   competencyId: CompetencyId;

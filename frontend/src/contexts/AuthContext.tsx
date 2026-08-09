@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAccessToken } from "../libs/auth";
-import { userService, type CurrentUser } from "../services/user-service";
+import { userService } from "../services/user-service";
+import type { CurrentUser } from "../types/user";
 
 export const CURRENT_USER_QUERY_KEY = ["currentUser"] as const;
 

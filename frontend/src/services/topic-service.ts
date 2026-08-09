@@ -1,10 +1,5 @@
 import { Service } from "./service";
-
-export interface ThemeTopic {
-  id: string;
-  title: string;
-  color: string;
-}
+import type { ThemeTopic } from "../types/topic";
 
 class TopicService extends Service {
   async list(): Promise<ThemeTopic[]> {

@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { ROTATED_SHADOW_CLASSES, rotateClass } from "../../../libs/hard-shadow";
-import { REJECTION_REASON_LABELS, type Essay, type EssayStatus } from "../../../services/essay-service";
+import { REJECTION_REASON_LABELS } from "../../../services/essay-service";
+import type { Essay, EssayStatus } from "../../../types/essay";
 
 const STATUS_MESSAGES: Partial<Record<EssayStatus, string>> = {
   UPLOADING: "Ops, o envio da sua redação não foi concluído",

@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "../../../components/Button";
 import { TexturedCard } from "../../../components/TexturedCard";
 import { ThemeBadges } from "../../../components/ThemeBadges";
-import { DEFAULT_THEME_COLOR, type ThemeWithTopic } from "../../../services/theme-service";
+import { DEFAULT_THEME_COLOR } from "../../../services/theme-service";
+import type { ThemeWithTopic } from "../../../types/theme";
 
 export function ThemeListItem({ theme, topic }: ThemeWithTopic) {
   const color = topic?.color ?? DEFAULT_THEME_COLOR;
