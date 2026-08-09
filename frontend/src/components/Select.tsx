@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Loader } from "lucide-react";
+import { useOnClickOutside } from "../hooks/app/useOnClickOutside";
 
 export type SelectOption = { value: string; label: string };
 
@@ -51,18 +52,7 @@ export function Select({
     [pinnedOption, matches],
   );
 
-  useEffect(() => {
-    if (!open) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (rootRef.current?.contains(target) || listboxRef.current?.contains(target)) return;
-      close();
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
+  useOnClickOutside([rootRef, listboxRef], close, open);
 
   useLayoutEffect(() => {
     if (!open) return;

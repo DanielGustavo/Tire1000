@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import { clearTokens } from "../../../libs/auth";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useOnClickOutside } from "../../../hooks/app/useOnClickOutside";
 import { Button } from "../../../components/Button";
 import { IconButton } from "../../../components/IconButton";
 
@@ -11,14 +12,7 @@ export function UserMenu({ open, onOpenChange }: { open: boolean; onOpenChange: 
   const rootRef = useRef<HTMLDivElement>(null);
   const { user, refetch } = useAuth();
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClickOutside(event: MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) onOpenChange(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open, onOpenChange]);
+  useOnClickOutside(rootRef, () => onOpenChange(false), open);
 
   function handleSignOut() {
     clearTokens();

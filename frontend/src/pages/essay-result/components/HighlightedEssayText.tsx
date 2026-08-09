@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { COMPETENCY_COLORS, COMPETENCY_ROMAN_NUMERALS, type EssayHighlight } from "../../../services/essay-service";
+import { useOnClickOutside } from "../../../hooks/app/useOnClickOutside";
 
 interface HighlightedTextSegment {
   key: number;
@@ -45,24 +46,20 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
   const popupRef = useRef<HTMLSpanElement>(null);
   const openMarkRef = useRef<HTMLElement>(null);
 
+  // "Outside" is just the popup and the currently-open mark — not the whole essay `<p>` — so
+  // clicking anywhere else in the essay text (not only outside the paragraph) closes the popup too.
+  useOnClickOutside([popupRef, openMarkRef], () => setPopup(null), popup !== null);
+
+  // Extra to the click-outside pattern: this popup is viewport-positioned (not CSS-anchored to its
+  // mark), so it also needs to close on scroll/resize or it'd drift away from the text it points at.
   useEffect(() => {
     if (!popup) return;
     function close() {
       setPopup(null);
     }
-    // "Outside" is just the popup and the currently-open mark — not the whole essay `<p>` — so
-    // clicking anywhere else in the essay text (not only outside the paragraph) closes the popup too.
-    function handleClickOutside(event: globalThis.MouseEvent) {
-      const target = event.target as Node;
-      const insidePopup = popupRef.current?.contains(target) ?? false;
-      const insideOpenMark = openMarkRef.current?.contains(target) ?? false;
-      if (!insidePopup && !insideOpenMark) close();
-    }
-    document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("scroll", close, { passive: true, capture: true });
     window.addEventListener("resize", close);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("scroll", close, true);
       window.removeEventListener("resize", close);
     };
