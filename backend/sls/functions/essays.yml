@@ -46,22 +46,22 @@ essaysEnqueueValidation:
         existing: true
 
 # Consumer of the fila de Revisão. batchSize: 1 so one essay's failure doesn't hold up another's.
-# Function timeout stays under the queue's VisibilityTimeout (60s, see resources/essays.yml) so a
+# Function timeout stays under the queue's VisibilityTimeout (120s, see resources/essays.yml) so a
 # message doesn't become visible to another poller while this invocation is still running.
 essaysValidate:
   handler: src/main/handlers/essays/validate-essay.handler
-  timeout: 30
+  timeout: 90
   events:
     - sqs:
         arn: !GetAtt EssayValidationQueue.Arn
         batchSize: 1
 
 # Consumer of the fila de Avaliação. batchSize: 1, same reasoning as essaysValidate. Timeout stays
-# under the queue's VisibilityTimeout (60s, see resources/essays.yml) — 5 concurrent Gemini calls
+# under the queue's VisibilityTimeout (120s, see resources/essays.yml) — 5 concurrent Gemini calls
 # (one per competência) fit comfortably inside it.
 essaysEvaluate:
   handler: src/main/handlers/essays/evaluate-essay.handler
-  timeout: 30
+  timeout: 90
   events:
     - sqs:
         arn: !GetAtt EssayEvaluationQueue.Arn

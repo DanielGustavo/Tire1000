@@ -35,7 +35,7 @@ EssayValidationQueue:
   Type: AWS::SQS::Queue
   Properties:
     QueueName: ${self:custom.essayValidationQueueName}
-    VisibilityTimeout: 60
+    VisibilityTimeout: 120
     ReceiveMessageWaitTimeSeconds: 20
     RedrivePolicy:
       deadLetterTargetArn: !GetAtt EssayValidationDLQ.Arn
@@ -55,7 +55,7 @@ EssayEvaluationQueue:
   Type: AWS::SQS::Queue
   Properties:
     QueueName: ${self:custom.essayEvaluationQueueName}
-    VisibilityTimeout: 60
+    VisibilityTimeout: 120
     ReceiveMessageWaitTimeSeconds: 20
     RedrivePolicy:
       deadLetterTargetArn: !GetAtt EssayEvaluationDLQ.Arn
