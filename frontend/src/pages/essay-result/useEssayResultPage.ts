@@ -11,7 +11,7 @@ export function useEssayResultPage() {
     queryKey: ["essay", essayId],
     queryFn: () => essayService.getById(essayId!),
     enabled: Boolean(essayId),
-    refetchInterval: (query) => (query.state.data && PENDING_STATUSES.includes(query.state.data.essay.status) ? 2000 : false),
+    refetchInterval: (query) => (query.state.data && PENDING_STATUSES.includes(query.state.data.essay.status) ? 30000 : false),
   });
 
   const status = essayQuery.data?.essay.status;
