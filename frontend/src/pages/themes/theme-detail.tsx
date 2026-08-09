@@ -36,33 +36,36 @@ export function ThemeDetailPage() {
   } = useThemeDetailPage();
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <div className="flex flex-col items-start gap-4 px-4">
-        <button
-          type="button"
-          onClick={handleGoBack}
-          className="flex items-center gap-0.5 text-small font-bold text-neutral-900"
-        >
-          <ChevronRight size={16} className="rotate-180" />
-          Voltar
-        </button>
+    // lg: swaps the stacked mobile column for the Figma desktop frame's 2-column layout
+    // (Article Section + a Call to Action card beside it, instead of below it) — teto/padding
+    // scoped to this page only, same pattern as tickets 08/09/10.
+    <div className="flex w-full flex-col gap-6 lg:mx-auto lg:max-w-[1280px] lg:flex-row lg:items-start lg:gap-16 lg:px-10">
+      <div className="flex flex-1 flex-col items-start gap-6 px-4 lg:px-0">
+        <div className="flex flex-col items-start gap-4">
+          <button
+            type="button"
+            onClick={handleGoBack}
+            className="flex items-center gap-0.5 text-small font-bold text-neutral-900"
+          >
+            <ChevronRight size={16} className="rotate-180" />
+            Voltar
+          </button>
 
-        {themeQuery.isPending && <Loading text="Carregando tema..." />}
-        {themeQuery.isError && <p className="text-default text-error-300">Não foi possível carregar o tema.</p>}
+          {themeQuery.isPending && <Loading text="Carregando tema..." />}
+          {themeQuery.isError && <p className="text-default text-error-300">Não foi possível carregar o tema.</p>}
+
+          {themeQuery.isSuccess && (
+            <div className="flex flex-col items-start gap-2">
+              <ThemeBadges theme={themeQuery.data.theme} topic={themeQuery.data.topic} />
+              <h1 className="text-subtitle font-bold capitalize text-neutral-900">{themeQuery.data.theme.title}</h1>
+            </div>
+          )}
+        </div>
 
         {themeQuery.isSuccess && (
-          <div className="flex flex-col items-start gap-2">
-            <ThemeBadges theme={themeQuery.data.theme} topic={themeQuery.data.topic} />
-            <h1 className="text-subtitle font-bold capitalize text-neutral-900">{themeQuery.data.theme.title}</h1>
-          </div>
-        )}
-      </div>
-
-      {themeQuery.isSuccess && (
-        <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-6">
             {themeQuery.data.referenceTexts.map((referenceText) => (
-              <section key={referenceText.id} className="flex flex-col gap-4 px-4">
+              <section key={referenceText.id} className="flex flex-col gap-4">
                 <h2 className="text-subtitle-small font-bold capitalize text-neutral-900">
                   Texto motivador {referenceText.order + 1}
                 </h2>
@@ -72,7 +75,7 @@ export function ThemeDetailPage() {
                       {paragraph.content}
                     </Markdown>
                   ) : (
-                    <div key={index} className="flex flex-col gap-2">
+                    <div key={index} className="flex flex-col gap-2 lg:mx-auto lg:w-[434px]">
                       <img
                         src={paragraph.content.url}
                         alt=""
@@ -86,8 +89,16 @@ export function ThemeDetailPage() {
               </section>
             ))}
           </div>
+        )}
+      </div>
 
-          <div className="sticky bottom-0 z-10 flex flex-col gap-2.5 border-t-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-2.5">
+      {themeQuery.isSuccess && (
+        <div className="sticky bottom-0 z-10 flex flex-col gap-8 border-t-2 border-solid border-neutral-900 bg-neutral-0 px-4 py-2.5 lg:static lg:w-[295px] lg:shrink-0 lg:border-2 lg:p-4 lg:shadow-hard">
+          <div className="hidden flex-col gap-1 lg:flex">
+            <h2 className="text-subtitle font-bold capitalize text-neutral-900">Já finalizou sua redação?</h2>
+            <p className="text-default text-neutral-900">Envie-a aqui para que possamos avaliá-la rapidamente!</p>
+          </div>
+          <div className="flex flex-col gap-2.5">
             <Button
               variant="primary"
               className="w-full"
