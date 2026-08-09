@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../libs/axios";
 import { setTokens } from "../../../libs/auth";
+import { useAuth } from "../../../contexts/AuthContext";
 import { authService } from "../../../services/auth-service";
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
@@ -11,13 +12,15 @@ import { AuthDivider } from "./AuthDivider";
 
 export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void; onSwitchToSignUp: () => void }) {
   const navigate = useNavigate();
+  const { refetch } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const loginMutation = useMutation({
     mutationFn: () => authService.login({ email, password }),
-    onSuccess: (tokens) => {
+    onSuccess: async (tokens) => {
       setTokens(tokens);
+      await refetch();
       navigate("/");
     },
   });

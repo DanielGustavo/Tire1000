@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../libs/axios";
+import { useAuth } from "../contexts/AuthContext";
 import { creditsService } from "../services/credits-service";
-import { userService } from "../services/user-service";
 
 const PRESET_CREDITS_QTY = [5, 10, 20];
 
@@ -19,7 +19,7 @@ export function CreditsPage() {
   const initialCheckoutUrl = (location.state as CreditsPageLocationState | null)?.initialCheckoutUrl ?? null;
   const checkoutStatus = searchParams.get("checkout");
 
-  const userQuery = useQuery({ queryKey: ["currentUser"], queryFn: () => userService.getCurrentUser() });
+  const { user, isLoading } = useAuth();
 
   const checkoutMutation = useMutation({
     mutationFn: (qty: number) => creditsService.requestCheckout(qty),
@@ -51,7 +51,7 @@ export function CreditsPage() {
 
       <p className="mt-4 text-sm text-gray-600">Seu saldo atual</p>
       <p className="text-3xl font-semibold text-gray-900">
-        {userQuery.isPending ? "..." : `${userQuery.data?.credits} créditos`}
+        {isLoading ? "..." : `${user?.credits} créditos`}
       </p>
 
       {initialCheckoutUrl && (

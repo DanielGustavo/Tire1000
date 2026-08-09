@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import type { EssayUploadMode } from "../essay-upload/useEssayCaptureFlow";
+import { useAuth } from "../../contexts/AuthContext";
 import { themeService } from "../../services/theme-service";
-import { userService } from "../../services/user-service";
 
 export function useThemeDetailPage() {
   const { themeId } = useParams<{ themeId: string }>();
@@ -16,11 +16,11 @@ export function useThemeDetailPage() {
     queryFn: () => themeService.getById(themeId!),
     enabled: Boolean(themeId),
   });
-  const userQuery = useQuery({ queryKey: ["currentUser"], queryFn: () => userService.getCurrentUser() });
+  const { user, isLoading } = useAuth();
 
   function handleStartEssay(mode: EssayUploadMode) {
-    if (!themeQuery.data || userQuery.isPending) return;
-    if ((userQuery.data?.credits ?? 0) > 0) {
+    if (!themeQuery.data || isLoading) return;
+    if ((user?.credits ?? 0) > 0) {
       setUploadMode(mode);
     } else {
       setPriceModalOpen(true);
@@ -29,7 +29,7 @@ export function useThemeDetailPage() {
 
   return {
     themeQuery,
-    ctaDisabled: userQuery.isPending,
+    ctaDisabled: isLoading,
     handleStartEssay,
     priceModalOpen,
     setPriceModalOpen,

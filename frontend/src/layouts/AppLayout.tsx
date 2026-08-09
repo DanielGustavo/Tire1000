@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { NotepadText, User } from "lucide-react";
 import { clearTokens } from "../libs/auth";
+import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/Button";
 import { IconButton } from "../components/IconButton";
 import { PriceModal } from "../components/PriceModal";
-import { userService } from "../services/user-service";
 import logo from "../assets/landing/logo.png";
 
 function Header({ credits }: { credits: number | undefined }) {
@@ -39,7 +38,7 @@ function Header({ credits }: { credits: number | undefined }) {
 function UserMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const navigate = useNavigate();
   const rootRef = useRef<HTMLDivElement>(null);
-  const userQuery = useQuery({ queryKey: ["currentUser"], queryFn: () => userService.getCurrentUser() });
+  const { user, refetch } = useAuth();
 
   useEffect(() => {
     if (!open) return;
@@ -52,6 +51,7 @@ function UserMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: 
 
   function handleSignOut() {
     clearTokens();
+    void refetch();
     navigate("/");
   }
 
@@ -72,9 +72,9 @@ function UserMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: 
         >
           <div className="flex flex-col items-start">
             <p className="text-default text-neutral-900">
-              Olá, <span className="font-bold">{userQuery.data?.name ?? "..."}</span>!
+              Olá, <span className="font-bold">{user?.name ?? "..."}</span>!
             </p>
-            <p className="text-small text-neutral-700">{userQuery.data?.email}</p>
+            <p className="text-small text-neutral-700">{user?.email}</p>
           </div>
           <Button type="button" variant="neutral" className="w-full" onClick={handleSignOut}>
             Sair
@@ -95,11 +95,11 @@ function Footer() {
 }
 
 export function AppLayout({ children }: { children?: ReactNode }) {
-  const userQuery = useQuery({ queryKey: ["currentUser"], queryFn: () => userService.getCurrentUser() });
+  const { user } = useAuth();
 
   return (
     <div className="flex w-full flex-col items-center gap-6 bg-neutral-0">
-      <Header credits={userQuery.data?.credits} />
+      <Header credits={user?.credits} />
       {children ?? <Outlet />}
       <Footer />
     </div>

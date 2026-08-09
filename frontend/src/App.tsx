@@ -1,5 +1,5 @@
-import { Route, Routes } from "react-router-dom";
-import { getAccessToken } from "./libs/auth";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AppLayout } from "./layouts/AppLayout";
 import { CreditsPage } from "./pages/credits";
 import { EssayResultPage } from "./pages/essay-result/essay-result";
@@ -9,7 +9,13 @@ import { ThemesPage } from "./pages/themes/themes";
 import { ThemeDetailPage } from "./pages/themes/theme-detail";
 
 function RootRoute() {
-  return getAccessToken() ? (
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <p className="text-default text-neutral-700">Carregando...</p>;
+  }
+
+  return isAuthenticated ? (
     <AppLayout>
       <HomePage />
     </AppLayout>
@@ -18,17 +24,31 @@ function RootRoute() {
   );
 }
 
+function RequireAuth() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <p className="text-default text-neutral-700">Carregando...</p>;
+  }
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
+}
+
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<RootRoute />} />
-      <Route element={<AppLayout />}>
-        <Route path="/themes" element={<ThemesPage />} />
-        <Route path="/themes/:themeId" element={<ThemeDetailPage />} />
-        <Route path="/essays/:essayId" element={<EssayResultPage />} />
-        <Route path="/credits" element={<CreditsPage />} />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<RootRoute />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<AppLayout />}>
+            <Route path="/themes" element={<ThemesPage />} />
+            <Route path="/themes/:themeId" element={<ThemeDetailPage />} />
+            <Route path="/essays/:essayId" element={<EssayResultPage />} />
+            <Route path="/credits" element={<CreditsPage />} />
+          </Route>
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 }
 
