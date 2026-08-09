@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { setAccessToken } from "../../../libs/auth";
 import { authService } from "../../../services/auth-service";
 
-export function useSignUpWizard() {
+export function useSignUpWizard(onClose: () => void) {
   const navigate = useNavigate();
   const [step, setStep] = useState<"form" | "credits">("form");
   const [name, setName] = useState("");
@@ -48,6 +48,6 @@ export function useSignUpWizard() {
     passwordsMismatch,
     handleFormSubmit,
     signUpMutation,
-    onClose: () => navigate("/"),
+    onClose,
   };
 }

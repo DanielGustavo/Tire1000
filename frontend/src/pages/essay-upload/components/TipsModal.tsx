@@ -2,7 +2,7 @@ import { Camera, Image as ImageIcon, LineStyle, NotebookPen, NotepadText, Sun, U
 import { Bullet } from "../../../components/Bullet";
 import { Button } from "../../../components/Button";
 import { Modal } from "../../../components/Modal";
-import type { EssayUploadMode } from "../useEssayUploadPage";
+import type { EssayUploadMode } from "../useEssayCaptureFlow";
 
 const CAMERA_TIPS: { icon: LucideIcon; label: string }[] = [
   { icon: Sun, label: "Iluminação boa!" },

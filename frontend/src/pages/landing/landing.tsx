@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Cta } from "./components/Cta";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
@@ -9,21 +10,23 @@ import { Steps } from "./components/Steps";
 
 type AuthModalKind = "signin" | "signup";
 
-type LandingPageProps = {
-  authModal?: AuthModalKind;
-};
+export function LandingPage() {
+  const [authModal, setAuthModal] = useState<AuthModalKind | null>(null);
 
-export function LandingPage({ authModal }: LandingPageProps) {
   return (
     <div className="flex w-full flex-col items-center bg-neutral-0">
-      <Header />
-      <Hero />
+      <Header onSignIn={() => setAuthModal("signin")} />
+      <Hero onSignUp={() => setAuthModal("signup")} />
       <Steps />
       <Illustration />
-      <Cta />
+      <Cta onSignUp={() => setAuthModal("signup")} />
       <Footer />
-      {authModal === "signin" && <SignInModal />}
-      {authModal === "signup" && <SignUpModal />}
+      {authModal === "signin" && (
+        <SignInModal onClose={() => setAuthModal(null)} onSwitchToSignUp={() => setAuthModal("signup")} />
+      )}
+      {authModal === "signup" && (
+        <SignUpModal onClose={() => setAuthModal(null)} onSwitchToSignIn={() => setAuthModal("signin")} />
+      )}
     </div>
   );
 }

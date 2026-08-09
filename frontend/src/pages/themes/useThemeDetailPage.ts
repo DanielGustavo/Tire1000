@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import type { EssayUploadMode } from "../essay-upload/useEssayUploadPage";
+import type { EssayUploadMode } from "../essay-upload/useEssayCaptureFlow";
 import { themeService } from "../../services/theme-service";
 import { userService } from "../../services/user-service";
 
@@ -9,6 +9,7 @@ export function useThemeDetailPage() {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
   const [priceModalOpen, setPriceModalOpen] = useState(false);
+  const [uploadMode, setUploadMode] = useState<EssayUploadMode | null>(null);
 
   const themeQuery = useQuery({
     queryKey: ["theme", themeId],
@@ -20,7 +21,7 @@ export function useThemeDetailPage() {
   function handleStartEssay(mode: EssayUploadMode) {
     if (!themeQuery.data || userQuery.isPending) return;
     if ((userQuery.data?.credits ?? 0) > 0) {
-      navigate(`/essays/new?themeId=${themeQuery.data.theme.id}&mode=${mode}`);
+      setUploadMode(mode);
     } else {
       setPriceModalOpen(true);
     }
@@ -32,5 +33,9 @@ export function useThemeDetailPage() {
     handleStartEssay,
     priceModalOpen,
     setPriceModalOpen,
+    uploadThemeId: themeQuery.data?.theme.id,
+    uploadMode,
+    closeUploadFlow: () => setUploadMode(null),
+    handleUploadDone: () => navigate("/"),
   };
 }

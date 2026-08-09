@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { getApiErrorMessage } from "../../../libs/axios";
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
@@ -7,7 +6,7 @@ import { AuthDivider } from "./AuthDivider";
 import { CreditsStep } from "./CreditsStep";
 import { useSignUpWizard } from "./useSignUpWizard";
 
-export function SignUpModal() {
+export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void; onSwitchToSignIn: () => void }) {
   const {
     step,
     name,
@@ -21,8 +20,7 @@ export function SignUpModal() {
     passwordsMismatch,
     handleFormSubmit,
     signUpMutation,
-    onClose,
-  } = useSignUpWizard();
+  } = useSignUpWizard(onClose);
 
   if (step === "credits") {
     return (
@@ -95,9 +93,9 @@ export function SignUpModal() {
       <AuthDivider />
       <p className="text-center text-default text-neutral-900">
         Já tenho uma conta?{" "}
-        <Link to="/login" className="font-bold text-primary-300">
+        <button type="button" onClick={onSwitchToSignIn} className="font-bold text-primary-300">
           Acessar conta
-        </Link>
+        </button>
       </p>
     </Modal>
   );

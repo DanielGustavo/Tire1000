@@ -34,3 +34,7 @@ Esta tela é reaberta tanto pelo fluxo de envio (ticket 06) quanto por um item d
 ### Pendência registrada (fora de escopo desta ticket)
 
 O usuário não quer mais rotas dedicadas só pra abrir modais (`/essays/new` faz isso hoje pro fluxo de envio/ticket 06) — pediu pra anotar e tratar depois numa refactor da plataforma inteira, não nessa ticket. O fluxo de reenvio desta ticket já evita introduzir uma nova instância desse padrão (usa estado local, não rota).
+
+## Comments
+
+Refactor implementado em [08-modais-sem-rota](08-modais-sem-rota.md) — `/essays/new`, `/login` e `/signup` removidos, migrados pro mesmo padrão de estado local do `EssayResendFlow` desta ticket.

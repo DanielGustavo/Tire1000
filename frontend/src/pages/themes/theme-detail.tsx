@@ -4,6 +4,7 @@ import Markdown, { type Components } from "react-markdown";
 import { Button } from "../../components/Button";
 import { PriceModal } from "../../components/PriceModal";
 import { ThemeBadges } from "../../components/ThemeBadges";
+import { EssayUploadFlow } from "./components/EssayUploadFlow";
 import { useThemeDetailPage } from "./useThemeDetailPage";
 
 /**
@@ -21,7 +22,17 @@ const referenceTextMarkdownComponents: Components = {
 };
 
 export function ThemeDetailPage() {
-  const { themeQuery, ctaDisabled, handleStartEssay, priceModalOpen, setPriceModalOpen } = useThemeDetailPage();
+  const {
+    themeQuery,
+    ctaDisabled,
+    handleStartEssay,
+    priceModalOpen,
+    setPriceModalOpen,
+    uploadThemeId,
+    uploadMode,
+    closeUploadFlow,
+    handleUploadDone,
+  } = useThemeDetailPage();
 
   return (
     <div className="flex w-full flex-col gap-6">
@@ -95,6 +106,9 @@ export function ThemeDetailPage() {
       )}
 
       {priceModalOpen && <PriceModal onClose={() => setPriceModalOpen(false)} />}
+      {uploadMode && uploadThemeId && (
+        <EssayUploadFlow themeId={uploadThemeId} mode={uploadMode} onClose={closeUploadFlow} onDone={handleUploadDone} />
+      )}
     </div>
   );
 }

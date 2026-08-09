@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../libs/axios";
 import { setAccessToken } from "../../../libs/auth";
@@ -9,7 +9,7 @@ import { Field } from "../../../components/Field";
 import { Modal } from "../../../components/Modal";
 import { AuthDivider } from "./AuthDivider";
 
-export function SignInModal() {
+export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void; onSwitchToSignUp: () => void }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +28,7 @@ export function SignInModal() {
   }
 
   return (
-    <Modal onClose={() => navigate("/")}>
+    <Modal onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex w-full flex-col items-center gap-8">
         <h1 className="w-full text-center text-title font-extrabold text-neutral-900">Acesso à Sua Conta</h1>
         <div className="flex w-full flex-col gap-4">
@@ -67,9 +67,9 @@ export function SignInModal() {
       <AuthDivider />
       <p className="text-center text-default text-neutral-900">
         Ainda não tem uma conta?{" "}
-        <Link to="/signup" className="font-bold text-primary-300">
+        <button type="button" onClick={onSwitchToSignUp} className="font-bold text-primary-300">
           Criar conta
-        </Link>
+        </button>
       </p>
     </Modal>
   );

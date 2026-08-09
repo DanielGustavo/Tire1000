@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
 import { Button } from "../../../components/Button";
 
-export function Cta() {
+export function Cta({ onSignUp }: { onSignUp: () => void }) {
   return (
     <section className="mt-6 flex w-full flex-col items-center px-4 py-0.5">
       <div className="flex w-full flex-col items-center gap-6 border-2 border-solid border-neutral-900 bg-pink-300 px-6 py-4 shadow-hard">
@@ -16,9 +15,9 @@ export function Cta() {
           Corrija sua redação com a gente! Apontamos detalhadamente o que falta para sua redação ter a nota máxima no
           ENEM.
         </p>
-        <Link to="/signup">
-          <Button variant="secondary">Quero uma redação nota 1000!</Button>
-        </Link>
+        <Button variant="secondary" onClick={onSignUp}>
+          Quero uma redação nota 1000!
+        </Button>
       </div>
     </section>
   );

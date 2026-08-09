@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
 import { Button } from "../../../components/Button";
 import logo from "../../../assets/landing/logo.png";
 import heroGridTexture from "../../../assets/landing/hero-grid-texture.png";
 
-export function Hero() {
+export function Hero({ onSignUp }: { onSignUp: () => void }) {
   return (
     <section className="relative flex w-full flex-col items-center gap-8 overflow-clip p-4">
       <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -24,9 +23,9 @@ export function Hero() {
           Utilizamos agentes IA para corrigir suas redações em um instante.
         </p>
       </div>
-      <Link to="/signup" className="relative">
-        <Button variant="primary">Quero ter uma redação nota 1000</Button>
-      </Link>
+      <Button variant="primary" className="relative" onClick={onSignUp}>
+        Quero ter uma redação nota 1000
+      </Button>
     </section>
   );
 }
