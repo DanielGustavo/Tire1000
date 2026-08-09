@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../libs/axios";
-import { setAccessToken } from "../../../libs/auth";
+import { setTokens } from "../../../libs/auth";
 import { authService } from "../../../services/auth-service";
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
@@ -17,7 +17,7 @@ export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void
   const loginMutation = useMutation({
     mutationFn: () => authService.login({ email, password }),
     onSuccess: (tokens) => {
-      setAccessToken(tokens.accessToken);
+      setTokens(tokens);
       navigate("/");
     },
   });

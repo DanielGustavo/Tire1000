@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { NotepadText, User } from "lucide-react";
-import { clearAccessToken } from "../libs/auth";
+import { clearTokens } from "../libs/auth";
 import { Button } from "../components/Button";
 import { IconButton } from "../components/IconButton";
 import { PriceModal } from "../components/PriceModal";
@@ -51,7 +51,7 @@ function UserMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: 
   }, [open, onOpenChange]);
 
   function handleSignOut() {
-    clearAccessToken();
+    clearTokens();
     navigate("/");
   }
 

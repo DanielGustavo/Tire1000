@@ -1,17 +1,14 @@
 import axios from "axios";
-import { getAccessToken } from "./auth";
 
-export const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
-});
+/** Plain AxiosInstance factory — no auth awareness. Header injection and refresh/retry live in
+ * the base `Service` class (see `services/service.ts`), which every concrete service extends. */
+export function createHttpClient() {
+  return axios.create({
+    baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
+  });
+}
 
-httpClient.interceptors.request.use((config) => {
-  const accessToken = getAccessToken();
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
+export const httpClient = createHttpClient();
 
 export function getApiErrorMessage(error: unknown, fallback: string): string {
   if (axios.isAxiosError(error) && typeof error.response?.data?.message === "string") {

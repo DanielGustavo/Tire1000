@@ -18,6 +18,16 @@ authLogin:
         path: /auth/login
         method: post
 
+authRefresh:
+  handler: src/main/handlers/auth/refresh.handler
+  environment:
+    USER_POOL_ID: !Ref CognitoUserPool
+    USER_POOL_CLIENT_ID: !Ref CognitoUserPoolClient
+  events:
+    - httpApi:
+        path: /auth/refresh
+        method: post
+
 # Invoked directly by Cognito as the PreTokenGeneration trigger (see the CognitoUserPool's
 # LambdaConfig in resources/cognito.yml) — no httpApi event. Doesn't use USER_POOL_ID/CLIENT_ID or
 # any cognito-idp action, so it gets its own dedicated role (AuthPreTokenGenerationRole) instead of

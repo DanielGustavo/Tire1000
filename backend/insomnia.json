@@ -178,6 +178,34 @@
       "_type": "request"
     },
     {
+      "_id": "req_auth_refresh",
+      "parentId": "fld_auth",
+      "modified": 1786029448482,
+      "created": 1786029448482,
+      "url": "{{ _.base_url }}/auth/refresh",
+      "name": "Refresh",
+      "description": "Troca um refreshToken válido por um novo accessToken/idToken (Cognito REFRESH_TOKEN_AUTH). O refreshToken enviado é devolvido como está — o fluxo não emite um novo.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"refreshToken\": \"{{ _.refresh_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "authentication": {},
+      "metaSortKey": -850,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_themes_list",
       "parentId": "fld_themes",
       "modified": 1786029448482,

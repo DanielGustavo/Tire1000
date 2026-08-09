@@ -12,9 +12,11 @@ import {
 import {
   EmailAlreadyExistsError,
   InvalidCredentialsError,
+  InvalidRefreshTokenError,
   WeakPasswordError,
   type AuthGateway,
   type AuthLoginInput,
+  type AuthRefreshInput,
   type AuthSignUpInput,
   type AuthTokens,
 } from "../../domain/contracts/gateways/auth-gateway.js";
@@ -101,6 +103,38 @@ export class CognitoAuthGateway implements AuthGateway {
     } catch (error) {
       if (error instanceof NotAuthorizedException || error instanceof UserNotFoundException) {
         throw new InvalidCredentialsError();
+      }
+      throw error;
+    }
+  }
+
+  async refresh({ refreshToken }: AuthRefreshInput): Promise<AuthTokens> {
+    try {
+      const result = await this.client.send(
+        new AdminInitiateAuthCommand({
+          UserPoolId: this.userPoolId,
+          ClientId: this.clientId,
+          AuthFlow: "REFRESH_TOKEN_AUTH",
+          AuthParameters: { REFRESH_TOKEN: refreshToken },
+        }),
+      );
+
+      const authResult = result.AuthenticationResult;
+      if (!authResult?.AccessToken || !authResult.IdToken) {
+        throw new InvalidRefreshTokenError();
+      }
+
+      // Cognito's REFRESH_TOKEN_AUTH flow doesn't return a new RefreshToken — keep reusing the
+      // one the caller sent in.
+      return {
+        accessToken: authResult.AccessToken,
+        idToken: authResult.IdToken,
+        refreshToken,
+        expiresIn: authResult.ExpiresIn ?? 3600,
+      };
+    } catch (error) {
+      if (error instanceof NotAuthorizedException || error instanceof UserNotFoundException) {
+        throw new InvalidRefreshTokenError();
       }
       throw error;
     }

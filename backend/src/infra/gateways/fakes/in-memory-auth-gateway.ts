@@ -1,8 +1,10 @@
 import {
   EmailAlreadyExistsError,
   InvalidCredentialsError,
+  InvalidRefreshTokenError,
   type AuthGateway,
   type AuthLoginInput,
+  type AuthRefreshInput,
   type AuthSignUpInput,
   type AuthTokens,
 } from "../../../domain/contracts/gateways/auth-gateway.js";
@@ -38,6 +40,22 @@ export class InMemoryAuthGateway implements AuthGateway {
       accessToken: `fake-access-token-${user.externalId}`,
       idToken: `fake-id-token-${user.externalId}`,
       refreshToken: `fake-refresh-token-${user.externalId}`,
+      expiresIn: 3600,
+    };
+  }
+
+  async refresh({ refreshToken }: AuthRefreshInput): Promise<AuthTokens> {
+    const match = /^fake-refresh-token-(.+)$/.exec(refreshToken);
+    const externalId = match?.[1];
+    const user = externalId && [...this.usersByEmail.values()].find((u) => u.externalId === externalId);
+    if (!user) {
+      throw new InvalidRefreshTokenError();
+    }
+
+    return {
+      accessToken: `fake-access-token-${user.externalId}`,
+      idToken: `fake-id-token-${user.externalId}`,
+      refreshToken,
       expiresIn: 3600,
     };
   }

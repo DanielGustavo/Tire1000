@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { setAccessToken } from "../../../libs/auth";
+import { setTokens } from "../../../libs/auth";
 import { authService } from "../../../services/auth-service";
 
 export function useSignUpWizard(onClose: () => void) {
@@ -16,7 +16,7 @@ export function useSignUpWizard(onClose: () => void) {
   const signUpMutation = useMutation({
     mutationFn: (creditsQty?: number) => authService.signUp({ name, email, password, creditsQty }),
     onSuccess: ({ tokens, checkoutUrl }) => {
-      setAccessToken(tokens.accessToken);
+      setTokens(tokens);
       if (checkoutUrl) {
         window.location.href = checkoutUrl;
         return;

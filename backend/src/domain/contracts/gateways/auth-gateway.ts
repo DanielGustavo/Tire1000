@@ -21,9 +21,14 @@ export interface AuthLoginInput {
   password: string;
 }
 
+export interface AuthRefreshInput {
+  refreshToken: string;
+}
+
 export interface AuthGateway {
   signUp(input: AuthSignUpInput): Promise<{ externalId: string }>;
   login(input: AuthLoginInput): Promise<AuthTokens>;
+  refresh(input: AuthRefreshInput): Promise<AuthTokens>;
   deleteUser(input: { email: string }): Promise<void>;
 }
 
@@ -36,6 +41,12 @@ export class EmailAlreadyExistsError extends ConflictError {
 export class InvalidCredentialsError extends UnauthorizedError {
   constructor() {
     super("E-mail ou senha inválidos");
+  }
+}
+
+export class InvalidRefreshTokenError extends UnauthorizedError {
+  constructor() {
+    super("Sessão expirada, faça login novamente");
   }
 }
 
