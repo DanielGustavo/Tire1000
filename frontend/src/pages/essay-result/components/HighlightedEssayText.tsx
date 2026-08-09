@@ -42,15 +42,21 @@ type PopupState = { key: number; top: number; left: number };
  */
 export function HighlightedEssayText({ text, highlights }: { text: string; highlights: EssayHighlight[] }) {
   const [popup, setPopup] = useState<PopupState | null>(null);
-  const rootRef = useRef<HTMLParagraphElement>(null);
+  const popupRef = useRef<HTMLSpanElement>(null);
+  const openMarkRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!popup) return;
     function close() {
       setPopup(null);
     }
+    // "Outside" is just the popup and the currently-open mark — not the whole essay `<p>` — so
+    // clicking anywhere else in the essay text (not only outside the paragraph) closes the popup too.
     function handleClickOutside(event: globalThis.MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) close();
+      const target = event.target as Node;
+      const insidePopup = popupRef.current?.contains(target) ?? false;
+      const insideOpenMark = openMarkRef.current?.contains(target) ?? false;
+      if (!insidePopup && !insideOpenMark) close();
     }
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("scroll", close, { passive: true, capture: true });
@@ -78,11 +84,12 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
   const openSegment = popup ? segments.find((segment) => segment.key === popup.key) : undefined;
 
   return (
-    <p ref={rootRef} className="whitespace-pre-line text-default leading-[1.7] text-neutral-900">
+    <p className="whitespace-pre-line text-default leading-[1.7] text-neutral-900">
       {segments.map((segment) =>
         segment.highlight ? (
           <mark
             key={segment.key}
+            ref={popup?.key === segment.key ? openMarkRef : undefined}
             role="button"
             tabIndex={0}
             aria-expanded={popup?.key === segment.key}
@@ -103,6 +110,7 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
       )}
       {popup && openSegment?.highlight && (
         <span
+          ref={popupRef}
           className="fixed z-20 flex flex-col gap-2 border-2 border-solid border-neutral-900 p-3 text-left font-normal leading-[1.2] shadow-hard"
           style={{ top: popup.top, left: popup.left, width: POPUP_WIDTH_PX, backgroundColor: COMPETENCY_COLORS[openSegment.highlight.type] }}
         >

@@ -57,13 +57,18 @@ export function EssayResultPage() {
       </div>
 
       {evaluationResult ? (
-        <div className="flex w-full flex-col gap-6 px-4 lg:w-[403px] lg:shrink-0 lg:px-0">
+        // Sticks below AppLayout's fixed 72px header (see AppLayout.tsx) so the score sidebar stays
+        // visible while the essay text column beside it scrolls, releasing naturally once this column
+        // ends — same sticky-column pattern as theme-detail.tsx's CTA card. Content here (5 competency
+        // cards + final score) is short/fixed-size, so no internal scroll is needed.
+        <div className="flex w-full flex-col gap-6 px-4 lg:sticky lg:top-[72px] lg:w-[403px] lg:shrink-0 lg:px-0">
           <CompetencyScores evaluation={evaluationResult.evaluation} />
         </div>
       ) : (
         // Skeleton sidebar is desktop-only (Figma "in progress"/"loading" frames) — mobile keeps ticket
         // 07's single-column pending state (just PendingResult's sticky note, no sidebar at all).
-        <div className="hidden lg:flex lg:w-[403px] lg:shrink-0 lg:flex-col lg:gap-6 lg:opacity-45">
+        // Same sticky treatment as the success-state sidebar above.
+        <div className="hidden lg:sticky lg:top-[72px] lg:flex lg:w-[403px] lg:shrink-0 lg:flex-col lg:gap-6 lg:opacity-45">
           <CompetencyScoresSkeleton status={essay.status} />
         </div>
       )}
