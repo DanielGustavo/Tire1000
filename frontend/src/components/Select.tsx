@@ -83,7 +83,9 @@ export function Select({
   }, [open]);
 
   useEffect(() => {
-    if (open) searchInputRef.current?.focus();
+    if (!open) return;
+    const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    if (!hasCoarsePointer) searchInputRef.current?.focus();
   }, [open]);
 
   useEffect(() => {
