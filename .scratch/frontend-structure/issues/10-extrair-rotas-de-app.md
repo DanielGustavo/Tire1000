@@ -2,7 +2,7 @@
 
 Type: task
 
-Status: open
+Status: resolved
 
 ## Question
 
@@ -24,3 +24,11 @@ function App() {
   );
 }
 ```
+
+## Answer
+
+Criado `frontend/src/routes.tsx` com `RootRoute`, `RequireAuth` e um novo componente `AppRoutes` (default export) contendo a árvore `<Routes>...</Routes>` exatamente como estava em `App.tsx` (rota raiz, `/themes`, `/themes/:themeId`, `/essays/:essayId` — sem `/credits`, já removida pela ticket 01). Levados junto os imports que só `routes.tsx` usa: `Navigate`/`Outlet`/`Route`/`Routes` do `react-router-dom`, `useAuth`, `Loading`, `AppLayout` e as 5 páginas (`EssayResultPage`, `HomePage`, `LandingPage`, `ThemesPage`, `ThemeDetailPage`).
+
+`frontend/src/App.tsx` reduzido para só `AuthProvider` + `Toaster` + `AppRoutes`, mantendo `AuthProvider` (de `./contexts/AuthContext`) e `Toaster` (de `./components/Toaster`) como únicos imports.
+
+`npx tsc -b` limpo depois da extração.
