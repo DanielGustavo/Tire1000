@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../libs/axios";
 import { useAuth } from "../contexts/AuthContext";
 import { creditsService } from "../services/credits-service";
+import { Button } from "../components/Button";
 
 const PRESET_CREDITS_QTY = [5, 10, 20];
 
@@ -88,13 +89,9 @@ export function CreditsPage() {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={checkoutMutation.isPending}
-          className="w-full rounded-md bg-gray-900 px-4 py-2 text-white disabled:opacity-50"
-        >
-          {checkoutMutation.isPending ? "Redirecionando..." : "Comprar créditos"}
-        </button>
+        <Button type="submit" variant="dark" size="small" className="w-full" loading={checkoutMutation.isPending}>
+          Comprar créditos
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-600">

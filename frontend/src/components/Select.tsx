@@ -1,6 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Loader } from "lucide-react";
 
 export type SelectOption = { value: string; label: string };
 
@@ -10,6 +10,9 @@ type SelectProps = {
   options: SelectOption[];
   value?: string;
   onChange?: (value: string) => void;
+  error?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
 };
 
 function normalize(text: string) {
@@ -25,6 +28,9 @@ export function Select({
   options,
   value,
   onChange,
+  error = false,
+  loading = false,
+  disabled = false,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -85,6 +91,16 @@ export function Select({
   }, [filteredOptions]);
 
   const selected = options.find((option) => option.value === value);
+  const isBlocked = disabled || loading;
+  const borderColor = error ? "border-error-300" : "border-neutral-900";
+  const focusWithinOutlineColor = error ? "focus-within:outline-error-300" : "focus-within:outline-neutral-900";
+  const focusVisibleOutlineColor = error ? "focus-visible:outline-error-300" : "focus-visible:outline-neutral-900";
+  const boxClasses = isBlocked
+    ? `${borderColor} opacity-50 shadow-none`
+    : `${borderColor} hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 ${focusWithinOutlineColor}`;
+  const closedButtonClasses = isBlocked
+    ? `${borderColor} opacity-50 shadow-none`
+    : `${borderColor} hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${focusVisibleOutlineColor}`;
 
   function close() {
     setOpen(false);
@@ -126,7 +142,9 @@ export function Select({
     <div ref={rootRef} className="relative flex w-full flex-col items-start gap-0.5">
       {label && <span className="text-default font-bold text-neutral-900">{label}</span>}
       {open ? (
-        <div className="flex h-12 w-full items-center justify-between border-2 border-solid border-neutral-900 bg-neutral-0 px-4 shadow-hard">
+        <div
+          className={`flex h-12 w-full items-center justify-between border-2 border-solid bg-neutral-0 px-4 shadow-hard transition-shadow duration-100 ${boxClasses}`}
+        >
           <input
             ref={searchInputRef}
             type="text"
@@ -146,14 +164,20 @@ export function Select({
         <button
           type="button"
           onClick={() => setOpen(true)}
+          disabled={isBlocked}
           aria-expanded={open}
           aria-haspopup="listbox"
-          className="flex h-12 w-full items-center justify-between border-2 border-solid border-neutral-900 bg-neutral-0 px-4 shadow-hard"
+          aria-busy={loading || undefined}
+          className={`flex h-12 w-full items-center justify-between border-2 border-solid bg-neutral-0 px-4 shadow-hard transition-shadow duration-100 ${closedButtonClasses}`}
         >
           <span className={`text-default ${selected ? "text-neutral-900" : "text-neutral-300"}`}>
-            {selected ? selected.label : placeholder}
+            {loading ? "Carregando..." : selected ? selected.label : placeholder}
           </span>
-          <ChevronDown size={24} className="shrink-0 text-neutral-900" />
+          {loading ? (
+            <Loader size={24} className="shrink-0 animate-spin text-neutral-900" aria-hidden="true" />
+          ) : (
+            <ChevronDown size={24} className="shrink-0 text-neutral-900" />
+          )}
         </button>
       )}
       {open &&

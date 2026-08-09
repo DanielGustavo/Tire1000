@@ -25,7 +25,14 @@ export function ThemesFilterModal({ topicId, onApply, onClose }: ThemesFilterMod
     <Modal onClose={onClose}>
       <p className="w-full text-center text-title font-extrabold text-neutral-900">Filtro de temas</p>
 
-      <Select label="Eixo do tema" placeholder="Escolha um eixo" options={options} value={pendingTopicId} onChange={setPendingTopicId} />
+      <Select
+        label="Eixo do tema"
+        placeholder="Escolha um eixo"
+        options={options}
+        value={pendingTopicId}
+        onChange={setPendingTopicId}
+        loading={topicsQuery.isPending}
+      />
 
       <div className="flex w-full gap-2">
         <Button type="button" variant="neutral" className="flex-1" onClick={onClose}>

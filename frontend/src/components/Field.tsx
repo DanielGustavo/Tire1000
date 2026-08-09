@@ -14,6 +14,7 @@ export function Field({
   success = [],
   type = "text",
   id,
+  disabled,
   ...props
 }: FieldProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +32,11 @@ export function Field({
     : hasSuccess
       ? "border-primary-300"
       : "border-neutral-900";
+  const focusOutlineColor = hasError
+    ? "focus-within:outline-error-300"
+    : hasSuccess
+      ? "focus-within:outline-primary-300"
+      : "focus-within:outline-neutral-900";
 
   return (
     <div className="flex w-full flex-col items-start gap-0.5">
@@ -40,12 +46,17 @@ export function Field({
         </label>
       )}
       <div
-        className={`flex h-12 w-full items-center justify-between border-2 border-solid bg-neutral-0 px-4 shadow-hard ${borderColor}`}
+        className={`flex h-12 w-full items-center justify-between border-2 border-solid bg-neutral-0 px-4 shadow-hard transition-shadow duration-100 ${borderColor} ${
+          disabled
+            ? "opacity-50 shadow-none"
+            : `hover:shadow-[3px_3px_0px_0px_#1e1e1e] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 ${focusOutlineColor}`
+        }`}
       >
         <input
           id={id}
           type={isPassword && showPassword ? "text" : type}
-          className="w-full text-default text-neutral-900 outline-none placeholder:text-neutral-300"
+          disabled={disabled}
+          className="w-full text-default text-neutral-900 outline-none placeholder:text-neutral-300 disabled:cursor-not-allowed"
           {...props}
         />
         {isPassword && (

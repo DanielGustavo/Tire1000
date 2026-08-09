@@ -62,8 +62,8 @@ export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void
               {getApiErrorMessage(loginMutation.error, "Email ou senha inválidos.")}
             </p>
           )}
-          <Button type="submit" variant="primary" className="w-full" disabled={loginMutation.isPending}>
-            {loginMutation.isPending ? "Entrando..." : "Acessar conta"}
+          <Button type="submit" variant="primary" className="w-full" loading={loginMutation.isPending}>
+            Acessar conta
           </Button>
         </div>
       </form>
