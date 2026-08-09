@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PageLoading } from "../../components/PageLoading";
 import { formatDate } from "../../libs/date";
 import { EssayEvaluationResult } from "./components/EssayEvaluationResult";
 import { PendingResult } from "./components/PendingResult";
@@ -9,11 +10,7 @@ export function EssayResultPage() {
   const { essayQuery, blocked } = useEssayResultPage();
 
   if (essayQuery.isPending || blocked) {
-    return (
-      <div className="flex w-full flex-col gap-4 px-4">
-        <p className="text-default text-neutral-700">Carregando...</p>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (essayQuery.isError) {
