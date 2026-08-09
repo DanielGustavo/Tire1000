@@ -1,11 +1,23 @@
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { themeService } from "../../services/theme-service";
+import { useIsDesktop } from "../../hooks/useIsDesktop";
 
-const THEMES_PER_PAGE = 3;
+const THEMES_PER_PAGE_MOBILE = 3;
+const THEMES_PER_PAGE_DESKTOP = 9;
+
+/** Clones `params` and drops `page` — any filter change invalidates the current page. */
+function withoutPage(params: URLSearchParams): URLSearchParams {
+  const next = new URLSearchParams(params);
+  next.delete("page");
+  return next;
+}
 
 export function useThemesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const isDesktop = useIsDesktop();
+  const themesPerPage = isDesktop ? THEMES_PER_PAGE_DESKTOP : THEMES_PER_PAGE_MOBILE;
 
   const search = searchParams.get("search") ?? "";
   const topicId = searchParams.get("topicId") ?? "";
@@ -13,10 +25,9 @@ export function useThemesPage() {
 
   function setSearch(value: string) {
     setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
+      const next = withoutPage(prev);
       if (value) next.set("search", value);
       else next.delete("search");
-      next.delete("page");
       return next;
     });
   }
@@ -27,10 +38,9 @@ export function useThemesPage() {
   function setTopicId(value: string) {
     setSearchParams(
       (prev) => {
-        const next = new URLSearchParams(prev);
+        const next = withoutPage(prev);
         if (value) next.set("topicId", value);
         else next.delete("topicId");
-        next.delete("page");
         return next;
       },
       { replace: true },
@@ -47,13 +57,25 @@ export function useThemesPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // Resets to page 1 whenever the effective per-page count changes — i.e. whenever a live
+  // resize crosses the desktop/mobile breakpoint. Skips the initial mount so a page number
+  // the user arrived with (shared/bookmarked URL) isn't clobbered on first render.
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setSearchParams(withoutPage);
+  }, [themesPerPage, setSearchParams]);
+
   const themesQuery = useQuery({
     queryKey: ["themes", { topicId, search }],
     queryFn: () => themeService.list({ topicId: topicId || undefined, search: search || undefined }),
   });
   const themes = themesQuery.data ?? [];
-  const totalPages = Math.max(1, Math.ceil(themes.length / THEMES_PER_PAGE));
-  const pageThemes = themes.slice((page - 1) * THEMES_PER_PAGE, page * THEMES_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(themes.length / themesPerPage));
+  const pageThemes = themes.slice((page - 1) * themesPerPage, page * themesPerPage);
 
   return { search, setSearch, topicId, setTopicId, page, setPage, themesQuery, themes, pageThemes, totalPages };
 }

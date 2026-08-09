@@ -50,13 +50,10 @@ export function ThemesPage() {
         )}
 
         {/* lg: swaps the single stacked column for the 3-column grid in the Figma desktop frame
-            (which shows a 3x3 grid, i.e. 9 themes/page). THEMES_PER_PAGE intentionally stays 3
-            here — matching per-page count to columns (9) would mean the "page" a URL points to
-            depends on viewport width (resizing across lg: would need to recompute page/totalPages,
-            and a shared link could land on a different set of themes on mobile vs desktop). That's
-            a real behavior change, not just layout, so it's left as an open question (see ticket
-            10's Answer) instead of guessed at without a live user — this grid only ever renders
-            one row of 3 for now. */}
+            (a 3x3 grid, i.e. 9 themes/page). useThemesPage reacts to the same lg: breakpoint via
+            useIsDesktop and switches the per-page count (3 mobile / 9 desktop) to match, resetting
+            to page 1 on a live breakpoint crossing so the URL's page never points out of range
+            (see ticket 14, Q4). */}
         <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
           {pageThemes.map(({ theme, topic }) => (
             <ThemeListItem key={theme.id} theme={theme} topic={topic} />
