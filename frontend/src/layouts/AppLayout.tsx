@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { NotepadText, User } from "lucide-react";
 import { clearTokens } from "../libs/auth";
 import { useAuth } from "../contexts/AuthContext";
@@ -14,7 +14,9 @@ function Header({ credits }: { credits: number | undefined }) {
 
   return (
     <header className="flex w-full items-center justify-between bg-neutral-20 p-4">
-      <img src={logo} alt="Tire 1000" className="h-10 w-[45px] object-contain" />
+      <Link to="/">
+        <img src={logo} alt="Tire 1000" className="h-10 w-[45px] object-contain" />
+      </Link>
       <div className="flex items-center gap-4">
         <IconButton
           variant="gray"
@@ -98,9 +100,9 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   const { user } = useAuth();
 
   return (
-    <div className="flex w-full flex-col items-center gap-6 bg-neutral-0">
+    <div className="flex min-h-screen w-full flex-col items-center gap-6 bg-neutral-0">
       <Header credits={user?.credits} />
-      {children ?? <Outlet />}
+      <div className="flex w-full flex-1 flex-col items-center">{children ?? <Outlet />}</div>
       <Footer />
     </div>
   );

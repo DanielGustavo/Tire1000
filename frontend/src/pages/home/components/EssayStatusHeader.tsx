@@ -3,14 +3,14 @@ import { ROTATED_SHADOW_CLASSES, rotateClass } from "../../../libs/hard-shadow";
 import { REJECTION_REASON_LABELS, type Essay, type EssayStatus } from "../../../services/essay-service";
 
 const STATUS_MESSAGES: Partial<Record<EssayStatus, string>> = {
-  UPLOADING: "O envio da sua redação não foi concluído",
-  QUEUED: "Sua redação está na fila da Revisão",
-  VALIDATING: "Estamos corrigindo sua redação, aguarde alguns minutos",
-  VALIDATED: "Sua redação está na fila da Avaliação",
-  EVALUATING: "Estamos corrigindo sua redação, aguarde alguns minutos",
-  UPLOAD_FAILED: "Não foi possível confirmar o envio da foto",
-  VALIDATION_FAILED: "Falha técnica ao revisar sua redação",
-  EVALUATION_FAILED: "Falha técnica ao avaliar sua redação",
+  UPLOADING: "Ops, o envio da sua redação não foi concluído",
+  QUEUED: "Sua redação chegou! Já já entra na fila da Revisão",
+  VALIDATING: "Estamos dando uma olhada na sua redação, só um instante",
+  VALIDATED: "Revisão concluída! Sua redação está na fila da Avaliação",
+  EVALUATING: "Estamos corrigindo sua redação com carinho, aguarde alguns minutos",
+  UPLOAD_FAILED: "Não conseguimos confirmar o envio da foto",
+  VALIDATION_FAILED: "Tivemos um probleminha técnico ao revisar sua redação",
+  EVALUATION_FAILED: "Tivemos um probleminha técnico ao avaliar sua redação",
 };
 
 function statusMessage(essay: Essay): string {

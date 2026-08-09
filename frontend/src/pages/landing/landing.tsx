@@ -14,12 +14,14 @@ export function LandingPage() {
   const [authModal, setAuthModal] = useState<AuthModalKind | null>(null);
 
   return (
-    <div className="flex w-full flex-col items-center bg-neutral-0">
+    <div className="flex min-h-screen w-full flex-col items-center bg-neutral-0">
       <Header onSignIn={() => setAuthModal("signin")} />
-      <Hero onSignUp={() => setAuthModal("signup")} />
-      <Steps />
-      <Illustration />
-      <Cta onSignUp={() => setAuthModal("signup")} />
+      <div className="flex w-full flex-1 flex-col items-center">
+        <Hero onSignUp={() => setAuthModal("signup")} />
+        <Steps />
+        <Illustration />
+        <Cta onSignUp={() => setAuthModal("signup")} />
+      </div>
       <Footer />
       {authModal === "signin" && (
         <SignInModal onClose={() => setAuthModal(null)} onSwitchToSignUp={() => setAuthModal("signup")} />

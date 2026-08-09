@@ -37,6 +37,6 @@ export function useThemeDetailPage() {
     uploadThemeId: themeQuery.data?.theme.id,
     uploadMode,
     closeUploadFlow: () => setUploadMode(null),
-    handleUploadDone: () => navigate("/"),
+    handleUploadDone: (essayId?: string) => navigate(essayId ? `/essays/${essayId}` : "/"),
   };
 }
