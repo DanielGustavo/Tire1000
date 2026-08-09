@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { getApiErrorMessage } from "../libs/axios";
+import { toast } from "sonner";
+import { applyFieldErrors } from "../libs/axios";
 import { useAuth } from "../contexts/AuthContext";
 import { creditsService } from "../services/credits-service";
 import { Button } from "../components/Button";
@@ -26,6 +27,10 @@ export function CreditsPage() {
     mutationFn: (qty: number) => creditsService.requestCheckout(qty),
     onSuccess: ({ checkoutUrl }) => {
       window.location.href = checkoutUrl;
+    },
+    onError: (error) => {
+      const { toastMessage } = applyFieldErrors(error, "Não foi possível iniciar o checkout. Tente novamente.");
+      if (toastMessage) toast.error(toastMessage);
     },
   });
 
@@ -82,12 +87,6 @@ export function CreditsPage() {
             ))}
           </select>
         </div>
-
-        {checkoutMutation.isError && (
-          <p className="text-sm text-red-600">
-            {getApiErrorMessage(checkoutMutation.error, "Não foi possível iniciar o checkout. Tente novamente.")}
-          </p>
-        )}
 
         <Button type="submit" variant="dark" size="small" className="w-full" loading={checkoutMutation.isPending}>
           Comprar créditos
