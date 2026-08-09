@@ -8,12 +8,16 @@ export function EssaysSection() {
   const { page, setPage, essaysQuery, essays, pageEssays, totalPages } = useEssaysSection();
 
   return (
-    <section className="flex w-full flex-col gap-4 px-4">
+    <section className="flex w-full flex-col gap-4 px-4 lg:w-[847px] lg:shrink-0 lg:px-10">
       <h2 className="text-title font-extrabold text-neutral-900">Suas redações</h2>
 
       {essaysQuery.isPending && <Loading />}
       {essaysQuery.isError && <p className="text-default text-error-300">Não foi possível carregar suas redações.</p>}
-      {essaysQuery.isSuccess && essays.length === 0 && <EssaysEmptyState />}
+      {essaysQuery.isSuccess && essays.length === 0 && (
+        <div className="flex w-full flex-col lg:h-[606px] lg:items-center lg:justify-center">
+          <EssaysEmptyState />
+        </div>
+      )}
 
       {pageEssays.length > 0 && (
         <div className="flex w-full flex-col gap-4">
