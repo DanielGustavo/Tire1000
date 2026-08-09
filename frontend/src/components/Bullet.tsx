@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/hard-shadow";
+import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/hardShadow";
 
 const VARIANT_STYLES = {
   default: { classes: "bg-primary-100 border-neutral-900 text-neutral-900", shadow: "black" },

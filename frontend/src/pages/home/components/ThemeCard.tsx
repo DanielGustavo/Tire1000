@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Bullet } from "../../../components/Bullet";
 import { Button } from "../../../components/Button";
 import { TexturedCard } from "../../../components/TexturedCard";
-import { DEFAULT_THEME_COLOR } from "../../../services/theme-service";
+import { DEFAULT_THEME_COLOR } from "../../../services/themeService";
 import type { ThemeWithTopic } from "../../../types/theme";
 
 export function ThemeCard({ theme, topic }: ThemeWithTopic) {

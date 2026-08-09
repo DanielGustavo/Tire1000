@@ -1,11 +1,11 @@
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
 import { Modal } from "../../../components/Modal";
-import { fieldErrorMessages } from "../../../libs/form-errors";
+import { fieldErrorMessages } from "../../../libs/formErrors";
 import { AuthDivider } from "./AuthDivider";
 import { CreditsStep } from "./CreditsStep";
 import { useSignUpWizard } from "../hooks/useSignUpWizard";
-import type { SignUpFormValues } from "./signup-schema";
+import type { SignUpFormValues } from "./signupSchema";
 
 export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void; onSwitchToSignIn: () => void }) {
   const { step, form, serverFieldErrors, handleFormSubmit, signUpMutation } = useSignUpWizard();

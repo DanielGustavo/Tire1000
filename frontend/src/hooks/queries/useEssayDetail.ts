@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { PENDING_STATUSES, essayService } from "../../services/essay-service";
+import { PENDING_STATUSES, essayService } from "../../services/essayService";
 
 export function useEssayDetail(essayId: string | undefined) {
   return useQuery({

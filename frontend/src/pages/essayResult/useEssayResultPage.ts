@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BLOCKED_ESSAY_RESULT_STATUSES } from "../../services/essay-service";
+import { BLOCKED_ESSAY_RESULT_STATUSES } from "../../services/essayService";
 import { useEssayDetail } from "../../hooks/queries/useEssayDetail";
 
 export function useEssayResultPage() {

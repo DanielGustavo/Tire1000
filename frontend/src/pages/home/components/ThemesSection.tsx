@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
-import { themeService } from "../../../services/theme-service";
+import { themeService } from "../../../services/themeService";
 import { Loading } from "../../../components/Loading";
 import { ThemeCard } from "./ThemeCard";
 

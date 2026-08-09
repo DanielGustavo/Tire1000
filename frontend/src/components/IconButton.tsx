@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/hard-shadow";
+import { ROTATED_SHADOW_CLASSES, rotateClass, SHADOW_CLASSES } from "../libs/hardShadow";
 
 const VARIANT_STYLES = {
   default: { classes: "bg-primary-300 border-neutral-900", shadow: "black" },

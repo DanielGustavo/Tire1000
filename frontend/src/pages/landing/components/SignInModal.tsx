@@ -6,14 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { applyFieldErrors, type ApiFieldErrors } from "../../../libs/axios";
 import { setTokens } from "../../../libs/auth";
-import { fieldErrorMessages } from "../../../libs/form-errors";
+import { fieldErrorMessages } from "../../../libs/formErrors";
 import { useAuth } from "../../../contexts/AuthContext";
-import { authService } from "../../../services/auth-service";
+import { authService } from "../../../services/authService";
 import { Button } from "../../../components/Button";
 import { Field } from "../../../components/Field";
 import { Modal } from "../../../components/Modal";
 import { AuthDivider } from "./AuthDivider";
-import { loginSchema, type LoginFormValues } from "./login-schema";
+import { loginSchema, type LoginFormValues } from "./loginSchema";
 
 export function SignInModal({ onClose, onSwitchToSignUp }: { onClose: () => void; onSwitchToSignUp: () => void }) {
   const navigate = useNavigate();

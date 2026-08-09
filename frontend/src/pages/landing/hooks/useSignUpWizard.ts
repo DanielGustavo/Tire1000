@@ -7,7 +7,7 @@ import { applyFieldErrors, type ApiFieldErrors } from "../../../libs/axios";
 import { setTokens } from "../../../libs/auth";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useSignUp } from "../../../hooks/mutations/useSignUp";
-import { signUpSchema, type SignUpFormValues } from "../components/signup-schema";
+import { signUpSchema, type SignUpFormValues } from "../components/signupSchema";
 
 export function useSignUpWizard() {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
-import { ROTATED_SHADOW_CLASSES, rotateClass } from "../../../libs/hard-shadow";
-import { REJECTION_REASON_LABELS } from "../../../services/essay-service";
+import { ROTATED_SHADOW_CLASSES, rotateClass } from "../../../libs/hardShadow";
+import { REJECTION_REASON_LABELS } from "../../../services/essayService";
 import type { Essay, EssayStatus } from "../../../types/essay";
 
 const STATUS_MESSAGES: Partial<Record<EssayStatus, string>> = {

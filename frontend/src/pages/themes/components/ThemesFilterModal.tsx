@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "../../../components/Button";
 import { Modal } from "../../../components/Modal";
 import { Select } from "../../../components/Select";
-import { topicService } from "../../../services/topic-service";
+import { topicService } from "../../../services/topicService";
 
 const ALL_TOPICS_OPTION = { value: "", label: "Todos os eixos" };
 

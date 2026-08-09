@@ -1,5 +1,5 @@
 import { Bullet } from "./Bullet";
-import { DEFAULT_THEME_COLOR } from "../services/theme-service";
+import { DEFAULT_THEME_COLOR } from "../services/themeService";
 import type { ThemeWithTopic } from "../types/theme";
 
 export function ThemeBadges({ theme, topic }: ThemeWithTopic) {

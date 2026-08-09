@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { essayService } from "../../services/essay-service";
+import { essayService } from "../../services/essayService";
 
 interface UploadEssayInput {
   themeId: string;

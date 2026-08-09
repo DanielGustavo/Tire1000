@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { NotepadText } from "lucide-react";
 import { getApiErrorMessage } from "../libs/axios";
-import { creditsService } from "../services/credits-service";
+import { creditsService } from "../services/creditsService";
 import { Button } from "./Button";
 import { Modal } from "./Modal";
 

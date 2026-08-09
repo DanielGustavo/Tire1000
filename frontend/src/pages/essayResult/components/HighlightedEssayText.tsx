@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
-import { COMPETENCY_COLORS, COMPETENCY_ROMAN_NUMERALS } from "../../../services/essay-service";
+import { COMPETENCY_COLORS, COMPETENCY_ROMAN_NUMERALS } from "../../../services/essayService";
 import type { EssayHighlight } from "../../../types/essay";
 import { useOnClickOutside } from "../../../hooks/app/useOnClickOutside";
 

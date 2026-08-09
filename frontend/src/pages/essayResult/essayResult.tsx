@@ -59,7 +59,7 @@ export function EssayResultPage() {
       {evaluationResult ? (
         // Sticks below AppLayout's fixed 72px header (see AppLayout.tsx) so the score sidebar stays
         // visible while the essay text column beside it scrolls, releasing naturally once this column
-        // ends — same sticky-column pattern as theme-detail.tsx's CTA card. Content here (5 competency
+        // ends — same sticky-column pattern as themeDetail.tsx's CTA card. Content here (5 competency
         // cards + final score) is short/fixed-size, so no internal scroll is needed.
         <div className="flex w-full flex-col gap-6 px-4 lg:w-[403px] lg:shrink-0 lg:px-0">
           <CompetencyScores evaluation={evaluationResult.evaluation} />
