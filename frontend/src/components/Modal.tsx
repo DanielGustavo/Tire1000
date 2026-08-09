@@ -40,6 +40,11 @@ export function Modal({ onClose, children }: ModalProps) {
   // rodar, ele cancela o back() pendente e reaproveita a entrada de history já empurrada em
   // vez de empurrar outra e sem deixar o back() antigo fechar o modal que acabou de (re)montar.
   const closedByPopStateRef = useRef(false);
+  // href of the marker entry right after it's pushed/reused. If something inside the modal
+  // (e.g. applying a filter) replaces the current entry's URL before close, history.back()
+  // below would undo that change instead of just removing the marker — so we skip it and let
+  // the replaced entry stand as the new, real history entry.
+  const openHrefRef = useRef("");
 
   useEffect(() => {
     closedByPopStateRef.current = false;
@@ -50,6 +55,7 @@ export function Modal({ onClose, children }: ModalProps) {
     } else {
       window.history.pushState({ modal: true }, "");
     }
+    openHrefRef.current = window.location.href;
 
     function handlePopState() {
       closedByPopStateRef.current = true;
@@ -60,7 +66,7 @@ export function Modal({ onClose, children }: ModalProps) {
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
-      if (!closedByPopStateRef.current) {
+      if (!closedByPopStateRef.current && window.location.href === openHrefRef.current) {
         let cancelled = false;
         pendingBack = () => {
           cancelled = true;

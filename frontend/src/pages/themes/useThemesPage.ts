@@ -21,14 +21,20 @@ export function useThemesPage() {
     });
   }
 
+  // replace: true because this runs while ThemesFilterModal (which pushes its own history
+  // entry to close on back-button) is still open — pushing here too would leave the modal's
+  // history.back() cleanup popping the filter instead of the modal marker.
   function setTopicId(value: string) {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (value) next.set("topicId", value);
-      else next.delete("topicId");
-      next.delete("page");
-      return next;
-    });
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value) next.set("topicId", value);
+        else next.delete("topicId");
+        next.delete("page");
+        return next;
+      },
+      { replace: true },
+    );
   }
 
   function setPage(value: number) {
