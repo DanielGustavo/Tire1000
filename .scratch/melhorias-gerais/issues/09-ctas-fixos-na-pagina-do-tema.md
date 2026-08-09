@@ -13,3 +13,7 @@ Os dois botões "Tirar foto da redação"/"Fazer upload da redação" (`frontend
 ## Referências
 
 - `frontend/src/pages/themes/theme-detail.tsx:85-104`
+
+## Comments
+
+Implementado em `156081e`. Container dos 2 CTAs ganhou `sticky bottom-0 z-10` + `bg-neutral-0`/`border-t-2 border-neutral-900`/`py-2.5` (fundo sólido e separador pra não deixar o conteúdo por trás transparecer, seguindo a linguagem de borda dura já usada em `Modal`/`Field`/`Select`/`PaperCard` — não havia padrão de `sticky` prévio no repo pra reaproveitar). CSS puro, sem JS. `tsc -b`/`oxlint` limpos.

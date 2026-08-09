@@ -15,3 +15,7 @@ Desde a remoção das rotas dedicadas a modal (`/essays/new`, `/login`, `/signup
 ## Referências
 
 - `frontend/src/components/Modal.tsx`
+
+## Comments
+
+Implementado em `27a321c`. `Modal.tsx` dá `history.pushState` ao montar e fecha via `onClose` num `popstate`; um ref marca quando o fechamento veio do popstate, e o cleanup do efeito só chama `history.back()` (consumindo a entrada pushada) quando o fechamento **não** veio do botão voltar — evita tanto entrada órfã quanto duplo pop. Zero mudança nos call sites, confirmado em `SignInModal`/`SignUpModal`/`PriceModal`. Sem teste dedicado (não há runner de testes no frontend; comportamento é puramente de UI). `tsc -b`/`oxlint` limpos.

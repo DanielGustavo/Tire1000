@@ -22,3 +22,7 @@ Existem 4 chamadas independentes a `GET /users/me`, cada uma com sua própria qu
 - `frontend/src/layouts/AppLayout.tsx:42,53-56,98`
 - `frontend/src/pages/credits.tsx:22`
 - `frontend/src/pages/themes/useThemeDetailPage.ts:19`
+
+## Comments
+
+Implementado em `4d3f910`. `AuthProvider`/`useAuth` novo em `frontend/src/contexts/AuthContext.tsx`, guardando a query `/me` uma única vez e expondo `{ user, isAuthenticated, isLoading, refetch }`; os 4 call sites duplicados (`AppLayout.tsx` ×2, `credits.tsx`, `useThemeDetailPage.ts`) migraram pro contexto. `RequireAuth` novo guarda `/themes`, `/themes/:themeId`, `/essays/:essayId`, `/credits`, bounce simples pra `/` sem preservar destino (decisão explícita da ticket). Como `localStorage` não é reativo sozinho, o contexto mantém um `hasSession` local sincronizado em `refetch`, chamado logo após `setTokens`/`clearTokens` no login/logout — substitui o truque antigo de `navigate("/")` forçar remount. `tsc -b` limpo; `oxlint` só acusa os 2 warnings esperados de `react/only-export-components` (padrão idiomático de módulo contexto+hook).

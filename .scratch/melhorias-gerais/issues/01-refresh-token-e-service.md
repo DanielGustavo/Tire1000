@@ -23,3 +23,7 @@ Ver ADR-0013.
 - `frontend/src/services/auth-service.ts:6` (`AuthTokens.refreshToken`, já tipado, nunca persistido)
 - `backend/src/infra/gateways/cognito-auth-gateway.ts:91-98`
 - `backend/src/application/dtos/auth-tokens-dto.ts:5`
+
+## Comments
+
+Implementado em `50a049f`. `POST /auth/refresh` (Cognito `REFRESH_TOKEN_AUTH`) espelhando a cadeia do endpoint de login, com testes de controller/use-case novos; `libs/auth.ts` ganhou `setTokens`/`clearTokens`/`getRefreshToken` (substituindo `setAccessToken`/`clearAccessToken`); `services/service.ts` passou a injetar o header `Authorization` e tratar 401 com refresh+retry único (deduplicando refreshes concorrentes via promise compartilhada), forçando logout via redirect duro se o refresh falhar; `libs/axios.ts` ficou reduzido a fábrica de `AxiosInstance`. Sem teste dedicado no frontend (não há runner de testes instalado no `frontend/`). `pnpm typecheck`/`pnpm test` do backend (168 testes) e `tsc -b` do frontend limpos.

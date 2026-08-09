@@ -21,3 +21,7 @@ Hoje só o botão/chevron final de `EssayCard` (`frontend/src/pages/home/compone
 - `frontend/src/pages/home/components/EssayCard.tsx:17,41,53-68`
 - `frontend/src/pages/home/components/ThemeCard.tsx`
 - `frontend/src/services/essay-service.ts:84` (`RESENDABLE_STATUSES`)
+
+## Comments
+
+Implementado em `30ef59c`. `EssayCard`/`ThemeCard` viram stretched link (`<Link>` cobrindo o card via posicionamento absoluto sobre o wrapper `relative` do `TexturedCard`) pros status sem controle concorrente (`SUCCESS`/chevron genéricos em `EssayCard`, todo `ThemeCard`); `inlineResend` e `EVALUATION_FAILED` continuam sem link no card. Os botões/chevrons visuais que apontavam pro mesmo destino do link do card viraram decorativos (`tabIndex={-1} aria-hidden`) em vez de um segundo `<Link>` aninhado. Label de `UPLOADING` trocado de "Tentar novamente" pra "Acompanhar envio". `tsc -b`/`oxlint` limpos.

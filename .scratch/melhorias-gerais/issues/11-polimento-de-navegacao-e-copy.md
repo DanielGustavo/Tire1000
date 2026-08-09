@@ -18,3 +18,7 @@ Itens pequenos e sem ambiguidade — não passaram por grilling dedicado, só co
 - `frontend/src/pages/themes/useThemeDetailPage.ts:39`
 - `frontend/src/services/essay-service.ts:9-12`
 - `frontend/src/pages/home/components/EssayStatusHeader.tsx:5-14`
+
+## Comments
+
+Implementado em `67d1e6a`. Rodapé grudado no fundo via `min-h-screen flex flex-col` no wrapper + `flex-1` no conteúdo, em `AppLayout.tsx` e `landing.tsx`. Logo do header envolvida em `<Link to="/">`. `handleUploadDone` passou a receber `essayId` e navegar pra `/essays/${essayId}` — precisou tipar `onDone` de `useEssayUploadFlow.ts` pra repassar o `essayId` do upload (capturado via ref dentro do hook), mantendo compatibilidade com a prop `onDone: () => void` de `EssayUploadFlow.tsx`/`theme-detail.tsx` (não tocados). `STATUS_MESSAGES` reescrito com tom mais amigável, mesmas 8 chaves. `tsc -b`/`oxlint` limpos.

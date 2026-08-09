@@ -16,3 +16,7 @@ A tela de correção já faz polling (`useEssayResultPage.ts:14`, `refetchInterv
 - `frontend/src/pages/essay-result/useEssayResultPage.ts:14`
 - `frontend/src/pages/home/components/useEssaysSection.ts`
 - `frontend/src/services/essay-service.ts:98,107` (`PENDING_STATUSES`, `BLOCKED_ESSAY_RESULT_STATUSES`)
+
+## Comments
+
+Implementado em `16f931b`. `useEssayResultPage.ts`: `refetchInterval` de 2000 pra 30000. `useEssaysSection.ts`: `refetchInterval` novo, mesmo idioma condicional (`query.state.data?.essays.some(essay => PENDING_STATUSES.includes(essay.status)) ? 30000 : false`). `tsc -b` limpo.

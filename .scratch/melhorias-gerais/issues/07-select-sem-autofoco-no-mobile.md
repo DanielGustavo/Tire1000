@@ -24,3 +24,7 @@ Em mobile isso abre o teclado virtual assim que a lista de opções abre — exp
 
 - `frontend/src/components/Select.tsx:79-81`
 - Usado (entre outros) pelo `Select` de eixo em `frontend/src/pages/themes/components/ThemesFilterModal.tsx:28`
+
+## Comments
+
+Implementado em `b82e1d8`. O `.focus()` automático do input de busca agora é condicionado a `!matchMedia("(pointer: coarse)").matches`; navegação por teclado em desktop (`handleKeyDown`) não foi tocada. `tsc -b`/`oxlint` limpos.

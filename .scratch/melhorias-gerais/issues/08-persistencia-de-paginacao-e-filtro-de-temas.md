@@ -17,3 +17,7 @@ Status: ready-for-agent
 - `frontend/src/pages/themes/useThemesPage.ts:8-10,22`
 - `frontend/src/pages/themes/theme-detail.tsx:40-43`
 - `frontend/src/pages/themes/themes.tsx`
+
+## Comments
+
+Implementado em `3d40cc0`. `useThemesPage` migrou `search`/`topicId`/`page` pra `useSearchParams` (`?search=&topicId=&page=`, cada um omitido da URL quando vazio/default); shape de retorno do hook ficou igual, `themes.tsx` não precisou de mudança. Trocar `search`/`topicId` reseta `page` removendo o param (mesmo comportamento de reset pra página 1 de antes). "Voltar" de `theme-detail.tsx` virou `navigate(-1)` (histórico real). `setPage` agora também rola pro topo. `tsc -b`/`oxlint` limpos.

@@ -19,3 +19,7 @@ Status: ready-for-agent
 - `frontend/src/components/Select.tsx:7-13` (tipo sem `error`/`loading`/`disabled`)
 - `frontend/src/pages/essay-upload/components/PhotoConfirmationLoadingModal.tsx:11`
 - `frontend/src/pages/themes/components/ThemesFilterModal.tsx:18`
+
+## Comments
+
+Implementado em `40d2571`. `Button` ganhou `loading?: boolean` (bloqueia clique via `disabled || loading` + `aria-busy`, mas troca o slot de ícone por `Loader` com `animate-spin` em vez de esmaecer) e hover/active/focus-visible no estilo hard-shadow do design system; `disabled` (sem `loading`) esmaece (`opacity-50 shadow-none`). `Field` ganhou hover/`focus-within`/disabled. `Select` ganhou `error`/`loading`/`disabled` no tipo (booleanos, sem lista de mensagens como `Field`) + os mesmos estados visuais. `credits.tsx` e `SignInModal.tsx` migraram do texto manual de loading pra `loading={...}`; `ThemesFilterModal`'s `Select` de eixo passa `loading={topicsQuery.isPending}`. `tsc -b`/`oxlint` limpos.

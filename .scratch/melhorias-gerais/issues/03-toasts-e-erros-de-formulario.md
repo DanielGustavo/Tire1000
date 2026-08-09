@@ -23,3 +23,7 @@ Não existe nenhum sistema de toast no app hoje (confirmado, zero libs/component
 - Endpoints que usam `Schema`: `auth/login-schema.ts`, `auth/signup-schema.ts`, `credits/request-credits-checkout-schema.ts`, `essays/upload-essay-schema.ts`
 - `frontend/src/libs/axios.ts:16-21` (`getApiErrorMessage`, hoje só lê `message`)
 - `frontend/src/pages/landing/components/useSignUpWizard.ts`, `SignUpModal.tsx`, `CreditsStep.tsx`
+
+## Comments
+
+Implementado em `a3b92f0`. `sonner` adicionado e retemado (`Toaster.tsx`, `unstyled` + classes do design system — bordas duras, `shadow-hard`) em vez do visual default. `applyFieldErrors(error, fallbackMessage)` em `libs/axios.ts` (junto de `getApiErrorMessage`, sem convenção de `utils/` prévia no repo) mapeia `fields`/`message` do backend pra `{ fieldErrors, toastMessage }`. Aplicado em `SignInModal`, `useSignUpWizard`/`SignUpModal` (com reset de `step` pra `"form"` no erro da etapa de créditos), `useEssayUploadFlow`. `libs/password.ts` novo duplica as regras de senha do backend pro frontend. **Achado do `/code-review` corrigido em `e1310ed`**: o 4º ponto do escopo ("CreditsStep/checkout") tinha ambiguidade entre o `CreditsStep` do wizard de signup e a página standalone `credits.tsx` — só o primeiro foi migrado na entrega inicial; `credits.tsx` também aplica `applyFieldErrors`/toast agora. `tsc -b`/`oxlint` limpos.
