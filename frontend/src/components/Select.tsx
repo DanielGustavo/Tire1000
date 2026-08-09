@@ -1,4 +1,5 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 
 export type SelectOption = { value: string; label: string };
@@ -28,7 +29,9 @@ export function Select({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [highlightedValue, setHighlightedValue] = useState<string | null>(null);
+  const [listboxRect, setListboxRect] = useState<{ top: number; left: number; width: number } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const listboxRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listboxId = useId();
 
@@ -46,13 +49,31 @@ export function Select({
     if (!open) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
-        close();
-      }
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target) || listboxRef.current?.contains(target)) return;
+      close();
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    function updateRect() {
+      const rect = rootRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setListboxRect({ top: rect.bottom, left: rect.left, width: rect.width });
+    }
+
+    updateRect();
+    window.addEventListener("scroll", updateRect, true);
+    window.addEventListener("resize", updateRect);
+    return () => {
+      window.removeEventListener("scroll", updateRect, true);
+      window.removeEventListener("resize", updateRect);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -135,33 +156,38 @@ export function Select({
           <ChevronDown size={24} className="shrink-0 text-neutral-900" />
         </button>
       )}
-      {open && (
-        <div
-          id={listboxId}
-          role="listbox"
-          className="absolute top-full z-10 mt-1 max-h-60 w-full overflow-y-auto border-2 border-solid border-neutral-900 bg-neutral-0 shadow-hard"
-        >
-          {matches.length === 0 && (
-            <p className="p-2 text-default text-neutral-300">Nenhum resultado encontrado</p>
-          )}
-          {filteredOptions.map((option) => (
-            <button
-              key={option.value}
-              id={`${listboxId}-${option.value}`}
-              type="button"
-              role="option"
-              aria-selected={option.value === value}
-              onMouseEnter={() => setHighlightedValue(option.value)}
-              onClick={() => selectOption(option)}
-              className={`w-full p-2 text-left text-default text-neutral-900 ${
-                option.value === highlightedValue ? "bg-neutral-30" : ""
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
+      {open &&
+        listboxRect &&
+        createPortal(
+          <div
+            ref={listboxRef}
+            id={listboxId}
+            role="listbox"
+            style={{ top: listboxRect.top, left: listboxRect.left, width: listboxRect.width }}
+            className="fixed z-[60] mt-1 max-h-60 overflow-y-auto border-2 border-solid border-neutral-900 bg-neutral-0 shadow-hard"
+          >
+            {matches.length === 0 && (
+              <p className="p-2 text-default text-neutral-300">Nenhum resultado encontrado</p>
+            )}
+            {filteredOptions.map((option) => (
+              <button
+                key={option.value}
+                id={`${listboxId}-${option.value}`}
+                type="button"
+                role="option"
+                aria-selected={option.value === value}
+                onMouseEnter={() => setHighlightedValue(option.value)}
+                onClick={() => selectOption(option)}
+                className={`w-full p-2 text-left text-default text-neutral-900 ${
+                  option.value === highlightedValue ? "bg-neutral-30" : ""
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
