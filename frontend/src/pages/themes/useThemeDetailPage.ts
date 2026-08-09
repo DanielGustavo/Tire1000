@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import type { EssayUploadMode } from "../../flows/essayCapture/hooks/useEssayCaptureFlow";
 import { useAuth } from "../../contexts/AuthContext";
-import { themeService } from "../../services/theme-service";
+import { useTheme } from "../../hooks/queries/useTheme";
 
 export function useThemeDetailPage() {
   const { themeId } = useParams<{ themeId: string }>();
@@ -11,11 +10,7 @@ export function useThemeDetailPage() {
   const [priceModalOpen, setPriceModalOpen] = useState(false);
   const [uploadMode, setUploadMode] = useState<EssayUploadMode | null>(null);
 
-  const themeQuery = useQuery({
-    queryKey: ["theme", themeId],
-    queryFn: () => themeService.getById(themeId!),
-    enabled: Boolean(themeId),
-  });
+  const themeQuery = useTheme(themeId);
   const { user, isLoading } = useAuth();
 
   function handleStartEssay(mode: EssayUploadMode) {

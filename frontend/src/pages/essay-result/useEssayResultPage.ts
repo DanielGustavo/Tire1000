@@ -1,18 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { BLOCKED_ESSAY_RESULT_STATUSES, PENDING_STATUSES, essayService } from "../../services/essay-service";
+import { BLOCKED_ESSAY_RESULT_STATUSES } from "../../services/essay-service";
+import { useEssayDetail } from "../../hooks/queries/useEssayDetail";
 
 export function useEssayResultPage() {
   const { essayId } = useParams<{ essayId: string }>();
   const navigate = useNavigate();
 
-  const essayQuery = useQuery({
-    queryKey: ["essay", essayId],
-    queryFn: () => essayService.getById(essayId!),
-    enabled: Boolean(essayId),
-    refetchInterval: (query) => (query.state.data && PENDING_STATUSES.includes(query.state.data.essay.status) ? 30000 : false),
-  });
+  const essayQuery = useEssayDetail(essayId);
 
   const status = essayQuery.data?.essay.status;
   const blocked = Boolean(status && BLOCKED_ESSAY_RESULT_STATUSES.includes(status));

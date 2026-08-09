@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { themeService } from "../../services/theme-service";
-import { useIsDesktop } from "../../hooks/useIsDesktop";
+import { useThemes } from "../../hooks/queries/useThemes";
+import { useIsDesktop } from "../../hooks/app/useIsDesktop";
 
 const THEMES_PER_PAGE_MOBILE = 3;
 const THEMES_PER_PAGE_DESKTOP = 9;
@@ -69,10 +68,7 @@ export function useThemesPage() {
     setSearchParams(withoutPage);
   }, [themesPerPage, setSearchParams]);
 
-  const themesQuery = useQuery({
-    queryKey: ["themes", { topicId, search }],
-    queryFn: () => themeService.list({ topicId: topicId || undefined, search: search || undefined }),
-  });
+  const themesQuery = useThemes({ topicId, search });
   const themes = themesQuery.data ?? [];
   const totalPages = Math.max(1, Math.ceil(themes.length / themesPerPage));
   const pageThemes = themes.slice((page - 1) * themesPerPage, page * themesPerPage);
