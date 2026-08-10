@@ -75,8 +75,12 @@ export function useThemesPage() {
   }
 
   // Resets to page 1 whenever the effective per-page count changes — i.e. whenever a live
-  // resize crosses the desktop/mobile breakpoint. Skips the initial mount so a page number
-  // the user arrived with (shared/bookmarked URL) isn't clobbered on first render.
+  // resize crosses the desktop/mobile breakpoint. Compares against the last value this effect
+  // actually reacted to (instead of an "isFirstRender" flag) so a page number the user arrived
+  // with (shared/bookmarked URL, or navigating back from a theme) isn't clobbered: a plain flag
+  // only protects the genuine first invocation, but StrictMode's dev-mode double-invoke replays
+  // this same effect a second time on every mount, reusing the same refs — the flag would already
+  // read "not first" on that replay and strip `page` on every mount, not just real crossings.
   //
   // setSearchParams is read through a ref instead of listed as a dependency: react-router
   // memoizes it on `[navigate, searchParams]`, and `searchParams` gets a new identity on every
@@ -85,12 +89,10 @@ export function useThemesPage() {
   const setSearchParamsRef = useRef(setSearchParams);
   setSearchParamsRef.current = setSearchParams;
 
-  const isFirstRender = useRef(true);
+  const previousThemesPerPageRef = useRef(themesPerPage);
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    if (previousThemesPerPageRef.current === themesPerPage) return;
+    previousThemesPerPageRef.current = themesPerPage;
     setSearchParamsRef.current(withoutPage);
   }, [themesPerPage]);
 
