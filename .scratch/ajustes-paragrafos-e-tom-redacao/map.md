@@ -24,6 +24,7 @@ Destino alcançado quando as 3 mudanças acima estiverem implementadas e mergead
 (decisões já registradas nos ADRs/CONTEXT.md linkados acima, não duplicadas aqui — ver Notes)
 
 - [Preservar parágrafos na exibição da redação](issues/01-preservar-paragrafos-na-exibicao-da-redacao.md) — prompt de Revisão instruído a marcar só quebras de parágrafo reais com `\n\n`; `HighlightedEssayText.tsx` agrupa os segments de highlight (já fatiados pelo texto bruto) em parágrafos, sem refatiar offsets. Edge case aceito: highlight que atravessa uma quebra de parágrafo vira dois fragmentos interativos separados.
+- [Parecer geral sintetizado por IA em vez de concatenado](issues/02-parecer-geral-sintetizado-por-ia.md) — novo prompt `domain/ai/evaluation-summary/`, chamado sequencialmente depois das 5 chamadas de competência em `gemini-essay-evaluation-gateway.ts`; recebe só os 5 pares competência/score/parecer + `themeTitle` (nunca `textContent`, ADR-0016); score `final` continua soma local. Teste dedicado adicionado em `gemini-essay-evaluation-gateway.test.ts` (mockando `callGeminiModel`) — desvio pontual da convenção "só teste de application", já que o fake `InMemoryEssayEvaluationGateway` usado em `evaluate-essay.test.ts` substitui o gateway inteiro e não consegue observar esse comportamento.
 
 ## Not yet specified
 

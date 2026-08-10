@@ -1,6 +1,6 @@
 # Parecer geral sintetizado por IA em vez de concatenado
 
-Status: ready-for-agent
+Status: resolved
 
 ## O que fazer
 
@@ -29,3 +29,12 @@ Hoje `EssayEvaluationScores.final.evaluationText` é gerado localmente por `buil
 ## Testes
 
 - Camada de application, seguindo a convenção do `CLAUDE.md`: cobrir o caminho que hoje testa `evaluate-essay`/o gateway de Avaliação (confirmar onde a suíte atual injeta o fake de IA durante a implementação). Casos mínimos: parecer geral vem da nova chamada (não é mais concatenação dos 5), score final continua sendo a soma dos 5, e falha da nova chamada propaga como falha geral da Avaliação (mesmo caminho que falha de uma das 5 chamadas de competência já usa hoje).
+
+## Answer
+
+Implementado como descrito, sem desvios de escopo:
+
+- Novo `backend/src/domain/ai/evaluation-summary/` (`prompt.ts` + `schema.ts`), seguindo o esqueleto padrão (`# Papel e Objetivo`/`# Instruções`/`# Instruções finais`, ver skill `ai-prompts`) e a convenção das pastas irmãs. `schema.ts` só tem `evaluationText`. `prompt.ts` recebe os 5 pares `{título da competência, score, parecer}` (via `EVALUATION_COMPETENCIES` + `scores`) e `themeTitle` — nunca `textContent` (ADR-0016). Tom instruído: fala direto com o estudante, abre reconhecendo um ponto forte e fecha com incentivo — diferente dos 5 pareceres de competência, que continuam técnicos e sem saudação (ticket 03).
+- `gemini-essay-evaluation-gateway.ts`: depois do `Promise.all` das 5 chamadas de competência, uma 6ª chamada sequencial ao novo prompt (mesmo `EVALUATION_MODEL`, sem model dedicado — não havia motivo pra isolar um só pra essa etapa). `buildFinalScore` foi trocado por `sumCompetencyScores` (só a soma, sem mais gerar texto por concatenação); `final.evaluationText` passa a vir de `summary.data.evaluationText`. Tokens/custo da 6ª chamada somados aos das 5. Falha da 6ª chamada não tem tratamento próprio — propaga do `evaluate()` pro `try/catch` de `evaluate-essay.ts` exatamente como a falha de uma das 5 chamadas de competência já propagava.
+- Teste dedicado adicionado em `backend/src/infra/gateways/gemini-essay-evaluation-gateway.test.ts`, mockando `callGeminiModel` — decisão de execução que se desviou da leitura mais literal da convenção do `CLAUDE.md` ("testes vivem na camada de application"): a suíte de `evaluate-essay.test.ts` injeta `InMemoryEssayEvaluationGateway`, um fake que substitui o gateway inteiro (não só a chamada de IA), então não consegue observar se o parecer geral realmente vem da 6ª chamada em vez de concatenação — só um teste no próprio `GeminiEssayEvaluationGateway` consegue verificar isso. Cobre os 2 casos pedidos que dependem do gateway real: parecer geral vem da chamada nova (não concatenação) com score final = soma dos 5, e falha da chamada de síntese propaga do mesmo jeito que falha de uma chamada de competência. `evaluate-essay.ts`/`evaluate-essay.test.ts` não mudaram — o use-case já tratava o gateway como caixa-preta, então nada ali dependia da concatenação antiga.
+- Verificado com `tsc --noEmit` limpo e suíte completa do backend (183/183, incluindo os 2 testes novos).

@@ -1,20 +1,17 @@
 import { EVALUATION_COMPETENCIES } from "../../domain/ai/evaluation/competencies.js";
 import { buildEvaluationPrompt } from "../../domain/ai/evaluation/prompt.js";
 import { evaluationCompetencyResponseSchema } from "../../domain/ai/evaluation/schema.js";
+import { buildEvaluationSummaryPrompt } from "../../domain/ai/evaluation-summary/prompt.js";
+import { evaluationSummaryResponseSchema } from "../../domain/ai/evaluation-summary/schema.js";
 import type { EssayEvaluationGateway, EssayEvaluationResult } from "../../domain/contracts/gateways/essay-evaluation-gateway.js";
 import type { CompetencyId, CompetencyScore, EssayEvaluationScores, EssayHighlight } from "../../domain/entities/essay-evaluation.js";
 import { callGeminiModel } from "../ai/gemini/utils/call-model.js";
 import { locateHighlight } from "../ai/gemini/utils/locate-highlight.js";
 import { EVALUATION_MODEL } from "../ai/gemini/evaluation-model.js";
 
-/** score = sum of the 5 competências (max 1000); evaluationText = parecer geral, the 5 pareceres put together. */
-function buildFinalScore(scores: Record<CompetencyId, CompetencyScore>): CompetencyScore {
-  const score = EVALUATION_COMPETENCIES.reduce((total, competency) => total + scores[competency.id].score, 0);
-  const evaluationText = EVALUATION_COMPETENCIES.map(
-    (competency) => `${competency.title}: ${scores[competency.id].evaluationText}`,
-  ).join("\n\n");
-
-  return { score, evaluationText };
+/** score = sum of the 5 competências (max 1000). */
+function sumCompetencyScores(scores: Record<CompetencyId, CompetencyScore>): number {
+  return EVALUATION_COMPETENCIES.reduce((total, competency) => total + scores[competency.id].score, 0);
 }
 
 export class GeminiEssayEvaluationGateway implements EssayEvaluationGateway {
@@ -50,8 +47,20 @@ export class GeminiEssayEvaluationGateway implements EssayEvaluationGateway {
       }
     }
 
+    // Runs sequentially after the 5 competência calls (which stay parallel among themselves) — same
+    // consumer/timeout budget (see sls/functions/essays.yml), needs their results as input.
+    const summary = await callGeminiModel({
+      model: EVALUATION_MODEL,
+      prompt: buildEvaluationSummaryPrompt({ themeTitle, scores }),
+      schema: evaluationSummaryResponseSchema,
+    });
+    tokens += summary.tokens;
+    amountInCents += summary.amountInCents;
+
+    const final: CompetencyScore = { score: sumCompetencyScores(scores), evaluationText: summary.data.evaluationText };
+
     return {
-      scores: { ...scores, final: buildFinalScore(scores) } as EssayEvaluationScores,
+      scores: { ...scores, final } as EssayEvaluationScores,
       highlights,
       tokens,
       amountInCents: Math.round(amountInCents * 100) / 100,
