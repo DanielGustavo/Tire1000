@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { LINE_HEIGHT_PX } from "../../../components/PaperCard";
 import { COMPETENCY_COLORS, COMPETENCY_ROMAN_NUMERALS } from "../../../services/essayService";
 import type { EssayHighlight } from "../../../types/essay";
 import { useOnClickOutside } from "../../../hooks/app/useOnClickOutside";
@@ -106,10 +107,13 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
 
   const openSegment = popup ? paragraphs.flat().find((segment) => segment.key === popup.key) : undefined;
 
+  // Paragraph gap must be a whole multiple of LINE_HEIGHT_PX — Tailwind's space-y-4 (16px) isn't, so
+  // each paragraph break nudged every following line off the ruled paper's fixed pitch. One full line's
+  // worth of gap reads as a real notebook paragraph break: a single skipped rule.
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col" style={{ gap: `${LINE_HEIGHT_PX}px` }}>
       {paragraphs.map((segments, paragraphIndex) => (
-        <p key={paragraphIndex} className="indent-8 text-default leading-[1.7] text-neutral-900">
+        <p key={paragraphIndex} className="indent-8 text-default text-neutral-900" style={{ lineHeight: `${LINE_HEIGHT_PX}px` }}>
           {segments.map((segment) =>
             segment.highlight ? (
               <mark

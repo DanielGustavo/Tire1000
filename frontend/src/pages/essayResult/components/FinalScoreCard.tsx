@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Bullet } from "../../../components/Bullet";
-import { PaperCard } from "../../../components/PaperCard";
+import { LINE_HEIGHT_PX, PaperCard } from "../../../components/PaperCard";
 
 type FinalScoreCardProps = {
   /** The number from the real evaluation, or "???" for the pending skeleton. */
@@ -24,8 +24,13 @@ export function FinalScoreCard({ score, text, ariaHidden, bold }: FinalScoreCard
           <Bullet size="auto" rotate="left">
             {score}
           </Bullet>
-          {/* leading-[1.7] must match PaperCard's ruled-line spacing, or the text drifts off its line over the length of the card. */}
-          <p className={`flex-1 text-default leading-[1.7] text-neutral-900 ${bold ? "font-bold" : ""}`}>{text}</p>
+          {/* Line-height must match PaperCard's ruled-line spacing (LINE_HEIGHT_PX), or the text drifts off its line over the length of the card. */}
+          <p
+            className={`flex-1 text-default text-neutral-900 ${bold ? "font-bold" : ""}`}
+            style={{ lineHeight: `${LINE_HEIGHT_PX}px` }}
+          >
+            {text}
+          </p>
         </div>
       </PaperCard>
     </div>

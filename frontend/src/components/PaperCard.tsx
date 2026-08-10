@@ -5,11 +5,14 @@ type PaperCardProps = {
   children: ReactNode;
 };
 
-// Matches the leading every text block inside a PaperCard must use (see HighlightedEssayText and the
-// Nota final paragraph) — the ruled lines are sized in `em` off this same number so a line of text can
-// never drift off its rule, no matter how long the card grows. A literal px line-height here would
-// round differently than the browser's own line-box math and drift more with every line.
-const LINE_HEIGHT_EM = 1.7;
+// Matches the line-height every text block inside a PaperCard must use (see HighlightedEssayText and
+// the Nota final paragraph) — the ruled lines are sized off this same number so a line of text can
+// never drift off its rule, no matter how long the card grows. This has to be a whole pixel value: the
+// browser rounds each text line-box to the nearest pixel, but a fractional value (e.g. an `em` that
+// resolves to a non-integer, like the old 1.7em/27.2px) rounds differently than the repeating background
+// pattern computes its tile size, and that mismatch compounds by a fraction of a pixel on every single
+// line — invisible for a couple of lines, but visibly off by the bottom of a long essay.
+export const LINE_HEIGHT_PX = 27;
 
 // The scallop is one bump per circle, radius 12px (bottom half only — the SVG is exactly as tall as the
 // radius, so each circle's top half falls outside the viewBox and never renders). Circles are real SVG
@@ -69,10 +72,10 @@ export function PaperCard({ className, children }: PaperCardProps) {
       <div
         className={`relative border-2 border-solid border-neutral-900 bg-neutral-0 bg-repeat-y p-4 text-default shadow-hard ${className ?? ""}`}
         style={{
-          lineHeight: LINE_HEIGHT_EM,
+          lineHeight: `${LINE_HEIGHT_PX}px`,
           backgroundImage: "linear-gradient(to bottom, transparent calc(100% - 2px), var(--color-neutral-50) calc(100% - 2px))",
-          backgroundSize: `100% ${LINE_HEIGHT_EM}em`,
-          backgroundPosition: `0 calc(1rem + ${LINE_HEIGHT_EM}em)`,
+          backgroundSize: `100% ${LINE_HEIGHT_PX}px`,
+          backgroundPosition: `0 calc(1rem + ${LINE_HEIGHT_PX}px)`,
         }}
       >
         {children}
