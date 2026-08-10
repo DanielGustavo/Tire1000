@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { essayService } from "../../services/essayService";
-import { CURRENT_USER_QUERY_KEY } from "../../contexts/AuthContext";
 
 interface UploadEssayInput {
   themeId: string;
@@ -16,8 +15,9 @@ export function useUploadEssay() {
       return { essayId };
     },
     onSuccess: () => {
-      // Consumes a credit server-side — keep `/me` and the essay list in sync.
-      queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
+      // The credit debit is async (S3 upload-completed event, not this response) — invalidating
+      // `/me` here would just refetch the still-stale balance. `useEssays`/`useEssayDetail` catch
+      // the actual debit once their poll observes the essay leave UPLOADING.
       queryClient.invalidateQueries({ queryKey: ["essays"] });
     },
   });

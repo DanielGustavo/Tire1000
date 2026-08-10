@@ -55,6 +55,19 @@ export const PENDING_STATUSES: EssayStatus[] = [...VALIDATING_STATUSES, ...EVALU
 // (ADR-0001), same reasoning as `RESENDABLE_STATUSES` above.
 export const REFUNDING_STATUSES: EssayStatus[] = ["REJECTED", "VALIDATION_FAILED"];
 
+// Whether the essay's status transition means the `/me` credits balance may now be stale. The debit
+// itself happens out-of-band (an S3 upload-completed event, not the `POST /essays`/`POST /essays/:id`
+// response), so it can't be invalidated right when the submit/resend mutation resolves — that fires
+// before the event even reaches the backend. Instead this is checked against the essay's *polled*
+// status: leaving UPLOADING is when the backend attempts the debit (`enqueue-essay-validation.ts`,
+// either succeeding into QUEUED or failing into UPLOAD_FAILED with no debit applied — invalidating
+// either way is harmless), and a pending essay reaching a `REFUNDING_STATUSES` status is a refund.
+export function essayCreditsMayHaveChanged(previousStatus: EssayStatus, currentStatus: EssayStatus): boolean {
+  if (previousStatus === currentStatus) return false;
+  if (previousStatus === "UPLOADING") return true;
+  return PENDING_STATUSES.includes(previousStatus) && REFUNDING_STATUSES.includes(currentStatus);
+}
+
 // Short heading for the Correção result page while pending — used by PendingResult's sticky note and,
 // on desktop (ticket 13), repeated by the score sidebar's skeleton placeholder next to each "???".
 export function pendingResultHeading(status: EssayStatus): string {

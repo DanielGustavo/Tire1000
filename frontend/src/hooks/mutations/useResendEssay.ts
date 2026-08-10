@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { essayService } from "../../services/essayService";
-import { CURRENT_USER_QUERY_KEY } from "../../contexts/AuthContext";
 
 interface ResendEssayInput {
   essayId: string;
@@ -16,8 +15,8 @@ export function useResendEssay() {
       return { essayId };
     },
     onSuccess: (_data, { essayId }) => {
-      // Also consumes a credit server-side — keep `/me`, the essay list, and this essay's detail in sync.
-      queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
+      // Also debits async on the same S3 event as a fresh upload — see `useUploadEssay`. `/me` is
+      // left to `useEssays`/`useEssayDetail` to invalidate once the poll observes it.
       queryClient.invalidateQueries({ queryKey: ["essays"] });
       queryClient.invalidateQueries({ queryKey: ["essay", essayId] });
     },
