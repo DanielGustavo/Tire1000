@@ -22,6 +22,7 @@ Destino alcançado quando as 3 mudanças acima estiverem implementadas e mergead
 ## Decisions so far
 
 - [Busca de temas case-insensitive e filtrando por enemYear/eixo](issues/01-busca-de-temas-case-insensitive-e-enemyear.md) — filtro em memória no use-case `list-themes.ts` (não no repositório), comparando `${enemYear ?? "tire 1000"} | title | topic.title` em minúsculas; `search` sai do contrato do repositório; placeholder do frontend mantido sem alteração.
+- [Denormalizar enemYear/topicTitle no Essay e badges na Correção](issues/02-denormalizar-enemyear-topictitle-e-badges-correcao.md) — campos soltos em `Essay`/`EssayDTO`; `topicTitle: null` é o único gate de "redação legada sem o dado" (enemYear pode ser `null` legitimamente mesmo em redação nova); `ThemeBadges.tsx` teve o tipo de props estreitado pra reuso sem IDs fantasma; badges renderizadas em `essayResult.tsx`; `EssayCard` (Home) confirmado sem mudança.
 
 ## Not yet specified
 
