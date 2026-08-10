@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Bullet } from "../../../components/Bullet";
 import { LINE_HEIGHT_PX, PaperCard } from "../../../components/PaperCard";
+import { scoreCardColor } from "../../../services/essayService";
 
 type FinalScoreCardProps = {
   /** The number from the real evaluation, or "???" for the pending skeleton. */
@@ -21,7 +22,7 @@ export function FinalScoreCard({ score, text, ariaHidden, bold }: FinalScoreCard
       </Bullet>
       <PaperCard>
         <div className="flex w-full items-start gap-4">
-          <Bullet size="auto" rotate="left">
+          <Bullet color={typeof score === "number" ? scoreCardColor(score) : undefined} size="auto" rotate="left">
             {score}
           </Bullet>
           {/* Line-height must match PaperCard's ruled-line spacing (LINE_HEIGHT_PX), or the text drifts off its line over the length of the card. */}
