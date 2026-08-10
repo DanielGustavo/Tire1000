@@ -1,6 +1,6 @@
 # Tom mais direto nos textos de parecer e destaque
 
-Status: ready-for-agent
+Status: resolved
 
 ## O que fazer
 
@@ -29,3 +29,11 @@ Os textos gerados pela Avaliação (pareceres de competência e comentários de 
 ## Testes
 
 - Sem teste dedicado esperado — mudança de texto livre em prompt (não lógica) e ajuste de constante CSS/JS. Se o cálculo de posicionamento do popup (`left`) tiver teste de componente existente cobrindo a largura antiga, atualizar o valor esperado.
+
+## Answer
+
+Implementado em `2d31753`.
+
+- `backend/src/domain/ai/evaluation/prompt.ts`: instrução de `evaluationText` reescrita pra "parecer direto e coloquial", falando com o estudante, explicitamente sem saudação/despedida (isso fica só no parecer geral). Instrução de `highlights[].textContent` reescrita pro mesmo registro direto/coloquial uniforme entre tipos de destaque, com o limite relaxado pra 1-2 frases normalmente, podendo chegar a 3-4 quando ajudar a ser mais explicativo (ex. sugerir expressão concreta) — sem forçar o máximo sempre.
+- `frontend/src/pages/essayResult/components/HighlightedEssayText.tsx`: `POPUP_WIDTH_PX` de `260` pra `320`. O cálculo de `left` (`window.innerWidth - POPUP_WIDTH_PX - VIEWPORT_MARGIN_PX`) já deriva da constante, então continua correto sem mudança de lógica.
+- Sem teste dedicado — não havia teste de componente cobrindo `POPUP_WIDTH_PX` antigo, e a mudança no prompt é texto livre. Typecheck e suíte completa (backend 183 testes) passando; `/code-review` (Standards + Spec) sem findings.
