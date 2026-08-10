@@ -5,9 +5,17 @@ import { TipsModal } from "../../../flows/essayCapture/components/TipsModal";
 import { useEssayResendFlow } from "../hooks/useEssayResendFlow";
 
 /** The same modal chain as a new essay upload (ticket 06), opened in place over the Homepage instead of at its own route — triggered by "Tentar novamente" on a rejected/failed essay's card. */
-export function EssayResendFlow({ essayId, onClose }: { essayId: string; onClose: () => void }) {
+export function EssayResendFlow({
+  essayId,
+  onClose,
+  onDone,
+}: {
+  essayId: string;
+  onClose: () => void;
+  onDone: () => void;
+}) {
   const { mode, step, photoUrl, photoSizeError, fileInputRef, submitMutation, handleOpenFilePicker, handleFileChange, handleSubmit } =
-    useEssayResendFlow(essayId, onClose);
+    useEssayResendFlow(essayId, onDone);
 
   const showStep = !submitMutation.isPending && !submitMutation.isError;
 

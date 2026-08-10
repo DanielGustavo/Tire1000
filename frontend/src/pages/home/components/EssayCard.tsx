@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Bullet } from "../../../components/Bullet";
 import { Button } from "../../../components/Button";
@@ -19,6 +19,7 @@ const INLINE_RESEND_STATUSES: EssayStatus[] = RESENDABLE_STATUSES.filter((status
 
 export function EssayCard({ essay }: { essay: Essay }) {
   const [resendOpen, setResendOpen] = useState(false);
+  const navigate = useNavigate();
 
   if (essay.status === "SUCCESS") {
     return (
@@ -73,7 +74,9 @@ export function EssayCard({ essay }: { essay: Essay }) {
           )}
         </div>
       </TexturedCard>
-      {inlineResend && resendOpen && <EssayResendFlow essayId={essay.id} onClose={() => setResendOpen(false)} />}
+      {inlineResend && resendOpen && (
+        <EssayResendFlow essayId={essay.id} onClose={() => setResendOpen(false)} onDone={() => navigate(`/essays/${essay.id}`)} />
+      )}
     </div>
   );
 }
