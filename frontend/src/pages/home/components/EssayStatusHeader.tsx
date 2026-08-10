@@ -10,8 +10,8 @@ const STATUS_MESSAGES: Partial<Record<EssayStatus, string>> = {
   VALIDATED: "Revisão concluída! Sua redação está na fila da Avaliação",
   EVALUATING: "Estamos corrigindo sua redação com carinho, aguarde alguns minutos",
   UPLOAD_FAILED: "Não conseguimos confirmar o envio da foto",
-  VALIDATION_FAILED: "Tivemos um probleminha técnico ao revisar sua redação",
-  EVALUATION_FAILED: "Tivemos um probleminha técnico ao avaliar sua redação",
+  VALIDATION_FAILED: "Tivemos um probleminha técnico ao revisar sua redação, tente novamente mais tarde",
+  EVALUATION_FAILED: "Tivemos um probleminha técnico ao avaliar sua redação, já estamos analisando o caso",
 };
 
 function statusMessage(essay: Essay): string {

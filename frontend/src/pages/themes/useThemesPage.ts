@@ -2,9 +2,11 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useThemes } from "../../hooks/queries/useThemes";
 import { useIsDesktop } from "../../hooks/app/useIsDesktop";
+import { useDebouncedValue } from "../../hooks/app/useDebouncedValue";
 
 const THEMES_PER_PAGE_MOBILE = 3;
 const THEMES_PER_PAGE_DESKTOP = 9;
+const SEARCH_DEBOUNCE_MS = 400;
 
 /** Clones `params` and drops `page` — any filter change invalidates the current page. */
 function withoutPage(params: URLSearchParams): URLSearchParams {
@@ -76,7 +78,11 @@ export function useThemesPage() {
     setSearchParamsRef.current(withoutPage);
   }, [themesPerPage]);
 
-  const themesQuery = useThemes({ topicId, search });
+  // Debounced so the query (a real backend call, not client-side filtering) doesn't refire
+  // on every keystroke — only once typing pauses. `search` itself still updates the URL/input
+  // instantly so the field stays responsive.
+  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
+  const themesQuery = useThemes({ topicId, search: debouncedSearch });
   const themes = themesQuery.data ?? [];
   const totalPages = Math.max(1, Math.ceil(themes.length / themesPerPage));
   const pageThemes = themes.slice((page - 1) * themesPerPage, page * themesPerPage);
