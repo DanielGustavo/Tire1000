@@ -52,7 +52,7 @@ function buildParagraphs(text: string, highlights: EssayHighlight[]): Highlighte
   return paragraphs.filter((paragraph) => paragraph.length > 0);
 }
 
-const POPUP_WIDTH_PX = 260;
+const POPUP_WIDTH_PX = 320;
 const VIEWPORT_MARGIN_PX = 12;
 
 type PopupState = { key: number; top: number; left: number };
