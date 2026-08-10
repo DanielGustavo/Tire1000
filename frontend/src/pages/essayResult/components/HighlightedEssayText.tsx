@@ -9,22 +9,47 @@ interface HighlightedTextSegment {
   highlight: EssayHighlight | null;
 }
 
+type RawSegment = Omit<HighlightedTextSegment, "key">;
+
 /** Splits `text` around non-overlapping highlight ranges, sorted by position — later overlapping ranges are dropped. */
-function buildHighlightedTextSegments(text: string, highlights: EssayHighlight[]): HighlightedTextSegment[] {
+function buildHighlightedTextSegments(text: string, highlights: EssayHighlight[]): RawSegment[] {
   const sorted = [...highlights].sort((a, b) => a.anchorIndex - b.anchorIndex);
-  const segments: HighlightedTextSegment[] = [];
+  const segments: RawSegment[] = [];
   let cursor = 0;
-  let key = 0;
 
   for (const highlight of sorted) {
     if (highlight.anchorIndex < cursor) continue;
-    if (highlight.anchorIndex > cursor) segments.push({ key: key++, text: text.slice(cursor, highlight.anchorIndex), highlight: null });
-    segments.push({ key: key++, text: text.slice(highlight.anchorIndex, highlight.endIndex), highlight });
+    if (highlight.anchorIndex > cursor) segments.push({ text: text.slice(cursor, highlight.anchorIndex), highlight: null });
+    segments.push({ text: text.slice(highlight.anchorIndex, highlight.endIndex), highlight });
     cursor = highlight.endIndex;
   }
 
-  if (cursor < text.length) segments.push({ key: key++, text: text.slice(cursor), highlight: null });
+  if (cursor < text.length) segments.push({ text: text.slice(cursor), highlight: null });
   return segments;
+}
+
+/**
+ * Groups highlighted segments into paragraphs, split on real paragraph breaks (`\n\n`, per ADR 0017)
+ * without disturbing highlight offsets — those are computed by `locate-highlight.ts` against the raw
+ * `text` including its `\n\n` markers, so splitting happens *after* segment boundaries are resolved,
+ * never by re-slicing text per paragraph. A lone `\n` left inside a paragraph (imperfect OCR line-break
+ * residue) is a same-length swap to a space, so it can't shift any offset either.
+ */
+function buildParagraphs(text: string, highlights: EssayHighlight[]): HighlightedTextSegment[][] {
+  const segments = buildHighlightedTextSegments(text, highlights);
+  const paragraphs: HighlightedTextSegment[][] = [[]];
+  let key = 0;
+
+  for (const segment of segments) {
+    const parts = segment.text.split(/\n{2,}/);
+    parts.forEach((part, index) => {
+      if (index > 0) paragraphs.push([]);
+      if (part === "") return;
+      paragraphs[paragraphs.length - 1].push({ key: key++, text: part.replace(/\n/g, " "), highlight: segment.highlight });
+    });
+  }
+
+  return paragraphs.filter((paragraph) => paragraph.length > 0);
 }
 
 const POPUP_WIDTH_PX = 260;
@@ -66,7 +91,7 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
     };
   }, [popup]);
 
-  const segments = buildHighlightedTextSegments(text, highlights);
+  const paragraphs = buildParagraphs(text, highlights);
 
   function togglePopup(target: HTMLElement, key: number) {
     if (popup?.key === key) {
@@ -79,33 +104,37 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
     setPopup({ key, top: anchor.bottom + 4, left });
   }
 
-  const openSegment = popup ? segments.find((segment) => segment.key === popup.key) : undefined;
+  const openSegment = popup ? paragraphs.flat().find((segment) => segment.key === popup.key) : undefined;
 
   return (
-    <p className="whitespace-pre-line text-default leading-[1.7] text-neutral-900">
-      {segments.map((segment) =>
-        segment.highlight ? (
-          <mark
-            key={segment.key}
-            ref={popup?.key === segment.key ? openMarkRef : undefined}
-            role="button"
-            tabIndex={0}
-            aria-expanded={popup?.key === segment.key}
-            className="cursor-pointer"
-            style={{ backgroundColor: COMPETENCY_COLORS[segment.highlight.type] }}
-            onClick={(event: MouseEvent<HTMLElement>) => togglePopup(event.currentTarget, segment.key)}
-            onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
-              if (event.key !== "Enter" && event.key !== " ") return;
-              event.preventDefault();
-              togglePopup(event.currentTarget, segment.key);
-            }}
-          >
-            {segment.text}
-          </mark>
-        ) : (
-          <span key={segment.key}>{segment.text}</span>
-        ),
-      )}
+    <div className="space-y-4">
+      {paragraphs.map((segments, paragraphIndex) => (
+        <p key={paragraphIndex} className="indent-8 text-default leading-[1.7] text-neutral-900">
+          {segments.map((segment) =>
+            segment.highlight ? (
+              <mark
+                key={segment.key}
+                ref={popup?.key === segment.key ? openMarkRef : undefined}
+                role="button"
+                tabIndex={0}
+                aria-expanded={popup?.key === segment.key}
+                className="cursor-pointer"
+                style={{ backgroundColor: COMPETENCY_COLORS[segment.highlight.type] }}
+                onClick={(event: MouseEvent<HTMLElement>) => togglePopup(event.currentTarget, segment.key)}
+                onKeyDown={(event: KeyboardEvent<HTMLElement>) => {
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+                  togglePopup(event.currentTarget, segment.key);
+                }}
+              >
+                {segment.text}
+              </mark>
+            ) : (
+              <span key={segment.key}>{segment.text}</span>
+            ),
+          )}
+        </p>
+      ))}
       {popup && openSegment?.highlight && (
         <span
           ref={popupRef}
@@ -116,6 +145,6 @@ export function HighlightedEssayText({ text, highlights }: { text: string; highl
           <span className="text-neutral-900">{openSegment.highlight.textContent}</span>
         </span>
       )}
-    </p>
+    </div>
   );
 }
