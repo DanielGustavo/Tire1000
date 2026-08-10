@@ -23,10 +23,11 @@ Destino alcançado quando as 3 mudanças acima estiverem implementadas e mergead
 
 - [Busca de temas case-insensitive e filtrando por enemYear/eixo](issues/01-busca-de-temas-case-insensitive-e-enemyear.md) — filtro em memória no use-case `list-themes.ts` (não no repositório), comparando `${enemYear ?? "tire 1000"} | title | topic.title` em minúsculas; `search` sai do contrato do repositório; placeholder do frontend mantido sem alteração.
 - [Denormalizar enemYear/topicTitle no Essay e badges na Correção](issues/02-denormalizar-enemyear-topictitle-e-badges-correcao.md) — campos soltos em `Essay`/`EssayDTO`; `topicTitle: null` é o único gate de "redação legada sem o dado" (enemYear pode ser `null` legitimamente mesmo em redação nova); `ThemeBadges.tsx` teve o tipo de props estreitado pra reuso sem IDs fantasma; badges renderizadas em `essayResult.tsx`; `EssayCard` (Home) confirmado sem mudança.
+- [Paginação de redações pelo backend](issues/03-paginacao-de-redacoes-pelo-backend.md) — cursor via query param `cursor` (base64 do `LastEvaluatedKey`, `Limit: 5` hardcoded); "Anterior" é uma pilha de cursors no cliente, não paginação bidirecional no backend; resposta `{ essays, nextCursor }` (`nextCursor` ausente na última página); cursor malformado → 400. Novo componente `EssaysPagination` (Anterior/Próxima) substitui a `Pagination` numérica só nesta seção.
 
 ## Not yet specified
 
-- Suporte a "Anterior" na paginação de redações por cursor: DynamoDB só pagina pra frente nativamente — se vai exigir cursor bidirecional real no backend ou uma pilha de cursors já visitados guardada no cliente, fica pra decidir na resolução da ticket de paginação.
+(nenhuma — as 3 mudanças do destino estão implementadas)
 
 ## Out of scope
 
