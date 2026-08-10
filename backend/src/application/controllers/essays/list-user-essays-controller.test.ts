@@ -42,7 +42,19 @@ describe("ListUserEssaysController", () => {
 
     await controller.execute(buildRequest({ id: "user-1" }));
 
-    expect(receivedInput).toEqual({ userId: "user-1" });
+    expect(receivedInput).toEqual({ userId: "user-1", cursor: undefined });
+  });
+
+  it("passes the cursor query param through to the use case", async () => {
+    let receivedInput: unknown;
+    const controller = new ListUserEssaysController(async (input) => {
+      receivedInput = input;
+      return FAKE_OUTPUT;
+    });
+
+    await controller.execute({ ...buildRequest(), queryStringParameters: { cursor: "abc123" } });
+
+    expect(receivedInput).toEqual({ userId: "user-1", cursor: "abc123" });
   });
 
   it("throws a 401 HttpError when there is no authenticated user", async () => {

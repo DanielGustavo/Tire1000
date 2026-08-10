@@ -1,18 +1,18 @@
 import { useRef } from "react";
 import { Loading } from "../../../components/Loading";
-import { Pagination } from "../../../components/Pagination";
 import { EssayCard } from "./EssayCard";
 import { EssaysEmptyState } from "./EssaysEmptyState";
+import { EssaysPagination } from "./EssaysPagination";
 import { useEssaysSection } from "../hooks/useEssaysSection";
 
 export function EssaysSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const { page, setPage, essaysQuery, essays, pageEssays, totalPages } = useEssaysSection();
+  const { essaysQuery, essays, hasPreviousPage, hasNextPage, goToNextPage, goToPreviousPage } = useEssaysSection();
 
   // 5 essays can already fill a screen, so after switching pages (mobile and desktop) bring the
   // section's top back into view instead of leaving the user scrolled into the previous page's list.
-  function handlePageChange(newPage: number) {
-    setPage(newPage);
+  function handlePageChange(goTo: () => void) {
+    goTo();
     sectionRef.current?.scrollIntoView({ block: "start" });
   }
 
@@ -34,15 +34,20 @@ export function EssaysSection() {
         </div>
       )}
 
-      {pageEssays.length > 0 && (
+      {essays.length > 0 && (
         <div className="flex w-full flex-col gap-4">
-          {pageEssays.map((essay) => (
+          {essays.map((essay) => (
             <EssayCard key={essay.id} essay={essay} />
           ))}
         </div>
       )}
 
-      <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
+      <EssaysPagination
+        hasPreviousPage={hasPreviousPage}
+        hasNextPage={hasNextPage}
+        onPrevious={() => handlePageChange(goToPreviousPage)}
+        onNext={() => handlePageChange(goToNextPage)}
+      />
     </section>
   );
 }

@@ -81,4 +81,33 @@ describe("ListUserEssays", () => {
 
     expect(result.essays).toEqual([]);
   });
+
+  it("caps a page at 5 essays and returns a nextCursor when more exist", async () => {
+    const essayRepository = new InMemoryEssayRepository();
+    const ids = ["1zzz1", "1zzz2", "1zzz3", "1zzz4", "1zzz5", "1zzz6"];
+    for (const id of ids) {
+      await essayRepository.create(buildEssay({ id, userId: "user-1" }));
+    }
+    const listUserEssays = createListUserEssays({ essayRepository });
+
+    const result = await listUserEssays({ userId: "user-1" });
+
+    expect(result.essays.map((essay) => essay.id)).toEqual(["1zzz6", "1zzz5", "1zzz4", "1zzz3", "1zzz2"]);
+    expect(result.nextCursor).toBeDefined();
+  });
+
+  it("resumes from the given cursor and omits nextCursor once the last page is reached", async () => {
+    const essayRepository = new InMemoryEssayRepository();
+    const ids = ["1zzz1", "1zzz2", "1zzz3", "1zzz4", "1zzz5", "1zzz6"];
+    for (const id of ids) {
+      await essayRepository.create(buildEssay({ id, userId: "user-1" }));
+    }
+    const listUserEssays = createListUserEssays({ essayRepository });
+    const firstPage = await listUserEssays({ userId: "user-1" });
+
+    const secondPage = await listUserEssays({ userId: "user-1", cursor: firstPage.nextCursor });
+
+    expect(secondPage.essays.map((essay) => essay.id)).toEqual(["1zzz1"]);
+    expect(secondPage.nextCursor).toBeUndefined();
+  });
 });

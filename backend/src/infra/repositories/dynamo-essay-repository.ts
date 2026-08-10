@@ -1,9 +1,10 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import type { Essay, EssayStatus } from "../../domain/entities/essay.js";
-import type { EssayRepository, EssayWithEvaluation } from "../../domain/contracts/repositories/essay-repository.js";
+import type { EssayRepository, EssayWithEvaluation, ListByUserIdOptions, ListByUserIdResult } from "../../domain/contracts/repositories/essay-repository.js";
 import { essayGSI1PK, essayPK, essaySK, fromEssayItem, toEssayItem, type EssayItem } from "../db/dynamodb/items/essay-item.js";
 import { fromEssayEvaluationItem, type EssayEvaluationItem } from "../db/dynamodb/items/essay-evaluation-item.js";
+import { decodeCursor, encodeCursor } from "../db/dynamodb/cursor.js";
 
 export class DynamoEssayRepository implements EssayRepository {
   constructor(
@@ -53,7 +54,7 @@ export class DynamoEssayRepository implements EssayRepository {
     };
   }
 
-  async listByUserId(userId: string): Promise<Essay[]> {
+  async listByUserId(userId: string, { limit, cursor }: ListByUserIdOptions): Promise<ListByUserIdResult> {
     const result = await this.documentClient.send(
       new QueryCommand({
         TableName: this.tableName,
@@ -61,10 +62,15 @@ export class DynamoEssayRepository implements EssayRepository {
         ExpressionAttributeValues: { ":pk": essayPK(userId), ":essayPrefix": "ESSAY#" },
         // Essay ids are KSUIDs, so SK order mirrors submission order — newest first.
         ScanIndexForward: false,
+        Limit: limit,
+        ExclusiveStartKey: cursor ? decodeCursor(cursor) : undefined,
       }),
     );
 
-    return (result.Items ?? []).map((item) => fromEssayItem(item as EssayItem));
+    const essays = (result.Items ?? []).map((item) => fromEssayItem(item as EssayItem));
+    const nextCursor = result.LastEvaluatedKey ? encodeCursor(result.LastEvaluatedKey) : undefined;
+
+    return { essays, nextCursor };
   }
 
   async updateStatus(essay: Essay, { expectedCurrentStatus }: { expectedCurrentStatus: EssayStatus }): Promise<{ applied: boolean }> {

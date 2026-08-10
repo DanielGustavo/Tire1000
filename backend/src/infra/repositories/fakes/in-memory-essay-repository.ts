@@ -1,6 +1,11 @@
 import { Essay, type EssayStatus } from "../../../domain/entities/essay.js";
 import type { EssayEvaluationRepository } from "../../../domain/contracts/repositories/essay-evaluation-repository.js";
-import type { EssayRepository, EssayWithEvaluation } from "../../../domain/contracts/repositories/essay-repository.js";
+import type {
+  EssayRepository,
+  EssayWithEvaluation,
+  ListByUserIdOptions,
+  ListByUserIdResult,
+} from "../../../domain/contracts/repositories/essay-repository.js";
 import { InMemoryEssayEvaluationRepository } from "./in-memory-essay-evaluation-repository.js";
 
 // Essay is mutable (see Essay#resetForResend/#markQueued). Clone on the way in and out, same
@@ -56,12 +61,19 @@ export class InMemoryEssayRepository implements EssayRepository {
     return { essay, evaluation };
   }
 
-  async listByUserId(userId: string): Promise<Essay[]> {
-    return [...this.essaysById.values()]
+  async listByUserId(userId: string, { limit, cursor }: ListByUserIdOptions): Promise<ListByUserIdResult> {
+    const sorted = [...this.essaysById.values()]
       .filter((essay) => essay.userId === userId)
       // Mirrors DynamoEssayRepository#listByUserId: KSUID ids sort chronologically, newest first.
-      .sort((a, b) => (a.id < b.id ? 1 : -1))
-      .map(cloneEssay);
+      .sort((a, b) => (a.id < b.id ? 1 : -1));
+
+    // Cursor is opaque to callers — this fake just uses the last-seen essay id, unlike
+    // DynamoEssayRepository's base64 LastEvaluatedKey (see cursor.ts).
+    const startIndex = cursor ? sorted.findIndex((essay) => essay.id === cursor) + 1 : 0;
+    const page = sorted.slice(startIndex, startIndex + limit);
+    const nextCursor = startIndex + limit < sorted.length ? page[page.length - 1]?.id : undefined;
+
+    return { essays: page.map(cloneEssay), nextCursor };
   }
 
   async updateStatus(essay: Essay, { expectedCurrentStatus }: { expectedCurrentStatus: EssayStatus }): Promise<{ applied: boolean }> {

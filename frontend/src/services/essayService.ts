@@ -18,6 +18,11 @@ export interface GetEssayDetailResponse {
 
 export interface ListUserEssaysResponse {
   essays: Essay[];
+  nextCursor?: string;
+}
+
+export interface ListEssaysParams {
+  cursor?: string;
 }
 
 export const REJECTION_REASON_LABELS: Record<string, string> = {
@@ -101,8 +106,8 @@ class EssayService extends Service {
     return data;
   }
 
-  async list(): Promise<ListUserEssaysResponse> {
-    const { data } = await this.client.get<ListUserEssaysResponse>("/essays");
+  async list(params: ListEssaysParams = {}): Promise<ListUserEssaysResponse> {
+    const { data } = await this.client.get<ListUserEssaysResponse>("/essays", { params });
     return data;
   }
 

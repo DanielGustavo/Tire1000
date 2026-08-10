@@ -6,6 +6,18 @@ export interface EssayWithEvaluation {
   evaluation: EssayEvaluation | null;
 }
 
+export interface ListByUserIdOptions {
+  limit: number;
+  /** Opaque cursor from a previous page's `nextCursor` — omitted for the first page. */
+  cursor?: string;
+}
+
+export interface ListByUserIdResult {
+  essays: Essay[];
+  /** Present only when more essays exist past this page. */
+  nextCursor?: string;
+}
+
 export interface EssayRepository {
   create(essay: Essay): Promise<Essay>;
   /** Resolved by essayId alone (GSI1), independent of the owning userId — see spec's model. */
@@ -17,8 +29,8 @@ export interface EssayRepository {
    * the only caller that ever needs both together; state-machine use cases keep using `findById`.
    */
   findByIdWithEvaluation(essayId: string): Promise<EssayWithEvaluation | null>;
-  /** Every essay the user has sent, most recent submission first (KSUID ids sort chronologically). */
-  listByUserId(userId: string): Promise<Essay[]>;
+  /** Every essay the user has sent, most recent submission first (KSUID ids sort chronologically), paginated by cursor. */
+  listByUserId(userId: string, options: ListByUserIdOptions): Promise<ListByUserIdResult>;
   /**
    * Persists essay's current status/fileKey/textContent/updatedAt, conditioned on the stored
    * status still being `expectedCurrentStatus`. `applied: false` means the stored status had

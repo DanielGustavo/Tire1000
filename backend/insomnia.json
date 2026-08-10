@@ -478,10 +478,10 @@
       "created": 1786029448482,
       "url": "{{ _.base_url }}/essays",
       "name": "List Essays",
-      "description": "Requer cognitoAuthorizer. Lista as redações do usuário logado, ordenadas pela ordem de envio (mais recente primeiro) — id, status, título e cor do eixo denormalizados (ticket 07).",
+      "description": "Requer cognitoAuthorizer. Lista as redações do usuário logado, ordenadas pela ordem de envio (mais recente primeiro) — id, status, título e cor do eixo denormalizados (ticket 07). Paginado por cursor: 5 por página, `cursor` opcional vindo do `nextCursor` da página anterior; resposta é `{ essays, nextCursor }`, com `nextCursor` ausente na última página.",
       "method": "GET",
       "body": {},
-      "parameters": [],
+      "parameters": [{ "name": "cursor", "value": "", "disabled": true }],
       "headers": [],
       "authentication": {
         "type": "bearer",

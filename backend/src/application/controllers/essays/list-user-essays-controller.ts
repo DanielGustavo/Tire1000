@@ -9,10 +9,10 @@ export class ListUserEssaysController extends Controller {
     super();
   }
 
-  protected async handle({ auth }: ControllerRequest): Promise<ControllerResponse> {
+  protected async handle({ auth, queryStringParameters }: ControllerRequest): Promise<ControllerResponse> {
     if (!auth) throw new UnauthorizedError();
 
-    const result = await this.listUserEssays({ userId: auth.id });
+    const result = await this.listUserEssays({ userId: auth.id, cursor: queryStringParameters.cursor });
 
     return { statusCode: 200, body: result };
   }
