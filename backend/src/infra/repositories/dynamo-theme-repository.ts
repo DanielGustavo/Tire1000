@@ -69,26 +69,21 @@ export class DynamoThemeRepository implements ThemeRepository {
     return { theme: fromThemeItem(themeItem as ThemeItem), referenceTexts };
   }
 
-  async list({ topicId, search }: ListThemesFilter = {}): Promise<Theme[]> {
-    // DynamoDB's `contains` is case-sensitive; there's no normalized/lowercased attribute
-    // in the data model to search against, so title search is case-sensitive for now.
-    const searchValue = search ? { ":search": search } : {};
-
+  async list({ topicId }: ListThemesFilter = {}): Promise<Theme[]> {
     const keyCondition = topicId
       ? {
           IndexName: "GSI1",
           KeyConditionExpression: "GSI1PK = :gsi1pk AND begins_with(GSI1SK, :themePrefix)",
-          ExpressionAttributeValues: { ":gsi1pk": themeGSI1PK(topicId), ":themePrefix": "THEME#", ...searchValue },
+          ExpressionAttributeValues: { ":gsi1pk": themeGSI1PK(topicId), ":themePrefix": "THEME#" },
         }
       : {
           KeyConditionExpression: "PK = :pk",
-          ExpressionAttributeValues: { ":pk": themePK(), ...searchValue },
+          ExpressionAttributeValues: { ":pk": themePK() },
         };
 
     const result = await this.documentClient.send(
       new QueryCommand({
         TableName: this.tableName,
-        FilterExpression: search ? "contains(#title, :search)" : undefined,
         ProjectionExpression: THEME_PROJECTION_EXPRESSION,
         ExpressionAttributeNames: THEME_PROJECTION_NAMES,
         ScanIndexForward: false,

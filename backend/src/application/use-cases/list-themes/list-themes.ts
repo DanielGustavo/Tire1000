@@ -20,15 +20,25 @@ export interface ThemeWithTopic {
 
 export function createListThemes({ themeRepository, themeTopicRepository }: ListThemesDeps) {
   return async function listThemes({ topicId, search }: ListThemesInput = {}): Promise<ThemeWithTopic[]> {
-    const themes = await themeRepository.list({ topicId, search });
+    const themes = await themeRepository.list({ topicId });
 
     const distinctTopicIds = [...new Set(themes.map((theme) => theme.topicId))];
     const topics = await themeTopicRepository.findByIds(distinctTopicIds);
     const topicById = new Map(topics.map((topic) => [topic.id, topic]));
 
-    return themes.map((theme) => {
+    const themesWithTopics = themes.map((theme) => {
       const topic = topicById.get(theme.topicId);
       return { theme: toThemeDTO(theme), topic: topic ? toTopicDTO(topic) : null };
+    });
+
+    if (!search) return themesWithTopics;
+
+    // Single free-text field covers title, ENEM year, and eixo (topic) — no separate
+    // controls or token parsing, matched case-insensitively against a composed string.
+    const searchLower = search.toLowerCase();
+    return themesWithTopics.filter(({ theme, topic }) => {
+      const searchable = `${theme.enemYear ?? "tire 1000"} | ${theme.title} | ${topic?.title ?? ""}`;
+      return searchable.toLowerCase().includes(searchLower);
     });
   };
 }

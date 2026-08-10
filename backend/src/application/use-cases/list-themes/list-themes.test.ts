@@ -73,6 +73,68 @@ describe("ListThemes", () => {
     expect(result.map(({ theme }) => theme.id)).toEqual(["theme-1"]);
   });
 
+  it("filters case-insensitively", async () => {
+    const matching = buildTheme({ id: "theme-1", title: "Educação financeira no Brasil" });
+    const other = buildTheme({ id: "theme-2", title: "Mobilidade urbana nas grandes cidades" });
+    const themeRepository = new InMemoryThemeRepository([matching, other]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository([buildTopic()]);
+    const listThemes = createListThemes({ themeRepository, themeTopicRepository });
+
+    const result = await listThemes({ search: "FINANCEIRA" });
+
+    expect(result.map(({ theme }) => theme.id)).toEqual(["theme-1"]);
+  });
+
+  it("filters by enemYear", async () => {
+    const matching = buildTheme({ id: "theme-1", enemYear: 2023 });
+    const other = buildTheme({ id: "theme-2", enemYear: 2020 });
+    const themeRepository = new InMemoryThemeRepository([matching, other]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository([buildTopic()]);
+    const listThemes = createListThemes({ themeRepository, themeTopicRepository });
+
+    const result = await listThemes({ search: "2023" });
+
+    expect(result.map(({ theme }) => theme.id)).toEqual(["theme-1"]);
+  });
+
+  it("matches themes without an enemYear against the 'tire 1000' placeholder", async () => {
+    const matching = buildTheme({ id: "theme-1", enemYear: null });
+    const other = buildTheme({ id: "theme-2", enemYear: 2020 });
+    const themeRepository = new InMemoryThemeRepository([matching, other]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository([buildTopic()]);
+    const listThemes = createListThemes({ themeRepository, themeTopicRepository });
+
+    const result = await listThemes({ search: "tire 1000" });
+
+    expect(result.map(({ theme }) => theme.id)).toEqual(["theme-1"]);
+  });
+
+  it("filters by the eixo (topic title)", async () => {
+    const matching = buildTheme({ id: "theme-1", topicId: "topic-a" });
+    const other = buildTheme({ id: "theme-2", topicId: "topic-b" });
+    const themeRepository = new InMemoryThemeRepository([matching, other]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository([
+      buildTopic({ id: "topic-a", title: "Meio ambiente" }),
+      buildTopic({ id: "topic-b", title: "Tecnologia" }),
+    ]);
+    const listThemes = createListThemes({ themeRepository, themeTopicRepository });
+
+    const result = await listThemes({ search: "meio ambiente" });
+
+    expect(result.map(({ theme }) => theme.id)).toEqual(["theme-1"]);
+  });
+
+  it("does not crash searching a theme whose topic no longer exists", async () => {
+    const theme = buildTheme({ topicId: "missing-topic", title: "Educação financeira no Brasil" });
+    const themeRepository = new InMemoryThemeRepository([theme]);
+    const themeTopicRepository = new InMemoryThemeTopicRepository();
+    const listThemes = createListThemes({ themeRepository, themeTopicRepository });
+
+    const result = await listThemes({ search: "financeira" });
+
+    expect(result.map(({ theme }) => theme.id)).toEqual([theme.id]);
+  });
+
   it("returns an empty list when there are no themes", async () => {
     const themeRepository = new InMemoryThemeRepository();
     const themeTopicRepository = new InMemoryThemeTopicRepository();

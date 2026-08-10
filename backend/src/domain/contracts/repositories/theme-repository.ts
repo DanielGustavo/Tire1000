@@ -3,7 +3,6 @@ import type { Theme } from "../../entities/theme.js";
 
 export interface ListThemesFilter {
   topicId?: string;
-  search?: string;
 }
 
 export interface ThemeWithReferenceTexts {
