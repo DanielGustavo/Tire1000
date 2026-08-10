@@ -19,6 +19,8 @@ export interface EssayItem {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  enemYear: number | null;
+  topicTitle: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -60,6 +62,8 @@ export function toEssayItem(essay: Essay): EssayItem {
     themeId: essay.themeId,
     themeTitle: essay.themeTitle,
     topicColor: essay.topicColor,
+    enemYear: essay.enemYear,
+    topicTitle: essay.topicTitle,
     createdAt: essay.createdAt.toISOString(),
     updatedAt: essay.updatedAt.toISOString(),
   };
@@ -80,6 +84,9 @@ export function fromEssayItem(item: EssayItem): Essay {
     themeId: item.themeId,
     themeTitle: item.themeTitle,
     topicColor: item.topicColor,
+    // Legacy items predate these attributes and have neither in DynamoDB (undefined, not null).
+    enemYear: item.enemYear ?? null,
+    topicTitle: item.topicTitle ?? null,
     createdAt: new Date(item.createdAt),
     updatedAt: new Date(item.updatedAt),
   });

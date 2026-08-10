@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Loading } from "../../components/Loading";
 import { PaperCard } from "../../components/PaperCard";
+import { ThemeBadges } from "../../components/ThemeBadges";
 import { formatDate } from "../../libs/date";
 import { CompetencyScores } from "./components/CompetencyScores";
 import { CompetencyScoresSkeleton } from "./components/CompetencyScoresSkeleton";
@@ -42,6 +43,16 @@ export function EssayResultPage() {
           </Link>
 
           <div className="flex flex-col items-start gap-1">
+            {/* topicTitle is the presence gate: null only for essays created before this
+                denormalization shipped (no retroactive migration) — hides both badges rather
+                than showing a half-populated pair. enemYear can be legitimately null on its
+                own (theme with no ENEM year); ThemeBadges already falls back to "Tire 1000". */}
+            {essay.topicTitle && (
+              <ThemeBadges
+                theme={{ enemYear: essay.enemYear }}
+                topic={{ title: essay.topicTitle, color: essay.topicColor }}
+              />
+            )}
             <h1 className="text-subtitle font-bold capitalize text-neutral-900">{essay.themeTitle}</h1>
             <p className="text-small text-neutral-900">{formatDate(essay.createdAt)}</p>
           </div>

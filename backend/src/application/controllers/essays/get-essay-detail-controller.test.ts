@@ -16,6 +16,8 @@ const FAKE_OUTPUT: GetEssayDetailOutput = {
     themeId: "theme-1",
     themeTitle: "Educação financeira",
     topicColor: "#2E7D32",
+    enemYear: 2023,
+    topicTitle: "Educação",
     finalScore: null,
     createdAt: "2026-08-01T00:00:00.000Z",
     textContent: null,

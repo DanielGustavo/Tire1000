@@ -17,6 +17,10 @@ export interface Essay {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  /** Null for essays created before this denormalization shipped, or when the theme has no ENEM year. */
+  enemYear: number | null;
+  /** Null only for essays created before this denormalization shipped — gates whether the ENEM/eixo badges show at all. */
+  topicTitle: string | null;
   finalScore: number | null;
   createdAt: string;
 }

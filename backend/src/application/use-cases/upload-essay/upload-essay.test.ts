@@ -62,7 +62,7 @@ async function buildDeps({ credits = 1 }: { credits?: number } = {}) {
 }
 
 describe("UploadEssay", () => {
-  it("creates an Essay with status UPLOADING, denormalizing theme title and topic color", async () => {
+  it("creates an Essay with status UPLOADING, denormalizing theme title, topic color, enemYear and topic title", async () => {
     const deps = await buildDeps();
     const uploadEssay = createUploadEssay(deps);
 
@@ -77,8 +77,21 @@ describe("UploadEssay", () => {
       themeId: "theme-1",
       themeTitle: "A importância da educação financeira no Brasil",
       topicColor: "#2E7D32",
+      enemYear: 2023,
+      topicTitle: "Educação",
       fileKey: "essays/fake-id-1",
     });
+  });
+
+  it("denormalizes a null enemYear when the theme has no ENEM year", async () => {
+    const deps = await buildDeps();
+    deps.themeRepository = new InMemoryThemeRepository([buildTheme({ enemYear: null })]);
+    const uploadEssay = createUploadEssay(deps);
+
+    await uploadEssay({ userId: "user-1", themeId: "theme-1" });
+
+    const essay = await deps.essayRepository.findById("fake-id-1");
+    expect(essay).toMatchObject({ enemYear: null, topicTitle: "Educação" });
   });
 
   it("requests a presigned upload capped at 10MB for the essay's file key", async () => {

@@ -13,6 +13,10 @@ export interface EssayDTO {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  /** Null for essays created before this denormalization shipped, or when the theme has no ENEM year. */
+  enemYear: number | null;
+  /** Null only for essays created before this denormalization shipped — gates whether the UI shows the ENEM/eixo badges at all. */
+  topicTitle: string | null;
   finalScore: number | null;
   createdAt: string;
 }
@@ -25,6 +29,8 @@ export function toEssayDTO(essay: Essay): EssayDTO {
     themeId: essay.themeId,
     themeTitle: essay.themeTitle,
     topicColor: essay.topicColor,
+    enemYear: essay.enemYear,
+    topicTitle: essay.topicTitle,
     finalScore: essay.finalScore,
     createdAt: essay.createdAt.toISOString(),
   };

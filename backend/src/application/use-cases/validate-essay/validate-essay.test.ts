@@ -26,6 +26,8 @@ function buildEssay(overrides: Partial<EssayProps> = {}): Essay {
     themeId: "theme-1",
     themeTitle: "A importância da educação financeira no Brasil",
     topicColor: "#2E7D32",
+    enemYear: null,
+    topicTitle: null,
     createdAt: new Date("2026-08-01T00:00:00.000Z"),
     updatedAt: new Date("2026-08-01T00:00:00.000Z"),
     ...overrides,

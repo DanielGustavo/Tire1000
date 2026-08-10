@@ -55,6 +55,8 @@ export function createUploadEssay({
       themeId,
       themeTitle: themeResult.theme.title,
       topicColor: topic.color,
+      enemYear: themeResult.theme.enemYear,
+      topicTitle: topic.title,
     });
     await essayRepository.create(essay);
 

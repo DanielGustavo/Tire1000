@@ -1,8 +1,12 @@
 import { Bullet } from "./Bullet";
 import { DEFAULT_THEME_COLOR } from "../services/themeService";
-import type { ThemeWithTopic } from "../types/theme";
 
-export function ThemeBadges({ theme, topic }: ThemeWithTopic) {
+interface ThemeBadgesProps {
+  theme: { enemYear: number | null };
+  topic: { title: string; color: string } | null;
+}
+
+export function ThemeBadges({ theme, topic }: ThemeBadgesProps) {
   const color = topic?.color ?? DEFAULT_THEME_COLOR;
 
   return (

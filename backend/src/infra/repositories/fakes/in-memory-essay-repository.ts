@@ -20,6 +20,8 @@ function cloneEssay(essay: Essay): Essay {
     themeId: essay.themeId,
     themeTitle: essay.themeTitle,
     topicColor: essay.topicColor,
+    enemYear: essay.enemYear,
+    topicTitle: essay.topicTitle,
     createdAt: essay.createdAt,
     updatedAt: essay.updatedAt,
   });

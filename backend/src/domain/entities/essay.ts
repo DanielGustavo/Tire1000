@@ -108,6 +108,10 @@ export interface EssayProps {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  /** Null for essays created before this denormalization shipped (no retroactive migration) or, for enemYear, when the theme itself has no ENEM year. */
+  enemYear: number | null;
+  /** Null only for essays created before this denormalization shipped — a new essay's topic always resolves. */
+  topicTitle: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -119,6 +123,8 @@ export interface NewEssayProps {
   themeId: string;
   themeTitle: string;
   topicColor: string;
+  enemYear: number | null;
+  topicTitle: string;
 }
 
 export class Essay extends Entity {
@@ -136,6 +142,8 @@ export class Essay extends Entity {
   readonly themeId: string;
   readonly themeTitle: string;
   readonly topicColor: string;
+  readonly enemYear: number | null;
+  readonly topicTitle: string | null;
 
   private constructor(props: EssayProps) {
     super({
@@ -156,6 +164,8 @@ export class Essay extends Entity {
     this.themeId = props.themeId;
     this.themeTitle = props.themeTitle;
     this.topicColor = props.topicColor;
+    this.enemYear = props.enemYear;
+    this.topicTitle = props.topicTitle;
   }
 
   static create({
@@ -165,6 +175,8 @@ export class Essay extends Entity {
     themeId,
     themeTitle,
     topicColor,
+    enemYear,
+    topicTitle,
   }: NewEssayProps): Essay {
     const now = new Date();
     return new Essay({
@@ -181,6 +193,8 @@ export class Essay extends Entity {
       themeId,
       themeTitle,
       topicColor,
+      enemYear,
+      topicTitle,
       createdAt: now,
       updatedAt: now,
     });

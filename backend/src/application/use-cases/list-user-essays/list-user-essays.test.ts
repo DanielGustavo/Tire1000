@@ -18,6 +18,8 @@ function buildEssay(overrides: Partial<EssayProps> = {}): Essay {
     themeId: "theme-1",
     themeTitle: "A importância da educação financeira no Brasil",
     topicColor: "#2E7D32",
+    enemYear: 2023,
+    topicTitle: "Educação",
     createdAt: new Date("2026-08-01T00:00:00.000Z"),
     updatedAt: new Date("2026-08-01T00:00:00.000Z"),
     ...overrides,
@@ -53,10 +55,22 @@ describe("ListUserEssays", () => {
         themeId: "theme-1",
         themeTitle: "A importância da educação financeira no Brasil",
         topicColor: "#2E7D32",
+        enemYear: 2023,
+        topicTitle: "Educação",
         finalScore: 800,
         createdAt: "2026-08-01T00:00:00.000Z",
       },
     ]);
+  });
+
+  it("passes through null enemYear/topicTitle for essays created before the denormalization shipped", async () => {
+    const essayRepository = new InMemoryEssayRepository();
+    await essayRepository.create(buildEssay({ enemYear: null, topicTitle: null }));
+    const listUserEssays = createListUserEssays({ essayRepository });
+
+    const result = await listUserEssays({ userId: "user-1" });
+
+    expect(result.essays[0]).toMatchObject({ enemYear: null, topicTitle: null });
   });
 
   it("returns an empty list when the user has no essays", async () => {
