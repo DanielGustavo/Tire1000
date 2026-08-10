@@ -11,15 +11,21 @@ type TexturedCardProps = {
   contentClassName?: string;
   /** Off for the Correção competência cards per a later call — the diagonal color wash still applies there, just not the dotted texture overlay. Every other usage keeps it. */
   texture?: boolean;
+  /** Set when the card has a full-bleed overlay `Link`/`button` on top of it — grows the hard shadow on hover and flattens it on active, matching the feedback on `Button`/`IconButton`. */
+  interactive?: boolean;
   children: ReactNode;
 };
 
-export function TexturedCard({ color, className, contentClassName, texture = true, children }: TexturedCardProps) {
+export function TexturedCard({ color, className, contentClassName, texture = true, interactive = false, children }: TexturedCardProps) {
   const isDark = color === "dark";
 
   return (
     <div
-      className={`relative flex flex-col overflow-hidden border-2 border-solid border-neutral-900 ${isDark ? "shadow-hard-pink" : "shadow-hard"} ${className ?? ""}`}
+      className={`relative flex flex-col overflow-hidden border-2 border-solid border-neutral-900 ${isDark ? "shadow-hard-pink" : "shadow-hard"} ${
+        interactive
+          ? `transition-shadow duration-100 active:shadow-none ${isDark ? "hover:shadow-[4px_4px_0px_0px_var(--color-pink-300)]" : "hover:shadow-[4px_4px_0px_0px_#1e1e1e]"}`
+          : ""
+      } ${className ?? ""}`}
       style={isDark ? undefined : { backgroundColor: color }}
     >
       <div aria-hidden className="pointer-events-none absolute inset-0">

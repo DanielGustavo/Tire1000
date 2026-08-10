@@ -22,7 +22,7 @@ export function EssayCard({ essay }: { essay: Essay }) {
 
   if (essay.status === "SUCCESS") {
     return (
-      <TexturedCard color={scoreCardColor(essay.finalScore ?? 0)} className="w-full" contentClassName="gap-4 p-2.5">
+      <TexturedCard color={scoreCardColor(essay.finalScore ?? 0)} className="w-full" contentClassName="gap-4 p-2.5" interactive>
         <Link to={`/essays/${essay.id}`} aria-label={`Ver resultado da redação sobre ${essay.themeTitle}`} className="absolute inset-0 z-10" />
         <div className="flex w-full items-center gap-4">
           <Bullet variant="white" size="auto" rotate="left">
@@ -47,7 +47,7 @@ export function EssayCard({ essay }: { essay: Essay }) {
   return (
     <div className="flex w-full flex-col gap-2">
       <EssayStatusHeader essay={essay} />
-      <TexturedCard color="dark" className="w-full" contentClassName="gap-4 p-2.5">
+      <TexturedCard color="dark" className="w-full" contentClassName="gap-4 p-2.5" interactive={isClickable}>
         {isClickable && (
           <Link to={`/essays/${essay.id}`} aria-label={`Ver redação sobre ${essay.themeTitle}`} className="absolute inset-0 z-10" />
         )}

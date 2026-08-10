@@ -13,6 +13,11 @@ export const ROTATED_SHADOW_CLASSES: Record<HardShadowColor, string> = {
   pink: "drop-shadow-[2px_2px_0px_var(--color-pink-300)]",
 };
 
+export const ROTATED_HOVER_SHADOW_CLASSES: Record<HardShadowColor, string> = {
+  black: "hover:drop-shadow-[4px_4px_0px_#1e1e1e]",
+  pink: "hover:drop-shadow-[4px_4px_0px_var(--color-pink-300)]",
+};
+
 export function rotateClass(rotate: "left" | "right"): string {
   return rotate === "left" ? "-rotate-5" : "rotate-5";
 }
