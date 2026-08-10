@@ -5,10 +5,12 @@ const CREDIT_OPTIONS = [1, 2, 3];
 
 export function CreditsStep({
   pending,
+  pendingCreditsQty,
   onSelect,
   onSkip,
 }: {
   pending: boolean;
+  pendingCreditsQty?: number;
   onSelect: (creditsQty: number) => void;
   onSkip: () => void;
 }) {
@@ -30,6 +32,7 @@ export function CreditsStep({
               variant="primary"
               className="w-full"
               disabled={pending}
+              loading={pending && pendingCreditsQty === qty}
               onClick={() => onSelect(qty)}
             >
               {`Iniciar com ${qty} crédito${qty > 1 ? "s" : ""}`}

@@ -24,6 +24,7 @@ export function SignUpModal({ onClose, onSwitchToSignIn }: { onClose: () => void
       <Modal onClose={onClose}>
         <CreditsStep
           pending={signUpMutation.isPending}
+          pendingCreditsQty={signUpMutation.variables?.creditsQty}
           onSelect={(creditsQty) => signUpMutation.mutate(creditsQty)}
           onSkip={() => signUpMutation.mutate(undefined)}
         />

@@ -36,6 +36,7 @@ export function PriceModal({ onClose }: PriceModalProps) {
                 variant="primary"
                 className="w-full"
                 disabled={checkoutMutation.isPending}
+                loading={checkoutMutation.isPending && checkoutMutation.variables === qty}
                 onClick={() => checkoutMutation.mutate(qty)}
               >
                 {`Adicionar ${qty} crédito${qty > 1 ? "s" : ""}`}
