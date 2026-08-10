@@ -16,6 +16,18 @@ _Avoid_: Validação (nome do enum de status no banco; o termo de produto é Rev
 A etapa `EVALUATION`: um modelo de IA mais caro processa o texto já revisado, pontuando cada uma das 5 competências do ENEM e gerando um parecer geral.
 _Avoid_: Correção (esse é o processo completo, não a etapa)
 
+**Parecer**:
+O `evaluationText` de uma competência específica na Avaliação — explica por que aquele nível foi escolhido para aquela competência.
+_Avoid_: comentário, feedback
+
+**Parecer geral**:
+O `evaluationText` do score `final` da Avaliação — um texto síntese que consolida os 5 pareceres de competência, gerado por sua própria chamada de IA. Não é concatenação dos 5 pareceres.
+_Avoid_: score final (quando usado pro texto — "score" sozinho sugere só o número)
+
+**Parágrafo**:
+Unidade estrutural do texto da redação, definida pelo estudante — distinta de linha, que é só a quebra visual causada pela largura do papel na escrita manuscrita e não carrega significado. No texto transcrito pela Revisão, parágrafos são marcados por `\n\n`; quebras de linha do papel não são preservadas.
+_Avoid_: linha, quebra de linha (usados como sinônimo de parágrafo — não são a mesma coisa)
+
 **Eixo**:
 A categoria temática à qual um Tema pertence (entidade `ThemeTopic`, tipo `TOPIC` no banco).
 _Avoid_: Tópico
