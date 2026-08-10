@@ -11,8 +11,18 @@ import { useThemesPage } from "./useThemesPage";
 
 export function ThemesPage() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
-  const { search, setSearch, topicId, setTopicId, page, setPage, themesQuery, themes, pageThemes, totalPages } =
-    useThemesPage();
+  const {
+    search,
+    handleSearchChange,
+    topicId,
+    setTopicId,
+    page,
+    setPage,
+    themesQuery,
+    themes,
+    pageThemes,
+    totalPages,
+  } = useThemesPage();
 
   return (
     // Capped here (not in the shared AppLayout — see home.tsx/map.md ticket 09) so only this
@@ -30,8 +40,8 @@ export function ThemesPage() {
         <Field
           type="search"
           placeholder="Buscar tema"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          defaultValue={search}
+          onChange={(event) => handleSearchChange(event.target.value)}
         />
         <IconButton
           variant="gray"

@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useThemes } from "../../hooks/queries/useThemes";
 import { useIsDesktop } from "../../hooks/app/useIsDesktop";
-import { useDebouncedValue } from "../../hooks/app/useDebouncedValue";
 
 const THEMES_PER_PAGE_MOBILE = 3;
 const THEMES_PER_PAGE_DESKTOP = 9;
@@ -24,13 +23,30 @@ export function useThemesPage() {
   const topicId = searchParams.get("topicId") ?? "";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
+  // replace: true — the search field is uncontrolled (see themes.tsx), so this only ever fires
+  // after the debounce below settles, not per keystroke. A push here would still spam history
+  // once per pause in typing, which is pointless for free-text search.
   function setSearch(value: string) {
-    setSearchParams((prev) => {
-      const next = withoutPage(prev);
-      if (value) next.set("search", value);
-      else next.delete("search");
-      return next;
-    });
+    setSearchParams(
+      (prev) => {
+        const next = withoutPage(prev);
+        if (value) next.set("search", value);
+        else next.delete("search");
+        return next;
+      },
+      { replace: true },
+    );
+  }
+
+  // The input itself is uncontrolled (no value= prop, see themes.tsx) so React never re-renders
+  // it on keystroke — that was the point: a controlled value tied to URL/router state couldn't
+  // keep up with fast typing on a loaded device and dropped/reordered characters. This just
+  // debounces the URL write instead of the input's displayed value.
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(searchDebounceRef.current), []);
+  function handleSearchChange(value: string) {
+    clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => setSearch(value), SEARCH_DEBOUNCE_MS);
   }
 
   // replace: true because this runs while ThemesFilterModal (which pushes its own history
@@ -78,14 +94,23 @@ export function useThemesPage() {
     setSearchParamsRef.current(withoutPage);
   }, [themesPerPage]);
 
-  // Debounced so the query (a real backend call, not client-side filtering) doesn't refire
-  // on every keystroke — only once typing pauses. `search` itself still updates the URL/input
-  // instantly so the field stays responsive.
-  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
-  const themesQuery = useThemes({ topicId, search: debouncedSearch });
+  // `search` only lands in the URL post-debounce (see handleSearchChange above), so the query
+  // doesn't need its own separate debouncing anymore.
+  const themesQuery = useThemes({ topicId, search });
   const themes = themesQuery.data ?? [];
   const totalPages = Math.max(1, Math.ceil(themes.length / themesPerPage));
   const pageThemes = themes.slice((page - 1) * themesPerPage, page * themesPerPage);
 
-  return { search, setSearch, topicId, setTopicId, page, setPage, themesQuery, themes, pageThemes, totalPages };
+  return {
+    search,
+    handleSearchChange,
+    topicId,
+    setTopicId,
+    page,
+    setPage,
+    themesQuery,
+    themes,
+    pageThemes,
+    totalPages,
+  };
 }
