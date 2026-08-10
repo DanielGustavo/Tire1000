@@ -50,6 +50,11 @@ export const VALIDATING_STATUSES: EssayStatus[] = ["UPLOADING", "QUEUED", "VALID
 export const EVALUATING_STATUSES: EssayStatus[] = ["VALIDATED", "EVALUATING"];
 export const PENDING_STATUSES: EssayStatus[] = [...VALIDATING_STATUSES, ...EVALUATING_STATUSES];
 
+// The backend refunds ESSAY_CREDIT_COST when the fila de Revisão rejects the photo or gives up
+// retrying it (`validate-essay.ts`). EVALUATION_FAILED is deliberately excluded — no refund there
+// (ADR-0001), same reasoning as `RESENDABLE_STATUSES` above.
+export const REFUNDING_STATUSES: EssayStatus[] = ["REJECTED", "VALIDATION_FAILED"];
+
 // Short heading for the Correção result page while pending — used by PendingResult's sticky note and,
 // on desktop (ticket 13), repeated by the score sidebar's skeleton placeholder next to each "???".
 export function pendingResultHeading(status: EssayStatus): string {
