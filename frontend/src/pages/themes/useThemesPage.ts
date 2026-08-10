@@ -59,14 +59,22 @@ export function useThemesPage() {
   // Resets to page 1 whenever the effective per-page count changes — i.e. whenever a live
   // resize crosses the desktop/mobile breakpoint. Skips the initial mount so a page number
   // the user arrived with (shared/bookmarked URL) isn't clobbered on first render.
+  //
+  // setSearchParams is read through a ref instead of listed as a dependency: react-router
+  // memoizes it on `[navigate, searchParams]`, and `searchParams` gets a new identity on every
+  // URL change — including a plain page click. Depending on it directly reran this effect right
+  // after setPage() and immediately stripped `page` back off, so pagination looked broken.
+  const setSearchParamsRef = useRef(setSearchParams);
+  setSearchParamsRef.current = setSearchParams;
+
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    setSearchParams(withoutPage);
-  }, [themesPerPage, setSearchParams]);
+    setSearchParamsRef.current(withoutPage);
+  }, [themesPerPage]);
 
   const themesQuery = useThemes({ topicId, search });
   const themes = themesQuery.data ?? [];
