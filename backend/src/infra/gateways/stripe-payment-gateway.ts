@@ -11,13 +11,19 @@ import {
 export class StripePaymentGateway implements PaymentGateway {
   constructor(
     private readonly priceId: string = process.env.STRIPE_PRICE_ID ?? "",
-    private readonly webhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET ?? "",
-    private readonly successUrl: string = `${process.env.FRONTEND_URL ?? ""}/credits?checkout=success`,
-    private readonly cancelUrl: string = `${process.env.FRONTEND_URL ?? ""}/credits?checkout=cancel`,
-    private readonly client: Stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? ""),
+    private readonly webhookSecret: string = process.env
+      .STRIPE_WEBHOOK_SECRET ?? "",
+    private readonly successUrl: string = `${process.env.FRONTEND_URL ?? ""}`,
+    private readonly cancelUrl: string = `${process.env.FRONTEND_URL ?? ""}`,
+    private readonly client: Stripe = new Stripe(
+      process.env.STRIPE_SECRET_KEY ?? "",
+    ),
   ) {}
 
-  async createCheckoutSession({ userId, creditsQty }: CreateCheckoutSessionInput): Promise<CreateCheckoutSessionOutput> {
+  async createCheckoutSession({
+    userId,
+    creditsQty,
+  }: CreateCheckoutSessionInput): Promise<CreateCheckoutSessionOutput> {
     const session = await this.client.checkout.sessions.create({
       mode: "payment",
       line_items: [{ price: this.priceId, quantity: creditsQty }],
@@ -33,10 +39,17 @@ export class StripePaymentGateway implements PaymentGateway {
     return { externalId: session.id, checkoutUrl: session.url };
   }
 
-  parseWebhookEvent({ payload, signature }: ParseWebhookEventInput): PaymentWebhookEvent {
+  parseWebhookEvent({
+    payload,
+    signature,
+  }: ParseWebhookEventInput): PaymentWebhookEvent {
     let event: Stripe.Event;
     try {
-      event = this.client.webhooks.constructEvent(payload, signature, this.webhookSecret);
+      event = this.client.webhooks.constructEvent(
+        payload,
+        signature,
+        this.webhookSecret,
+      );
     } catch {
       throw new InvalidWebhookSignatureError();
     }
@@ -46,6 +59,10 @@ export class StripePaymentGateway implements PaymentGateway {
     }
 
     const session = event.data.object as Stripe.Checkout.Session;
-    return { type: "CHECKOUT_COMPLETED", externalId: session.id, amountInCents: session.amount_total ?? 0 };
+    return {
+      type: "CHECKOUT_COMPLETED",
+      externalId: session.id,
+      amountInCents: session.amount_total ?? 0,
+    };
   }
 }
